@@ -1,0 +1,62 @@
+/page A4 --margin 1.0cm
+
+/hero --bg gradient {
+  /text "Polyester" --bold --size 3rem
+  /text "A document authoring language for humans" --size 1.25rem --italic
+}
+
+Polyester is a document authoring language that occupies an interesting niche in the markup landscape. It combines the readability of **Markdown** with the structured power of **LaTeX**, sitting alongside **Typst** as a modern alternative for document creation.
+
+## Core Philosophy
+
+Polyester uses a `/command` syntax that's intuitive and readable. Unlike LaTeX's backslash escapes or Typst's hash-based functions, Polyester commands feel more like CLI invocations—familiar territory for developers.
+
+## Key Characteristics
+
+### Hybrid Content Model
+
+- Commands start with `/` at the beginning of a line
+- Plain Markdown flows naturally between commands
+- No need to wrap everything in special syntax
+
+### Flexible Arguments
+
+/code polyester {
+/command positional "quoted arg" --flag value { block content }
+}
+
+Positional args, quoted strings, flags, and blocks all coexist cleanly.
+
+### Pipe Transforms
+
+/code polyester {
+/text "hello" | bold | color red
+}
+
+This functional chaining is unique—neither Markdown, LaTeX, nor Typst have this pattern built-in.
+
+### Block Nesting
+
+Curly braces contain nested content, enabling structured layouts without escaping into a different mode.
+
+## Compared to Neighbors
+
+/table --header --bordered {
+Feature | Markdown | LaTeX | Typst | Polyester
+Learning curve | Low | High | Medium | Low
+Layout control | Minimal | Full | Full | Full
+Syntax style | Implicit | `\command{}` | `#command()` | `/command {}`
+Pipes/transforms | No | No | Limited | Yes
+CSS-like styling | No | No | Partial | Yes
+}
+
+## Strengths
+
+- **Layout primitives**: Grid, columns, regions with CSS-like properties (`--gap`, `--bg`, `--padding`)
+- **Component library**: Cards, heroes, buttons—web-inspired but document-focused
+- **Multiple outputs**: HTML and PDF from the same source
+- **Readable source**: Someone unfamiliar can parse a `.poly` file easily
+
+---
+
+Polyester feels designed for people who want LaTeX's power, Markdown's simplicity, and modern web-style layouts without learning three different systems.

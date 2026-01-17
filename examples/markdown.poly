@@ -1,0 +1,63 @@
+/page A4
+
+# Full Markdown Support
+
+Polyester now supports **GitHub Flavored Markdown** including:
+
+## Text Formatting
+
+- **Bold text** and *italic text*
+- ~~Strikethrough~~ text
+- `Inline code` snippets
+- [Links](https://example.com)
+
+## Lists
+
+1. First item
+2. Second item
+   - Nested bullet
+   - Another nested item
+3. Third item
+
+## Code Blocks
+
+```javascript
+function greet(name) {
+  console.log(`Hello, ${name}!`);
+}
+```
+
+## Tables
+
+| Feature | Status |
+|---------|--------|
+| Parser | ✅ Done |
+| HTML Backend | ✅ Done |
+| Markdown | ✅ Done |
+| PDF Backend | 🔜 Soon |
+
+## Blockquotes
+
+> This is a blockquote.
+> It can span multiple lines.
+
+## Horizontal Rules
+
+---
+
+## Task Lists
+
+- [x] Build parser
+- [x] Build HTML compiler
+- [x] Add Markdown support
+- [ ] Add PDF support
+
+/region --bg #f0fdf4 --padding 2rem {
+  ## All Inside Components Too!
+
+  Markdown works **inside** Polyester components:
+
+  - Lists work
+  - `Code` works
+  - Everything works!
+}

@@ -1,0 +1,59 @@
+name: VS Code Extension Release
+
+on:
+  push:
+    tags:
+      - 'vscode-v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: editors/vscode
+        run: npm ci
+
+      - name: Compile extension
+        working-directory: editors/vscode
+        run: npm run compile
+
+      - name: Package extension
+        working-directory: editors/vscode
+        run: npx @vscode/vsce package --allow-missing-repository
+
+      - name: Get version from tag
+        id: version
+        run: echo "version=${GITHUB_REF#refs/tags/vscode-v}" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: VS Code Extension v${{ steps.version.outputs.version }}
+          body: |
+            ## Polyester VS Code Extension v${{ steps.version.outputs.version }}
+
+            ### Installation
+
+            1. Download the `.vsix` file below
+            2. In VS Code, open Command Palette (Ctrl+Shift+P)
+            3. Run "Extensions: Install from VSIX..."
+            4. Select the downloaded file
+
+            Or install from command line:
+            ```bash
+            code --install-extension polyester-vscode-${{ steps.version.outputs.version }}.vsix
+            ```
+          files: editors/vscode/*.vsix
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

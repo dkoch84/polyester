@@ -1,0 +1,27 @@
+/page A4
+
+## Pipes Syntax Demo
+
+/columns 2 -g 1rem {
+  /card {
+    /text "$42M" | bold | size 2.5rem | color #059669
+
+    Revenue
+  }
+
+  /card {
+    /text "+32%" | bold | size 2.5rem | color #059669
+
+    YoY Growth
+  }
+}
+
+## Comparison
+
+**With flags:**
+/text "Hello World" --bold --color blue --size 1.5rem
+
+**With pipes:**
+/text "Hello World" | bold | color blue | size 1.5rem
+
+/button "click me"

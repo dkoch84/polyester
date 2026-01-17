@@ -1,0 +1,56 @@
+/page A4 --landscape
+
+/hero --bg gradient {
+  # Annual Report 2024
+
+  Building the future, one document at a time.
+
+  /button primary "Download PDF"
+  /button secondary "View Online"
+}
+
+/columns 2 -g 3rem {
+  /region {
+    ## Financial Highlights
+
+    /columns 2 -g 1rem {
+      /card {
+        /text "$42M" --bold --size 2.5rem --color #059669
+
+        Revenue
+      }
+
+      /card {
+        /text "+32%" --bold --size 2.5rem --color #059669
+
+        YoY Growth
+      }
+    }
+
+    Revenue grew **32%** year over year, driven by strong performance
+    in our cloud division and expanded enterprise partnerships.
+
+    Our strategic initiatives in document automation have positioned
+    us as a leader in the content creation space.
+  }
+
+  /region {
+    ## Looking Forward
+
+    Our roadmap for 2025 includes:
+
+    - **AI Integration**: Smart content suggestions
+    - **Collaboration**: Real-time multi-user editing
+    - **Enterprise**: Advanced security and compliance
+
+    /quote pull "The future of documents is programmable."
+  }
+}
+
+/region --bg #1e3a5f --padding 3rem {
+  /center {
+    /text "Ready to transform your document workflow?" --color white --size 1.5rem
+
+    /button primary "Contact Sales"
+  }
+}

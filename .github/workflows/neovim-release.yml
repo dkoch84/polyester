@@ -1,0 +1,83 @@
+name: Neovim Plugin Release
+
+on:
+  push:
+    tags:
+      - 'neovim-v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get version from tag
+        id: version
+        run: echo "version=${GITHUB_REF#refs/tags/neovim-v}" >> $GITHUB_OUTPUT
+
+      - name: Create plugin archive
+        run: |
+          cd editors/neovim
+          tar -czvf ../../polyester-neovim-${{ steps.version.outputs.version }}.tar.gz \
+            ftdetect/ \
+            lua/ \
+            plugin/ \
+            syntax/ \
+            README.md
+
+      - name: Create zip archive
+        run: |
+          cd editors/neovim
+          zip -r ../../polyester-neovim-${{ steps.version.outputs.version }}.zip \
+            ftdetect/ \
+            lua/ \
+            plugin/ \
+            syntax/ \
+            README.md
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Neovim Plugin v${{ steps.version.outputs.version }}
+          body: |
+            ## Polyester Neovim Plugin v${{ steps.version.outputs.version }}
+
+            ### Installation
+
+            **Using lazy.nvim:**
+            ```lua
+            {
+              "yourusername/polyester",
+              config = function()
+                require("polyester").setup()
+              end,
+            }
+            ```
+
+            **Using packer.nvim:**
+            ```lua
+            use {
+              "yourusername/polyester",
+              config = function()
+                require("polyester").setup()
+              end,
+            }
+            ```
+
+            **Manual installation:**
+            1. Download the archive below
+            2. Extract to `~/.config/nvim/pack/plugins/start/polyester/`
+
+            ### Features
+            - Syntax highlighting for `.poly` files
+            - `:PolyBuild` and `:PolyBuildPdf` commands
+            - Auto-build on save (optional)
+          files: |
+            polyester-neovim-${{ steps.version.outputs.version }}.tar.gz
+            polyester-neovim-${{ steps.version.outputs.version }}.zip
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

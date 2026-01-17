@@ -1,0 +1,58 @@
+/page A4
+
+# Working with Code
+
+Polyester handles code blocks seamlessly - curly braces inside code fences won't break the parser.
+
+## JavaScript Example
+
+```javascript
+function createDocument(options = {}) {
+  const { title, author, date } = options;
+
+  return {
+    metadata: {
+      title: title || 'Untitled',
+      author: author || 'Anonymous',
+      createdAt: date || new Date()
+    },
+    sections: [],
+    addSection(name, content) {
+      this.sections.push({ name, content });
+      return this;
+    }
+  };
+}
+
+// Usage
+const doc = createDocument({ title: 'My Report' })
+  .addSection('intro', 'Welcome!')
+  .addSection('body', 'Content here...');
+
+console.log(doc);
+```
+
+## With Polyester Components
+
+/columns 2 -g 2rem {
+  /region --bg #1e293b --padding 1.5rem {
+    **Input:**
+
+```poly
+/hero --bg gradient {
+  # Welcome
+  /button primary "Click"
+}
+```
+  }
+
+  /region --bg #f8fafc --padding 1.5rem {
+    **Output:**
+
+    The code compiles to semantic HTML with embedded CSS styling.
+  }
+}
+
+## Inline Code
+
+You can also use `inline code` like `const x = { nested: { object } }` without issues.

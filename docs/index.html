@@ -1,0 +1,2014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Polyester - Document Language</title>
+  <meta name="description" content="A document authoring language combining Markdown simplicity with programming power.">
+  <style>
+
+/* Polyester Base Styles */
+.poly-document {
+  font-family: system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+  color: #1a1a1a;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.poly-content {
+  margin-bottom: 1rem;
+}
+
+.poly-content p {
+  margin: 0 0 1em 0;
+}
+
+.poly-content h1, .poly-content h2, .poly-content h3 {
+  margin: 1.5em 0 0.5em 0;
+  line-height: 1.3;
+}
+
+.poly-content h1 { font-size: 2rem; }
+.poly-content h2 { font-size: 1.5rem; }
+.poly-content h3 { font-size: 1.25rem; }
+
+/* Component styles */
+.poly-columns {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.poly-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.poly-region {
+  padding: 1rem;
+}
+
+.poly-sidebar {
+  position: absolute;
+}
+
+.poly-quote {
+  border-left: 4px solid #e5e5e5;
+  padding-left: 1rem;
+  margin: 1rem 0;
+  font-style: italic;
+}
+
+.poly-quote.pullquote {
+  border: none;
+  font-size: 1.5rem;
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
+.poly-hero {
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.poly-card {
+  border: 1px solid #e5e5e5;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+}
+
+.poly-text {
+  display: inline;
+}
+
+/* Markdown content styles */
+.poly-content ul, .poly-content ol {
+  margin: 0 0 1em 0;
+  padding-left: 1.5em;
+}
+
+.poly-content li {
+  margin-bottom: 0.25em;
+}
+
+.poly-content code {
+  background: #f3f4f6;
+  padding: 0.125em 0.25em;
+  border-radius: 0.25em;
+  font-size: 0.9em;
+}
+
+.poly-content pre {
+  background: #0d1117;
+  color: #c9d1d9;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin: 1em 0;
+}
+
+.poly-content pre code {
+  background: none;
+  padding: 0;
+  color: inherit;
+}
+
+/* Syntax highlighting (GitHub Dark theme) */
+.hljs-comment,
+.hljs-quote { color: #8b949e; }
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-type { color: #ff7b72; }
+
+.hljs-string,
+.hljs-attr,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition { color: #a5d6ff; }
+
+.hljs-title,
+.hljs-section,
+.hljs-function { color: #d2a8ff; }
+
+.hljs-variable,
+.hljs-template-variable { color: #ffa657; }
+
+.hljs-literal,
+.hljs-number { color: #79c0ff; }
+
+.hljs-built_in,
+.hljs-class .hljs-title { color: #ffa657; }
+
+.hljs-attr { color: #79c0ff; }
+
+.hljs-params { color: #c9d1d9; }
+
+.hljs-meta { color: #8b949e; }
+
+.hljs-name,
+.hljs-tag { color: #7ee787; }
+
+.hljs-attribute { color: #79c0ff; }
+
+.hljs-selector-id,
+.hljs-selector-class { color: #7ee787; }
+
+.hljs-deletion { color: #ffa198; background: #490202; }
+.hljs-addition { color: #aff5b4; background: #033a16; }
+
+.poly-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1em 0;
+}
+
+.poly-content th, .poly-content td {
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+.poly-content th {
+  background: #f9fafb;
+  font-weight: 600;
+}
+
+.poly-content blockquote {
+  border-left: 4px solid #e5e5e5;
+  padding-left: 1rem;
+  margin: 1em 0;
+  color: #666;
+}
+
+.poly-content a {
+  color: #3b82f6;
+  text-decoration: underline;
+}
+
+.poly-content img {
+  max-width: 100%;
+  height: auto;
+}
+
+.poly-content hr {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 2em 0;
+}
+
+
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+    @media print {
+      .poly-document {
+        max-width: none;
+        padding: 0;
+      }
+    }
+    .poly-document {
+      max-width: none;
+      padding: 0;
+    }
+  
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+.poly-grid {
+  align-items: stretch;
+}
+.poly-grid > .poly-region:first-child {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0.5rem 0.75rem !important;
+}
+.poly-grid > .poly-region:first-child .poly-code-block {
+  margin: 0;
+}
+.poly-grid > .poly-region:first-child .poly-code-block pre {
+  background: transparent !important;
+  margin: 0;
+  padding: 0;
+}
+.poly-grid > .poly-region:first-child .poly-code-block code {
+  color: #ebdbb2;
+}
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: ui-monospace, monospace;
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+  
+
+    .poly-button {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.375rem;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      border: 1px solid #e5e5e5;
+      background: white;
+    }
+    .poly-button-primary {
+      background: #3b82f6;
+      color: white;
+      border-color: #3b82f6;
+    }
+    .poly-button-secondary {
+      background: #f3f4f6;
+      color: #374151;
+    }
+  
+
+    .poly-button {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.375rem;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      border: 1px solid #e5e5e5;
+      background: white;
+    }
+    .poly-button-primary {
+      background: #3b82f6;
+      color: white;
+      border-color: #3b82f6;
+    }
+    .poly-button-secondary {
+      background: #f3f4f6;
+      color: #374151;
+    }
+  
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: ui-monospace, monospace;
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+  
+.poly-columns {
+  max-width: 900px;
+  margin: 0 auto;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+    .poly-figure {
+      margin: 1.5rem 0;
+    }
+    .poly-figure.align-center {
+      text-align: center;
+    }
+    .poly-figure.align-left {
+      text-align: left;
+    }
+    .poly-figure.align-right {
+      text-align: right;
+    }
+    .poly-figure img {
+      max-width: 100%;
+      height: auto;
+    }
+    .poly-figure figcaption {
+      margin-top: 0.5rem;
+      font-size: 0.9em;
+      color: #666;
+      font-style: italic;
+    }
+  
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: ui-monospace, monospace;
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+  
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: ui-monospace, monospace;
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+  
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: ui-monospace, monospace;
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+  
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: ui-monospace, monospace;
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+  
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: ui-monospace, monospace;
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+  
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: ui-monospace, monospace;
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+  
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: ui-monospace, monospace;
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+  
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: ui-monospace, monospace;
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+  
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: ui-monospace, monospace;
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+  
+
+    .poly-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+    .poly-table th,
+    .poly-table td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+    }
+    .poly-table thead th {
+      font-weight: 600;
+      border-bottom: 2px solid #e5e5e5;
+    }
+    .poly-table.bordered th,
+    .poly-table.bordered td {
+      border: 1px solid #e5e5e5;
+    }
+    .poly-table.striped tbody tr:nth-child(odd) {
+      background: #f9f9f9;
+    }
+    .poly-table.dark {
+      color: #e6e6e6;
+    }
+    .poly-table.dark thead th {
+      border-bottom-color: #4a5568;
+    }
+    .poly-table.dark.bordered th,
+    .poly-table.dark.bordered td {
+      border-color: #4a5568;
+    }
+    .poly-table.dark.striped tbody tr:nth-child(odd) {
+      background: rgba(255, 255, 255, 0.05);
+    }
+  
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: ui-monospace, monospace;
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+  
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: ui-monospace, monospace;
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+  
+
+    .poly-fold {
+      margin: 1rem 0;
+      border: 1px solid #e5e5e5;
+      border-radius: 4px;
+    }
+    .poly-fold summary {
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-weight: 500;
+      background: #f9f9f9;
+      border-radius: 4px;
+    }
+    .poly-fold[open] summary {
+      border-bottom: 1px solid #e5e5e5;
+      border-radius: 4px 4px 0 0;
+    }
+    .poly-fold .poly-fold-content {
+      padding: 1rem;
+    }
+  
+
+    .poly-fold {
+      margin: 1rem 0;
+      border: 1px solid #e5e5e5;
+      border-radius: 4px;
+    }
+    .poly-fold summary {
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-weight: 500;
+      background: #f9f9f9;
+      border-radius: 4px;
+    }
+    .poly-fold[open] summary {
+      border-bottom: 1px solid #e5e5e5;
+      border-radius: 4px 4px 0 0;
+    }
+    .poly-fold .poly-fold-content {
+      padding: 1rem;
+    }
+  
+
+    .poly-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0.25rem 0;
+    }
+    .poly-checkbox input {
+      width: 1.1em;
+      height: 1.1em;
+      margin: 0;
+    }
+    .poly-checkbox.checked label {
+      text-decoration: line-through;
+      opacity: 0.7;
+    }
+  
+
+    .poly-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0.25rem 0;
+    }
+    .poly-checkbox input {
+      width: 1.1em;
+      height: 1.1em;
+      margin: 0;
+    }
+    .poly-checkbox.checked label {
+      text-decoration: line-through;
+      opacity: 0.7;
+    }
+  
+
+    .poly-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0.25rem 0;
+    }
+    .poly-checkbox input {
+      width: 1.1em;
+      height: 1.1em;
+      margin: 0;
+    }
+    .poly-checkbox.checked label {
+      text-decoration: line-through;
+      opacity: 0.7;
+    }
+  
+
+    .poly-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0.25rem 0;
+    }
+    .poly-checkbox input {
+      width: 1.1em;
+      height: 1.1em;
+      margin: 0;
+    }
+    .poly-checkbox.checked label {
+      text-decoration: line-through;
+      opacity: 0.7;
+    }
+  
+
+    .poly-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0.25rem 0;
+    }
+    .poly-checkbox input {
+      width: 1.1em;
+      height: 1.1em;
+      margin: 0;
+    }
+    .poly-checkbox.checked label {
+      text-decoration: line-through;
+      opacity: 0.7;
+    }
+  
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: ui-monospace, monospace;
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+  
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: ui-monospace, monospace;
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+  
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: ui-monospace, monospace;
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+  
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: ui-monospace, monospace;
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+  
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: ui-monospace, monospace;
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+  
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: ui-monospace, monospace;
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+  
+
+    .poly-list {
+      margin: 1rem 0;
+      padding-left: 0;
+      list-style: none;
+    }
+    .poly-list li {
+      position: relative;
+      padding-left: 1.5em;
+      margin-bottom: 0.5em;
+    }
+    .poly-list li::before {
+      position: absolute;
+      left: 0;
+    }
+  
+
+    .poly-list {
+      margin: 1rem 0;
+      padding-left: 0;
+      list-style: none;
+    }
+    .poly-list li {
+      position: relative;
+      padding-left: 1.5em;
+      margin-bottom: 0.5em;
+    }
+    .poly-list li::before {
+      position: absolute;
+      left: 0;
+    }
+  
+
+    .poly-list {
+      margin: 1rem 0;
+      padding-left: 0;
+      list-style: none;
+    }
+    .poly-list li {
+      position: relative;
+      padding-left: 1.5em;
+      margin-bottom: 0.5em;
+    }
+    .poly-list li::before {
+      position: absolute;
+      left: 0;
+    }
+  
+
+    .poly-list {
+      margin: 1rem 0;
+      padding-left: 0;
+      list-style: none;
+    }
+    .poly-list li {
+      position: relative;
+      padding-left: 1.5em;
+      margin-bottom: 0.5em;
+    }
+    .poly-list li::before {
+      position: absolute;
+      left: 0;
+    }
+  
+/* Syntax highlighting: gruvbox */
+.poly-content pre {
+  background: #1d2021;
+  color: #ebdbb2;
+}
+
+.hljs { background: #1d2021; color: #ebdbb2; }
+
+.hljs-comment,
+.hljs-quote { color: #928374; }
+
+.hljs-keyword,
+.hljs-selector-tag { color: #cc241d; }
+
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet { color: #98971a; }
+
+.hljs-number,
+.hljs-literal { color: #689d6a; }
+
+.hljs-title,
+.hljs-section,
+.hljs-title.function_ { color: #b16286; }
+
+.hljs-type,
+.hljs-title.class_ { color: #d79921; }
+
+.hljs-variable,
+.hljs-template-variable { color: #fabd2f; }
+
+.hljs-built_in { color: #d3869b; }
+
+.hljs-attr,
+.hljs-attribute { color: #d79921; }
+
+.hljs-property { color: #458588; }
+
+.hljs-params { color: #ebdbb2; }
+
+.hljs-meta { color: #928374; }
+
+.hljs-name,
+.hljs-tag { color: #cc241d; }
+
+.hljs-selector-id,
+.hljs-selector-class { color: #98971a; }
+
+.hljs-regexp { color: #689d6a; }
+
+.hljs-operator { color: #ebdbb2; }
+
+.hljs-punctuation { color: #ebdbb2; }
+
+.hljs-addition { color: #98971a; }
+
+.hljs-deletion { color: #cc241d; }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.language-polyester').forEach(function(block) {
+        let html = block.innerHTML;
+        // Commands: /word
+        html = html.replace(/(\/\w+)/g, '<span style="color: #ff7b72;">$1</span>');
+        // Flags: --word or -w
+        html = html.replace(/(--\w+|-\w)(?=\s|$|&)/g, '<span style="color: #79c0ff;">$1</span>');
+        // Strings: "..."
+        html = html.replace(/(&quot;[^&]*&quot;)/g, '<span style="color: #a5d6ff;">$1</span>');
+        // Braces
+        html = html.replace(/([{}])/g, '<span style="color: #ffa657;">$1</span>');
+        block.innerHTML = html;
+      });
+    });
+  </script>
+</head>
+<body>
+  <div class="poly-document">
+
+
+<div class="poly-grid" style="grid-template-columns: 320px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><pre><code class="language-polyester">/hero --bg gradient {
+/vcenter --height 90vh {
+/text &quot;Polyester&quot; --bold
+     --size 4rem --color white
+
+/button primary &quot;Get Started&quot;
+}
+}</code></pre></div></div>
+<section class="poly-hero" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; "><div style="display: flex; align-items: center; justify-content: center; flex-direction: column; height: 90vh; min-height: 90vh;"><span class="poly-text" style="color: white; font-size: 4rem; font-weight: bold; letter-spacing: 0.1em; ">Polyester</span>
+<div class="poly-region" style="padding: 1rem; "><div class="poly-content"><p>A document language that feels like home.</p>
+<p>Markdown simplicity meets programming power.</p></div></div>
+<div class="poly-region" style="padding: 2rem; "><button class="poly-button poly-button-primary">Get Started</button>
+<button class="poly-button poly-button-secondary">View on GitHub</button></div></div></section></div>
+<div class="poly-grid" style="grid-template-columns: 320px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><pre><code class="language-polyester">/center {
+/text &quot;Title&quot; --size 2rem --bold
+}
+
+/columns 2 --gap 3rem {
+/region {
+  Lorem ipsum dolor sit amet...
+}
+/region {
+/frame --border &quot;2px solid black&quot; {
+/image &quot;d3.png&quot; --width 100%
+       --caption &quot;important data&quot;
+}
+}
+}</code></pre></div></div>
+<div class="poly-region" style="background: white; padding: 4rem; "><div style="text-align: center; display: flex; align-items: center; justify-content: center; flex-direction: column;"><span class="poly-text" style="font-size: 2rem; font-weight: bold; ">De Finibus Bonorum et Malorum</span></div>
+<div class="poly-region" style="padding: 1rem; "><div style="text-align: center; display: flex; align-items: center; justify-content: center; flex-direction: column;"><span class="poly-text" style="color: #64748b; font-style: italic; ">Sed ut perspiciatis unde omnis iste natus error sit voluptatem.</span></div></div>
+
+<div class="poly-columns" style="grid-template-columns: repeat(2, 1fr); gap: 3rem;"><div class="poly-region" style=""><div class="poly-content"><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+<p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.</p>
+<p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.</p></div></div>
+<div class="poly-region" style=""><div class="poly-frame" style="border: 2px solid black; border-radius: 4px; padding: 0;"><figure class="poly-figure align-center"><img src="d3.png" alt="" style="width: 100%;"><figcaption>important data</figcaption></figure></div>
+<div class="poly-region" style="padding: 1rem; "></div>
+<div class="poly-content"><p>Similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio.</p></div></div></div></div></div>
+<div class="poly-grid" style="grid-template-columns: 320px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><pre><code class="language-polyester">## Why Polyester?
+
+/columns 3 --gap 2rem {
+/card --icon rocket {
+### Fast
+Compiles to HTML instantly.
+}
+
+/card --icon shield {
+### Familiar
+If you know Markdown...
+}
+
+/card --icon bolt {
+### Powerful
+Layouts, theming, highlighting.
+}
+}</code></pre></div></div>
+<div class="poly-region" style="padding: 3rem; margin: 2rem; "><div class="poly-content"><h2>Why Polyester?</h2></div>
+<div class="poly-columns" style="grid-template-columns: repeat(3, 1fr); gap: 2rem;"><div class="poly-card"><div class="poly-card-icon">🚀</div><div class="poly-content"><h3>Fast</h3>
+<p>Compiles to HTML instantly. PDF via Typst.
+Zero runtime overhead.</p></div></div>
+<div class="poly-card"><div class="poly-card-icon">🛡️</div><div class="poly-content"><h3>Familiar</h3>
+<p>If you know Markdown, you know Polyester.
+Commands are just <code>/slash</code> syntax.</p></div></div>
+<div class="poly-card"><div class="poly-card-icon">⚡</div><div class="poly-content"><h3>Powerful</h3>
+<p>Layouts, theming, code highlighting.
+Full control over your documents.</p></div></div></div></div></div>
+<div class="poly-grid" style="grid-template-columns: 320px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><pre><code class="language-polyester">## The Syntax
+
+/code polyester {
+/text &quot;Hello&quot; --bold --color blue
+}
+
+/code polyester {
+/columns 2 {
+  /card { Left side }
+  /card { Right side }
+}
+}</code></pre></div></div>
+<div class="poly-region" style="background: #f8fafc; padding: 3rem; "><div class="poly-content"><h2>The Syntax</h2>
+<p>Write documents with Markdown, supercharged with <code>/commands</code>.</p></div>
+<div class="poly-columns" style="grid-template-columns: repeat(2, 1fr); gap: 3rem;"><div class="poly-region" style=""><div class="poly-content"><h3>Basic Command</h3></div>
+<div class="poly-code-block"><pre><code class="language-polyester">/text &quot;Hello&quot; --bold --color blue</code></pre></div>
+<div class="poly-content"><p>Commands start with <code>/</code>, take arguments and flags,
+and optionally contain blocks with <code>{ }</code>.</p></div></div>
+<div class="poly-region" style=""><div class="poly-content"><h3>Blocks &#x26; Nesting</h3></div>
+<div class="poly-code-block"><pre><code class="language-polyester">/columns 2 {
+  /card { Left side }
+  /card { Right side }
+}</code></pre></div>
+<div class="poly-content"><p>Nest commands freely. Markdown content
+flows naturally between them.</p></div></div></div></div></div>
+<div class="poly-grid" style="grid-template-columns: 320px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><pre><code class="language-polyester">## Layout Components
+
+/frame --border &quot;1px solid #e2e8f0&quot;
+       --radius 12px --padding 2rem {
+
+/columns 2 --gap 2rem {
+
+/region {
+### Columns &amp; Grids
+
+/code polyester {
+/columns 3 --gap 1rem {
+  Column 1
+  Column 2
+}
+}
+}
+
+/region {
+### Centering
+
+/code polyester {
+/vcenter --height 200px {
+  Centered content
+}
+}
+}
+
+}
+}</code></pre></div></div>
+<div class="poly-region" style="padding: 3rem; "><div class="poly-content"><h2>Layout Components</h2>
+<p>Build complex layouts without CSS gymnastics.</p></div>
+<div class="poly-frame" style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 2rem; background: white;"><div class="poly-columns" style="grid-template-columns: repeat(2, 1fr); gap: 2rem;"><div class="poly-region" style=""><div class="poly-content"><h3>Columns &#x26; Grids</h3></div>
+<div class="poly-code-block"><pre><code class="language-polyester">/columns 3 --gap 1rem {
+  Column 1
+  Column 2
+  Column 3
+}
+
+/grid &quot;2fr 1fr&quot; {
+  Wide column
+  Narrow column
+}</code></pre></div></div>
+<div class="poly-region" style=""><div class="poly-content"><h3>Centering</h3></div>
+<div class="poly-code-block"><pre><code class="language-polyester">/center {
+  Horizontally centered
+}
+
+/vcenter --height 200px {
+  Vertically &amp; horizontally
+  centered content
+}</code></pre></div></div></div></div></div></div>
+<div class="poly-grid" style="grid-template-columns: 320px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><pre><code class="language-polyester">/region --bg #1e293b --padding 3rem {
+
+/text &quot;Content Components&quot; --bold
+     --size 1.5rem --color white
+
+/columns 2 --gap 2rem {
+
+/frame --bg #334155 --padding 1.5rem {
+/code typescript --lines
+     --title &quot;example.ts&quot; {
+const greet = (name: User) =&gt;
+  console.log(&quot;Hello, &quot; + name);
+}
+}
+
+/frame --bg #334155 --padding 1.5rem {
+/table --header --striped --dark {
+Feature | HTML | PDF
+Highlighting | Yes | Yes
+}
+}
+
+}
+}</code></pre></div></div>
+<div class="poly-region" style="background: #1e293b; padding: 3rem; "><span class="poly-text" style="color: white; font-size: 1.5rem; font-weight: bold; ">Content Components</span>
+<div class="poly-region" style="padding: 1rem; "><span class="poly-text" style="color: #94a3b8; ">Rich content primitives for documents.</span></div>
+<div class="poly-columns" style="grid-template-columns: repeat(2, 1fr); gap: 2rem;"><div class="poly-frame" style="border: 1px solid #e5e5e5; border-radius: 8px; padding: 1.5rem; background: #334155;"><span class="poly-text" style="color: white; font-weight: bold; ">Code Blocks</span>
+<div class="poly-code-block"><div class="poly-code-title">example.ts</div><pre><code class="language-typescript"><div class="poly-code-lines"><div class="poly-code-line"><span class="poly-code-line-number">1</span><span class="poly-code-line-content">type User = string;</span></div><div class="poly-code-line"><span class="poly-code-line-number">2</span><span class="poly-code-line-content">const greet = (name: User) =&gt;</span></div><div class="poly-code-line"><span class="poly-code-line-number">3</span><span class="poly-code-line-content">  console.log(&quot;Hello, &quot; + name);</span></div><div class="poly-code-line"><span class="poly-code-line-number">4</span><span class="poly-code-line-content">greet(&quot;World&quot;);</span></div></div></code></pre></div></div>
+<div class="poly-frame" style="border: 1px solid #e5e5e5; border-radius: 8px; padding: 1.5rem; background: #334155;"><span class="poly-text" style="color: white; font-weight: bold; ">Tables</span>
+<table class="poly-table striped dark"><thead><tr><th style=""><div class="poly-content">Feature</th><th style="">HTML</th><th style="">PDF</th></tr></thead><tbody><tr><td style="">Syntax Highlighting</td><td style="">Yes</td><td style="">Yes</td></tr><tr><td style="">Line Numbers</td><td style="">Yes</td><td style="">Yes</td></tr><tr><td style="">Themes</td><td style="">5+</td><td style="">5+</div></td></tr></tbody></table></div></div></div></div>
+<div class="poly-grid" style="grid-template-columns: 320px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><pre><code class="language-polyester">## Interactive Elements
+
+/fold &quot;Click to expand&quot; --open {
+/code typescript {
+const compile = (source: string) =&gt;
+  generateHTML(parse(source));
+}
+}
+
+/checkbox &quot;Write docs&quot; --checked
+/checkbox &quot;Add highlighting&quot; --checked
+/checkbox &quot;World domination&quot;</code></pre></div></div>
+<div class="poly-region" style="padding: 3rem; "><div class="poly-content"><h2>Interactive Elements</h2></div>
+<div class="poly-columns" style="grid-template-columns: repeat(2, 1fr); gap: 2rem;"><div class="poly-region" style=""><div class="poly-content"><h3>Collapsible Sections</h3></div>
+<details class="poly-fold" open><summary>Click to see implementation details</summary><div class="poly-fold-content"><div class="poly-code-block"><pre><code class="language-typescript">const compile = (source: string) =&gt;
+  generateHTML(parse(source));</code></pre></div>
+<div class="poly-content"><p>The compiler parses your <code>.poly</code> file into an AST,
+then renders to your target format.</p></div></div></details>
+<details class="poly-fold"><summary>Advanced configuration</summary><div class="poly-fold-content"><div class="poly-content"><p>Configuration options for power users.
+Theme customization, output formats, and more.</p></div></div></details></div>
+<div class="poly-region" style=""><div class="poly-content"><h3>Task Lists</h3></div>
+<div class="poly-checkbox checked"><input type="checkbox" id="cb-ynfnlfw" checked disabled><label for="cb-ynfnlfw">Write documentation</label></div>
+<div class="poly-checkbox checked"><input type="checkbox" id="cb-b4cyodz" checked disabled><label for="cb-b4cyodz">Add syntax highlighting</label></div>
+<div class="poly-checkbox checked"><input type="checkbox" id="cb-s5p7n5e" checked disabled><label for="cb-s5p7n5e">Create VSCode extension</label></div>
+<div class="poly-checkbox checked"><input type="checkbox" id="cb-kn9l2jg" checked disabled><label for="cb-kn9l2jg">Build Neovim plugin</label></div>
+<div class="poly-checkbox"><input type="checkbox" id="cb-6hnjfgy"  disabled><label for="cb-6hnjfgy">World domination</label></div>
+<div class="poly-region" style="padding: 1rem; "><div class="poly-content"><p>Progress: 4/5 complete</p></div></div></div></div></div></div>
+<div class="poly-grid" style="grid-template-columns: 320px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><pre><code class="language-polyester">/region --bg #fef3c7 --padding 3rem {
+
+## Theming
+
+/columns 4 --gap 1rem {
+/frame --bg #282828 --padding 1rem {
+/text &quot;Gruvbox&quot; --color #ebdbb2
+}
+/frame --bg #2e3440 --padding 1rem {
+/text &quot;Nord&quot; --color #eceff4
+}
+}
+
+/code bash {
+poly theme import ~/.Xresources
+poly build doc.poly --theme my-theme
+}
+
+}</code></pre></div></div>
+<div class="poly-region" style="background: #fef3c7; padding: 3rem; "><div class="poly-content"><h2>Theming</h2>
+<p>Import colorschemes from your terminal. Your documents match your aesthetic.</p></div>
+<div class="poly-columns" style="grid-template-columns: repeat(4, 1fr); gap: 1rem;"><div class="poly-frame" style="border: 1px solid #e5e5e5; border-radius: 8px; padding: 1rem; background: #282828;"><span class="poly-text" style="color: #ebdbb2; font-size: 0.9rem; ">Gruvbox</span></div>
+<div class="poly-frame" style="border: 1px solid #e5e5e5; border-radius: 8px; padding: 1rem; background: #2e3440;"><span class="poly-text" style="color: #eceff4; font-size: 0.9rem; ">Nord</span></div>
+<div class="poly-frame" style="border: 1px solid #e5e5e5; border-radius: 8px; padding: 1rem; background: #1d1f21;"><span class="poly-text" style="color: #c5c8c6; font-size: 0.9rem; ">Tomorrow</span></div>
+<div class="poly-frame" style="border: 1px solid #e5e5e5; border-radius: 8px; padding: 1rem; background: #002b36;"><span class="poly-text" style="color: #839496; font-size: 0.9rem; ">Solarized</span></div></div>
+<div class="poly-code-block"><pre><code class="language-bash"># Import from your terminal config
+poly theme import ~/.Xresources --name my-theme
+poly theme import ~/.config/kitty/kitty.conf --name kitty
+poly theme import ~/.cache/wal/colors.json --name pywal
+
+# Build with your theme
+poly build doc.poly --theme my-theme</code></pre></div></div></div>
+<div class="poly-grid" style="grid-template-columns: 320px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><pre><code class="language-polyester">## Editor Support
+
+/columns 2 --gap 2rem {
+
+/card --icon star {
+### VSCode Extension
+- Syntax highlighting
+- Autocomplete
+- Hover documentation
+}
+
+/card --icon bolt {
+### Neovim Plugin
+- LSP integration
+- :PolyBuild command
+- Zathura PDF preview
+}
+
+}</code></pre></div></div>
+<div class="poly-region" style="padding: 3rem; "><div class="poly-content"><h2>Editor Support</h2>
+<p>First-class IDE integration with full language intelligence.</p></div>
+<div class="poly-columns" style="grid-template-columns: repeat(2, 1fr); gap: 2rem;"><div class="poly-card"><div class="poly-card-icon">⭐</div><div class="poly-content"><h3>VSCode Extension</h3>
+<ul>
+<li>Syntax highlighting</li>
+<li>Autocomplete for commands &#x26; flags</li>
+<li>Hover documentation</li>
+<li>Build commands (Ctrl+Alt+H, Ctrl+Alt+P)</li>
+<li>Error diagnostics</li>
+</ul></div></div>
+<div class="poly-card"><div class="poly-card-icon">⚡</div><div class="poly-content"><h3>Neovim Plugin</h3>
+<ul>
+<li>Native syntax highlighting</li>
+<li>LSP integration</li>
+<li><code>:PolyBuild</code> and <code>:PolyPreview</code></li>
+<li>Auto-build on save</li>
+<li>Zathura PDF preview</li>
+</ul></div></div></div></div></div>
+<div class="poly-grid" style="grid-template-columns: 320px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><pre><code class="language-bash">npm install -g polyester
+
+poly build document.poly
+poly build document.poly --format pdf
+poly build document.poly --theme gruvbox
+
+poly help
+poly help columns</code></pre></div></div>
+<div class="poly-region" style="background: #f0fdf4; padding: 3rem; "><div class="poly-content"><h2>Quick Start</h2></div>
+<div class="poly-code-block"><pre><code class="language-bash">npm install -g polyester
+
+poly build document.poly
+poly build document.poly --format pdf
+poly build document.poly --theme gruvbox
+
+poly help
+poly help columns
+poly help code</code></pre></div></div></div>
+<div class="poly-grid" style="grid-template-columns: 320px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><pre><code class="language-polyester">## Component Reference
+
+/columns 4 --gap 1rem {
+
+/region {
+/text &quot;Layout&quot; --bold
+/list --marker &quot;&gt;&quot; {
+page
+columns
+grid
+region
+}
+}
+
+/region {
+/text &quot;Content&quot; --bold
+/list --marker &quot;&gt;&quot; {
+text
+code
+table
+image
+}
+}
+
+}</code></pre></div></div>
+<div class="poly-region" style="padding: 3rem; "><div class="poly-content"><h2>Component Reference</h2></div>
+<span class="poly-text" style="color: #64748b; ">21 built-in components across 4 categories</span>
+<div class="poly-columns" style="grid-template-columns: repeat(4, 1fr); gap: 1rem;"><div class="poly-region" style=""><span class="poly-text" style="font-size: 0.9rem; font-weight: bold; ">Layout</span>
+<ul class="poly-list"><li><span style="position: absolute; left: 0;">></span> page</li><li><span style="position: absolute; left: 0;">></span> columns</li><li><span style="position: absolute; left: 0;">></span> grid</li><li><span style="position: absolute; left: 0;">></span> region</li><li><span style="position: absolute; left: 0;">></span> sidebar</li><li><span style="position: absolute; left: 0;">></span> center</li><li><span style="position: absolute; left: 0;">></span> vcenter</li><li><span style="position: absolute; left: 0;">></span> frame</li></ul></div>
+<div class="poly-region" style=""><span class="poly-text" style="font-size: 0.9rem; font-weight: bold; ">Content</span>
+<ul class="poly-list"><li><span style="position: absolute; left: 0;">></span> text</li><li><span style="position: absolute; left: 0;">></span> quote</li><li><span style="position: absolute; left: 0;">></span> code</li><li><span style="position: absolute; left: 0;">></span> table</li><li><span style="position: absolute; left: 0;">></span> list</li><li><span style="position: absolute; left: 0;">></span> checkbox</li><li><span style="position: absolute; left: 0;">></span> image</li></ul></div>
+<div class="poly-region" style=""><span class="poly-text" style="font-size: 0.9rem; font-weight: bold; ">Style</span>
+<ul class="poly-list"><li><span style="position: absolute; left: 0;">></span> hero</li><li><span style="position: absolute; left: 0;">></span> card</li><li><span style="position: absolute; left: 0;">></span> button</li><li><span style="position: absolute; left: 0;">></span> shape</li><li><span style="position: absolute; left: 0;">></span> style</li></ul></div>
+<div class="poly-region" style=""><span class="poly-text" style="font-size: 0.9rem; font-weight: bold; ">Interactive</span>
+<ul class="poly-list"><li><span style="position: absolute; left: 0;">></span> fold</li></ul></div></div>
+<div style="text-align: center; display: flex; align-items: center; justify-content: center; flex-direction: column;"><div class="poly-region" style="padding: 2rem; "><div class="poly-content"><p>Run <code>poly help &#x3C;component></code> for detailed documentation.</p></div></div></div></div></div>
+<div class="poly-grid" style="grid-template-columns: 320px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "></div>
+<div class="poly-region" style="background: #282828; padding: 3rem; "><div style="text-align: center; display: flex; align-items: center; justify-content: center; flex-direction: column;"><span class="poly-text" style="color: white; font-size: 2rem; font-weight: bold; letter-spacing: 0.1em; ">Polyester</span>
+<div class="poly-region" style="padding: 1rem; "><span class="poly-text" style="color: #ff0080; ">Just as fake as any other way.</span></div>
+<div class="poly-region" style="padding: 1rem; "><span class="poly-text" style="color: #64748b; font-size: 0.85rem; ">MIT License</span></div></div></div></div>
+  </div>
+</body>
+</html>

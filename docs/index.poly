@@ -1,0 +1,738 @@
+/page A4 --margin 0 --max-width none
+
+/style {
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  .poly-grid {
+    align-items: stretch;
+  }
+  .poly-grid > .poly-region:first-child {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0.5rem 0.75rem !important;
+  }
+  .poly-grid > .poly-region:first-child .poly-code-block {
+    margin: 0;
+  }
+  .poly-grid > .poly-region:first-child .poly-code-block pre {
+    background: transparent !important;
+    margin: 0;
+    padding: 0;
+  }
+  .poly-grid > .poly-region:first-child .poly-code-block code {
+    color: #ebdbb2;
+  }
+}
+
+/grid "320px 1fr" {
+
+  /region --bg #282828 --padding 1.5rem {
+    /code polyester {
+      /hero --bg gradient {
+        /vcenter --height 90vh {
+          /text "Polyester" --bold
+          --size 4rem --color white
+
+          /button primary "Get Started"
+        }
+      }
+    }
+  }
+
+  /hero --bg gradient {
+    /vcenter --height 90vh {
+      /text "Polyester" --bold --size 4rem --color white --tracking wide
+
+      /region --padding 1rem {
+        A document language that feels like home.
+
+        Markdown simplicity meets programming power.
+      }
+
+      /region --padding 2rem {
+        /button primary "Get Started"
+        /button secondary "View on GitHub"
+      }
+    }
+  }
+
+}
+
+/grid "320px 1fr" {
+
+  /region --bg #282828 --padding 1.5rem {
+    /code polyester {
+      /center {
+        /text "Title" --size 2rem --bold
+      }
+
+      /columns 2 --gap 3rem {
+        /region {
+          Lorem ipsum dolor sit amet...
+        }
+        /region {
+          /frame --border "2px solid black" {
+            /image "d3.png" --width 100%
+            --caption "important data"
+          }
+        }
+      }
+    }
+  }
+
+  /region --bg white --padding 4rem {
+
+    /center {
+      /text "De Finibus Bonorum et Malorum" --size 2rem --bold
+    }
+
+    /region --padding 1rem {
+      /center {
+        /text "Sed ut perspiciatis unde omnis iste natus error sit voluptatem." --color #64748b --italic
+      }
+    }
+
+    /style {
+      .poly-columns {
+        max-width: 900px;
+        margin: 0 auto;
+        font-size: 1.05rem;
+        line-height: 1.7;
+      }
+    }
+
+    /columns 2 --gap 3rem {
+
+      /region {
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+
+        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.
+
+        Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+      }
+
+      /region {
+        /frame --border "2px solid black" --padding 0 --margin 0 {
+          /image "d3.png" --width 100% --caption "important data"
+        }
+
+        /region --padding 1rem {
+        }
+
+        Similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio.
+      }
+
+    }
+
+  }
+
+}
+
+/grid "320px 1fr" {
+
+  /region --bg #282828 --padding 1.5rem {
+    /code polyester {
+      ## Why Polyester?
+
+      /columns 3 --gap 2rem {
+        /card --icon rocket {
+          ### Fast
+          Compiles to HTML instantly.
+        }
+
+        /card --icon shield {
+          ### Familiar
+          If you know Markdown...
+        }
+
+        /card --icon bolt {
+          ### Powerful
+          Layouts, theming, highlighting.
+        }
+      }
+    }
+  }
+
+  /region --padding 3rem --margin 2rem {
+
+    ## Why Polyester?
+
+    /columns 3 --gap 2rem {
+      /card --icon rocket {
+        ### Fast
+        Compiles to HTML instantly. PDF via Chrome.
+        Zero runtime overhead.
+      }
+
+      /card --icon shield {
+        ### Familiar
+        If you know Markdown and Slack , you know Polyester.
+        Commands are just `/slash` syntax.
+      }
+
+      /card --icon bolt {
+        ### Powerful
+        Layouts, theming, code highlighting.
+        Full control over your documents.
+      }
+    }
+
+  }
+
+}
+
+/grid "320px 1fr" {
+
+  /region --bg #282828 --padding 1.5rem {
+    /code polyester {
+      ## The Syntax
+
+      /code polyester {
+        /text "Hello" --bold --color blue
+      }
+
+      /code polyester {
+        /columns 2 {
+          /card { Left side }
+          /card { Right side }
+        }
+      }
+    }
+  }
+
+  /region --bg #f8fafc --padding 3rem {
+
+    ## The Syntax
+
+    Write documents with Markdown, supercharged with `/commands`.
+
+    /columns 2 --gap 3rem {
+
+      /region {
+        ### Basic Command
+
+        /code polyester {
+          /text "Hello" --bold --color blue
+        }
+
+        Commands start with `/`, take arguments and flags,
+        and optionally contain blocks with `{ }`.
+      }
+
+      /region {
+        ### Blocks & Nesting
+
+        /code polyester {
+          /columns 2 {
+            /card { Left side }
+            /card { Right side }
+          }
+        }
+
+        Nest commands freely. Markdown content
+        flows naturally between them.
+      }
+
+    }
+
+  }
+
+}
+
+/grid "320px 1fr" {
+
+  /region --bg #282828 --padding 1.5rem {
+    /code polyester {
+      ## Layout Components
+
+      /frame --border "1px solid #e2e8f0"
+      --radius 12px --padding 2rem {
+
+        /columns 2 --gap 2rem {
+
+          /region {
+            ### Columns & Grids
+
+            /code polyester {
+              /columns 3 --gap 1rem {
+                Column 1
+                Column 2
+              }
+            }
+          }
+
+          /region {
+            ### Centering
+
+            /code polyester {
+              /vcenter --height 200px {
+                Centered content
+              }
+            }
+          }
+
+        }
+      }
+    }
+  }
+
+  /region --padding 3rem {
+
+    ## Layout Components
+
+    Build complex layouts without CSS gymnastics.
+
+    /frame --border "1px solid #e2e8f0" --radius 12px --padding 2rem --bg white {
+
+      /columns 2 --gap 2rem {
+
+        /region {
+          ### Columns & Grids
+
+          /code polyester {
+            /columns 3 --gap 1rem {
+              Column 1
+              Column 2
+              Column 3
+            }
+
+            /grid "2fr 1fr" {
+              Wide column
+              Narrow column
+            }
+          }
+        }
+
+        /region {
+          ### Centering
+
+          /code polyester {
+            /center {
+              Horizontally centered
+            }
+
+            /vcenter --height 200px {
+              Vertically & horizontally
+              centered content
+            }
+          }
+        }
+
+      }
+
+    }
+
+  }
+
+}
+
+/grid "320px 1fr" {
+
+  /region --bg #282828 --padding 1.5rem {
+    /code polyester {
+      /region --bg #1e293b --padding 3rem {
+
+        /text "Content Components" --bold
+        --size 1.5rem --color white
+
+        /columns 2 --gap 2rem {
+
+          /frame --bg #334155 --padding 1.5rem {
+            /code typescript --lines
+            --title "example.ts" {
+              const greet = (name: User) =>
+              console.log("Hello, " + name);
+            }
+          }
+
+          /frame --bg #334155 --padding 1.5rem {
+            /table --header --striped --dark {
+              Feature | HTML | PDF
+              Highlighting | Yes | Yes
+            }
+          }
+
+        }
+      }
+    }
+  }
+
+  /region --bg #1e293b --padding 3rem {
+
+    /text "Content Components" --bold --size 1.5rem --color white
+
+    /region --padding 1rem {
+      /text "Rich content primitives for documents." --color #94a3b8
+    }
+
+    /columns 2 --gap 2rem {
+
+      /frame --bg #334155 --padding 1.5rem --radius 8px {
+        /text "Code Blocks" --bold --color white
+
+        /code typescript --lines --title "example.ts" {
+          type User = string;
+          const greet = (name: User) =>
+          console.log("Hello, " + name);
+          greet("World");
+        }
+      }
+
+      /frame --bg #334155 --padding 1.5rem --radius 8px {
+        /text "Tables" --bold --color white
+
+        /table --header --striped --dark {
+          Feature | HTML | PDF
+          Syntax Highlighting | Yes | Yes
+          Line Numbers | Yes | Yes
+          Themes | 5+ | 5+
+        }
+      }
+
+    }
+
+  }
+
+}
+
+/grid "320px 1fr" {
+
+  /region --bg #282828 --padding 1.5rem {
+    /code polyester {
+      ## Interactive Elements
+
+      /fold "Click to expand" --open {
+        /code typescript {
+          const compile = (source: string) =>
+          generateHTML(parse(source));
+        }
+      }
+
+      /checkbox "Write docs" --checked
+      /checkbox "Add highlighting" --checked
+      /checkbox "World domination"
+    }
+  }
+
+  /region --padding 3rem {
+
+    ## Interactive Elements
+
+    /columns 2 --gap 2rem {
+
+      /region {
+        ### Collapsible Sections
+
+        /fold "Click to see implementation details" --open {
+          /code typescript {
+            const compile = (source: string) =>
+            generateHTML(parse(source));
+          }
+
+          The compiler parses your `.poly` file into an AST,
+          then renders to your target format.
+        }
+
+        /fold "Advanced configuration" {
+          Configuration options for power users.
+          Theme customization, output formats, and more.
+        }
+      }
+
+      /region {
+        ### Task Lists
+
+        /checkbox "Write documentation" --checked
+        /checkbox "Add syntax highlighting" --checked
+        /checkbox "Create VSCode extension" --checked
+        /checkbox "Build Neovim plugin" --checked
+        /checkbox "World domination"
+
+        /region --padding 1rem {
+          Progress: 4/5 complete
+        }
+      }
+
+    }
+
+  }
+
+}
+
+/grid "320px 1fr" {
+
+  /region --bg #282828 --padding 1.5rem {
+    /code polyester {
+      /region --bg #fef3c7 --padding 3rem {
+
+        ## Theming
+
+        /columns 4 --gap 1rem {
+          /frame --bg #282828 --padding 1rem {
+            /text "Gruvbox" --color #ebdbb2
+          }
+          /frame --bg #2e3440 --padding 1rem {
+            /text "Nord" --color #eceff4
+          }
+        }
+
+        /code bash {
+          poly theme import ~/.Xresources
+          poly build doc.poly --theme my-theme
+        }
+
+      }
+    }
+  }
+
+  /region --bg #fef3c7 --padding 3rem {
+
+    ## Theming
+
+    Import colorschemes from your terminal. Your documents match your aesthetic.
+
+    /columns 4 --gap 1rem {
+      /frame --bg #282828 --padding 1rem --radius 8px {
+        /text "Gruvbox" --color #ebdbb2 --size 0.9rem
+      }
+      /frame --bg #2e3440 --padding 1rem --radius 8px {
+        /text "Nord" --color #eceff4 --size 0.9rem
+      }
+      /frame --bg #1d1f21 --padding 1rem --radius 8px {
+        /text "Tomorrow" --color #c5c8c6 --size 0.9rem
+      }
+      /frame --bg #002b36 --padding 1rem --radius 8px {
+        /text "Solarized" --color #839496 --size 0.9rem
+      }
+    }
+
+    /code bash {
+      # Import from your terminal config
+      poly theme import ~/.Xresources --name my-theme
+      poly theme import ~/.config/kitty/kitty.conf --name kitty
+      poly theme import ~/.cache/wal/colors.json --name pywal
+
+      # Build with your theme
+      poly build doc.poly --theme my-theme
+    }
+
+  }
+
+}
+
+/grid "320px 1fr" {
+
+  /region --bg #282828 --padding 1.5rem {
+    /code polyester {
+      ## Editor Support
+
+      /columns 2 --gap 2rem {
+
+        /card --icon star {
+          ### VSCode Extension
+          - Syntax highlighting
+          - Autocomplete
+          - Hover documentation
+        }
+
+        /card --icon bolt {
+          ### Neovim Plugin
+          - LSP integration
+          - :PolyBuild command
+          - Zathura PDF preview
+        }
+
+      }
+    }
+  }
+
+  /region --padding 3rem {
+
+    ## Editor Support
+
+    First-class IDE integration with full language intelligence.
+
+    /columns 2 --gap 2rem {
+
+      /card --icon star {
+        ### VSCode Extension
+
+        - Syntax highlighting
+        - Autocomplete for commands & flags
+        - Hover documentation
+        - Build commands (Ctrl+Alt+H, Ctrl+Alt+P)
+        - Error diagnostics
+      }
+
+      /card --icon bolt {
+        ### Neovim Plugin
+
+        - Native syntax highlighting
+        - LSP integration
+        - `:PolyBuild` and `:PolyPreview`
+        - Auto-build on save
+        - Zathura PDF preview
+      }
+
+    }
+
+  }
+
+}
+
+/grid "320px 1fr" {
+
+  /region --bg #282828 --padding 1.5rem {
+    /code bash {
+      npm install -g polyester
+
+      poly build document.poly
+      poly build document.poly --format pdf
+      poly build document.poly --theme gruvbox
+
+      poly help
+      poly help columns
+    }
+  }
+
+  /region --bg #f0fdf4 --padding 3rem {
+
+    ## Quick Start
+
+    /code bash {
+      npm install -g polyester
+
+      poly build document.poly
+      poly build document.poly --format pdf
+      poly build document.poly --theme gruvbox
+
+      poly help
+      poly help columns
+      poly help code
+    }
+
+  }
+
+}
+
+/grid "320px 1fr" {
+
+  /region --bg #282828 --padding 1.5rem {
+    /code polyester {
+      ## Component Reference
+
+      /columns 4 --gap 1rem {
+
+        /region {
+          /text "Layout" --bold
+          /list --marker ">" {
+            page
+            columns
+            grid
+            region
+          }
+        }
+
+        /region {
+          /text "Content" --bold
+          /list --marker ">" {
+            text
+            code
+            table
+            image
+          }
+        }
+
+      }
+    }
+  }
+
+  /region --padding 3rem {
+
+    ## Component Reference
+
+    /text "21 built-in components across 4 categories" --color #64748b
+
+    /columns 4 --gap 1rem {
+
+      /region {
+        /text "Layout" --bold --size 0.9rem
+        /list --marker ">" {
+          page
+          columns
+          grid
+          region
+          sidebar
+          center
+          vcenter
+          frame
+        }
+      }
+
+      /region {
+        /text "Content" --bold --size 0.9rem
+        /list --marker ">" {
+          text
+          quote
+          code
+          table
+          list
+          checkbox
+          image
+        }
+      }
+
+      /region {
+        /text "Style" --bold --size 0.9rem
+        /list --marker ">" {
+          hero
+          card
+          button
+          shape
+          style
+        }
+      }
+
+      /region {
+        /text "Interactive" --bold --size 0.9rem
+        /list --marker ">" {
+          fold
+        }
+      }
+
+    }
+
+    /center {
+      /region --padding 2rem {
+        Run `poly help <component>` for detailed documentation.
+      }
+    }
+
+  }
+
+}
+
+/grid "320px 1fr" {
+
+  /region --bg #282828 --padding 1.5rem {
+  }
+
+  /region --bg #282828 --padding 3rem {
+    /center {
+      /text "Polyester" --bold --size 2rem --color white --tracking wide
+
+      /region --padding 1rem {
+        /text "Just as fake as any other way." --color #ff0080
+      }
+
+      /region --padding 1rem {
+        /text "MIT License" --color #64748b --size 0.85rem
+      }
+    }
+  }
+
+}

@@ -1,0 +1,92 @@
+{
+  "name": "polyester-vscode",
+  "displayName": "Polyester",
+  "description": "Language support for Polyester documents",
+  "version": "0.1.0",
+  "publisher": "polyester",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "activationEvents": [
+    "onLanguage:polyester"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "polyester",
+        "aliases": ["Polyester", "poly"],
+        "extensions": [".poly"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "polyester",
+        "scopeName": "source.polyester",
+        "path": "./syntaxes/polyester.tmLanguage.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "polyester.buildHtml",
+        "title": "Polyester: Build to HTML"
+      },
+      {
+        "command": "polyester.buildPdf",
+        "title": "Polyester: Build to PDF"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "polyester.buildHtml",
+        "key": "ctrl+alt+h",
+        "mac": "cmd+alt+h",
+        "when": "editorLangId == polyester"
+      },
+      {
+        "command": "polyester.buildPdf",
+        "key": "ctrl+alt+p",
+        "mac": "cmd+alt+p",
+        "when": "editorLangId == polyester"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Polyester",
+      "properties": {
+        "polyester.lspPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to poly-lsp executable (if not in PATH)"
+        },
+        "polyester.cliPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to poly CLI (dist/cli/index.js). If empty, searches workspace or uses 'poly' from PATH."
+        },
+        "polyester.defaultTheme": {
+          "type": "string",
+          "default": "default",
+          "description": "Default theme for syntax highlighting in output"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.7.0"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1"
+  }
+}

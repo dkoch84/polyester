@@ -1,0 +1,149 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Polyester",
+  "scopeName": "source.polyester",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#commands" },
+    { "include": "#fenced-code" },
+    { "include": "#markdown" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.polyester",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.block.polyester",
+          "begin": "/\\*",
+          "end": "\\*/"
+        }
+      ]
+    },
+    "commands": {
+      "patterns": [
+        {
+          "name": "meta.command.polyester",
+          "begin": "^(\\s*)(/)(\\w+)",
+          "beginCaptures": {
+            "2": { "name": "punctuation.definition.command.polyester" },
+            "3": { "name": "entity.name.function.command.polyester" }
+          },
+          "end": "(?=\\{)|$",
+          "patterns": [
+            { "include": "#command-args" }
+          ]
+        }
+      ]
+    },
+    "command-args": {
+      "patterns": [
+        {
+          "name": "variable.parameter.flag.long.polyester",
+          "match": "--[a-zA-Z][a-zA-Z0-9-]*"
+        },
+        {
+          "name": "variable.parameter.flag.short.polyester",
+          "match": "-[a-zA-Z]"
+        },
+        {
+          "name": "string.quoted.double.polyester",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.polyester",
+              "match": "\\\\."
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.single.polyester",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            {
+              "name": "constant.character.escape.polyester",
+              "match": "\\\\."
+            }
+          ]
+        },
+        {
+          "name": "constant.numeric.polyester",
+          "match": "\\b\\d+(\\.\\d+)?(px|pt|em|rem|cm|mm|in|%)?\\b"
+        },
+        {
+          "name": "constant.other.color.polyester",
+          "match": "#[0-9a-fA-F]{3,8}\\b"
+        },
+        {
+          "name": "keyword.operator.pipe.polyester",
+          "match": "\\|"
+        },
+        {
+          "name": "variable.other.positional.polyester",
+          "match": "\\b[a-zA-Z][a-zA-Z0-9]*\\b"
+        }
+      ]
+    },
+    "fenced-code": {
+      "patterns": [
+        {
+          "name": "markup.fenced_code.block.polyester",
+          "begin": "^(\\s*)(`{3,})([a-zA-Z0-9]*)?\\s*$",
+          "beginCaptures": {
+            "2": { "name": "punctuation.definition.code.begin.polyester" },
+            "3": { "name": "entity.name.tag.language.polyester" }
+          },
+          "end": "^\\1\\2\\s*$",
+          "endCaptures": {
+            "0": { "name": "punctuation.definition.code.end.polyester" }
+          },
+          "contentName": "meta.embedded.block.code"
+        }
+      ]
+    },
+    "markdown": {
+      "patterns": [
+        {
+          "name": "markup.heading.1.polyester",
+          "match": "^#\\s+.+$"
+        },
+        {
+          "name": "markup.heading.2.polyester",
+          "match": "^##\\s+.+$"
+        },
+        {
+          "name": "markup.heading.3.polyester",
+          "match": "^###\\s+.+$"
+        },
+        {
+          "name": "markup.bold.polyester",
+          "match": "\\*\\*[^*]+\\*\\*"
+        },
+        {
+          "name": "markup.italic.polyester",
+          "match": "\\*[^*]+\\*"
+        },
+        {
+          "name": "markup.inline.raw.polyester",
+          "match": "`[^`]+`"
+        },
+        {
+          "name": "markup.underline.link.polyester",
+          "match": "\\[[^\\]]+\\]\\([^)]+\\)"
+        },
+        {
+          "name": "markup.list.unnumbered.polyester",
+          "match": "^\\s*[-*]\\s+"
+        },
+        {
+          "name": "markup.list.numbered.polyester",
+          "match": "^\\s*\\d+\\.\\s+"
+        }
+      ]
+    }
+  }
+}

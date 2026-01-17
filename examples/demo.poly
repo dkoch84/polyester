@@ -1,0 +1,51 @@
+/page A4 --margin 2cm
+
+/hero --bg gradient {
+  # Welcome to Polyester
+
+  A document language that feels like home.
+
+  /button primary "Get Started"
+}
+
+## Features
+
+/columns 2 -g 2rem {
+  /card --icon rocket {
+    ### Fast
+    Compiles in milliseconds. Write your documents and see results instantly.
+  }
+
+  /card --icon shield {
+    ### Powerful
+    Full control over layouts, styling, and structure without the LaTeX complexity.
+  }
+}
+
+## Example Layouts
+
+/region --bg #f8fafc --padding 2rem {
+  /columns 3 -g 1rem {
+    /region --bg white --padding 1rem {
+      First column content
+    }
+
+    /region --bg white --padding 1rem {
+      Second column content
+    }
+
+    /region --bg white --padding 1rem {
+      Third column content
+    }
+  }
+}
+
+## A Quote
+
+/quote pull "The best document language is the one you'll actually use."
+
+## Styled Text
+
+/text "IMPORTANT NOTICE" --bold --color #dc2626 --tracking wide
+
+Regular paragraph text continues here with **bold** and *italic* support.
