@@ -1,0 +1,259 @@
+/page A4 --margin 0 --max-width none
+
+/style {
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+  }
+  .poly-grid {
+    align-items: stretch;
+  }
+  .poly-grid > .poly-region:first-child {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .poly-grid > .poly-region:first-child .poly-code-block pre {
+    background: transparent !important;
+    margin: 0;
+    padding: 0;
+  }
+  .poly-grid > .poly-region:first-child .poly-code-block code {
+    color: #e6e6e6;
+    font-size: 13px;
+  }
+  h1, h2, h3 { margin-top: 0; }
+}
+
+/region --bg linear-gradient(135deg,#10b981,#059669) --padding 2rem {
+  /text "Content Components" --bold --size 2rem --color white
+  /text "Display text, code, images, and data" --color rgba(255,255,255,0.8)
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /text "Hello World"
+        --bold
+        --size 2rem
+        --color blue
+    }
+  }
+
+  /region --bg #f8fafc --padding 1.5rem {
+    ## /text
+
+    /text "Styled inline text with full control" --italic --color #64748b
+
+    /frame --bg white --padding 1rem --radius 8px {
+      /text "Bold large text" --bold --size 1.5rem --color #3b82f6
+      /text "Small muted caption" --size 0.85rem --color #64748b
+      /text "Colored emphasis" --color #ef4444 --italic
+    }
+
+    /region --bg #eff6ff --padding 0.75rem --radius 8px {
+      **Key flags:** `--bold`, `--italic`, `--size`, `--color`, `--weight`
+    }
+  }
+
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /code javascript {
+        function greet(name) {
+          return `Hello, ${name}!`;
+        }
+      }
+    }
+  }
+
+  /region --bg white --padding 1.5rem {
+    ## /code
+
+    /text "Syntax-highlighted code blocks" --italic --color #64748b
+
+    /code javascript {
+      function greet(name) {
+        return `Hello, ${name}!`;
+      }
+    }
+
+    /region --bg #eff6ff --padding 0.75rem --radius 8px {
+      **Key flags:** First arg is language, `--lines` for line numbers, `--title` for filename
+    }
+  }
+
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /table --header --striped {
+        Name | Age | City
+        Alice | 28 | NYC
+        Bob | 32 | LA
+      }
+    }
+  }
+
+  /region --bg #f8fafc --padding 1.5rem {
+    ## /table
+
+    /text "Data tables with pipe-separated syntax" --italic --color #64748b
+
+    /table --header --striped {
+      Name | Age | City
+      Alice | 28 | NYC
+      Bob | 32 | LA
+    }
+
+    /region --bg #eff6ff --padding 0.75rem --radius 8px {
+      **Key flags:** `--header`, `--striped`, `--bordered`
+    }
+  }
+
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /list {
+        First item
+        Second item
+        Third item
+      }
+
+      /list --ordered {
+        Step one
+        Step two
+      }
+    }
+  }
+
+  /region --bg white --padding 1.5rem {
+    ## /list
+
+    /text "Bulleted or numbered lists" --italic --color #64748b
+
+    /columns 2 --gap 1rem {
+      /frame --bg #f8fafc --padding 1rem --radius 8px {
+        /text "Unordered" --bold --size 0.85rem --color #64748b
+        /list {
+          First item
+          Second item
+          Third item
+        }
+      }
+      /frame --bg #f8fafc --padding 1rem --radius 8px {
+        /text "Ordered" --bold --size 0.85rem --color #64748b
+        /list --ordered {
+          Step one
+          Step two
+          Step three
+        }
+      }
+    }
+
+    /region --bg #eff6ff --padding 0.75rem --radius 8px {
+      **Key flags:** `--ordered`, `--marker` for custom bullets
+    }
+  }
+
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /quote {
+        Design is not just what it
+        looks like. Design is how
+        it works.
+      }
+
+      /quote pull "Steve Jobs"
+    }
+  }
+
+  /region --bg #f8fafc --padding 1.5rem {
+    ## /quote
+
+    /text "Block quotes and pull quotes" --italic --color #64748b
+
+    /quote {
+      Design is not just what it looks like and feels like. Design is how it works.
+    }
+
+    /region --bg #eff6ff --padding 0.75rem --radius 8px {
+      **Key flags:** `pull` for magazine-style pull quotes, attribution as second arg
+    }
+  }
+
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /image "photo.jpg"
+        --width 50%
+        --caption "Figure 1"
+    }
+  }
+
+  /region --bg white --padding 1.5rem {
+    ## /image
+
+    /text "Display images with captions" --italic --color #64748b
+
+    /frame --bg #f8fafc --padding 1rem --radius 8px {
+      /center {
+        /frame --bg #e2e8f0 --padding 2rem --radius 8px {
+          /text "[Image placeholder]" --color #64748b
+        }
+        /text "Figure 1: Photo caption" --size 0.85rem --color #64748b --italic
+      }
+    }
+
+    /region --bg #eff6ff --padding 0.75rem --radius 8px {
+      **Key flags:** `--width`, `--height`, `--caption`, `--alt`
+    }
+  }
+
+}
+
+/region --bg #1e293b --padding 2rem {
+  /center {
+    /text "Content Components Summary" --bold --size 1.25rem --color white
+  }
+
+  /columns 3 --gap 1rem {
+
+    /frame --bg #334155 --padding 1rem --radius 8px {
+      /text "Text" --bold --color #10b981 --size 0.9rem
+      /text "/text" --color white - styled text
+      /text "/quote" --color white - blockquotes
+    }
+
+    /frame --bg #334155 --padding 1rem --radius 8px {
+      /text "Data" --bold --color #3b82f6 --size 0.9rem
+      /text "/table" --color white - data tables
+      /text "/list" --color white - bullet/number lists
+      /text "/code" --color white - code blocks
+    }
+
+    /frame --bg #334155 --padding 1rem --radius 8px {
+      /text "Media" --bold --color #f59e0b --size 0.9rem
+      /text "/image" --color white - pictures
+    }
+
+  }
+}

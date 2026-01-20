@@ -5,6 +5,7 @@
  * - Syntax highlighting (via TextMate grammar)
  * - LSP features (diagnostics, completions, hover)
  * - Document formatting with proper indentation
+ * - Documentation browser and search
  */
 
 import * as path from "path";
@@ -17,7 +18,14 @@ import {
   TransportKind,
 } from "vscode-languageclient/node";
 
+import { DocsTreeProvider, ComponentInfo } from "./docsTreeView";
+import { showComponentDocs, showReferenceDocs, showCategoryDocs, disposePanel } from "./docsWebview";
+import { ReferenceSection, CategorySection } from "./glossary";
+import { showComponentSearch, showDocsForCurrentWord } from "./docsQuickPick";
+import { openLivePreview, disposePreview } from "./livePreview";
+
 let client: LanguageClient | undefined;
+let docsTreeProvider: DocsTreeProvider | undefined;
 
 /**
  * Count braces in a line, ignoring braces inside quoted strings.
@@ -169,14 +177,49 @@ export function activate(context: vscode.ExtensionContext) {
     );
   });
 
+  // Create documentation tree provider
+  docsTreeProvider = new DocsTreeProvider();
+  const treeView = vscode.window.createTreeView("polyesterDocs", {
+    treeDataProvider: docsTreeProvider,
+    showCollapseAll: true,
+  });
+
   // Register commands
   context.subscriptions.push(
+    // Build commands
     vscode.commands.registerCommand("polyester.buildHtml", buildHtml),
-    vscode.commands.registerCommand("polyester.buildPdf", buildPdf)
-  );
+    vscode.commands.registerCommand("polyester.buildPdf", buildPdf),
 
-  // Register document formatter
-  context.subscriptions.push(
+    // Documentation commands
+    vscode.commands.registerCommand("polyester.searchComponents", () => {
+      showComponentSearch(context);
+    }),
+    vscode.commands.registerCommand("polyester.showComponentDocs", (component: ComponentInfo) => {
+      showComponentDocs(component, context);
+    }),
+    vscode.commands.registerCommand("polyester.showDocsAtCursor", () => {
+      showDocsForCurrentWord(context);
+    }),
+    vscode.commands.registerCommand("polyester.refreshDocs", () => {
+      docsTreeProvider?.refresh();
+      vscode.window.showInformationMessage("Polyester documentation refreshed");
+    }),
+    vscode.commands.registerCommand("polyester.showReferenceDocs", (section: ReferenceSection) => {
+      showReferenceDocs(section, context);
+    }),
+    vscode.commands.registerCommand("polyester.showCategoryDocs", (category: CategorySection) => {
+      showCategoryDocs(category, context);
+    }),
+
+    // Live preview
+    vscode.commands.registerCommand("polyester.openPreview", () => {
+      openLivePreview(context);
+    }),
+
+    // Tree view
+    treeView,
+
+    // Document formatter
     vscode.languages.registerDocumentFormattingEditProvider(
       { scheme: "file", language: "polyester" },
       new PolyesterFormattingProvider()
@@ -185,6 +228,8 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate(): Thenable<void> | undefined {
+  disposePanel();
+  disposePreview();
   if (!client) {
     return undefined;
   }

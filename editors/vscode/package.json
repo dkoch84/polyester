@@ -33,11 +33,38 @@
     "commands": [
       {
         "command": "polyester.buildHtml",
-        "title": "Polyester: Build to HTML"
+        "title": "Polyester: Build to HTML",
+        "icon": "$(file-code)"
       },
       {
         "command": "polyester.buildPdf",
-        "title": "Polyester: Build to PDF"
+        "title": "Polyester: Build to PDF",
+        "icon": "$(file-pdf)"
+      },
+      {
+        "command": "polyester.searchComponents",
+        "title": "Polyester: Search Components",
+        "icon": "$(search)"
+      },
+      {
+        "command": "polyester.showComponentDocs",
+        "title": "Polyester: Show Component Documentation",
+        "icon": "$(book)"
+      },
+      {
+        "command": "polyester.showDocsAtCursor",
+        "title": "Polyester: Show Docs for Component at Cursor",
+        "icon": "$(question)"
+      },
+      {
+        "command": "polyester.refreshDocs",
+        "title": "Polyester: Refresh Documentation",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "polyester.openPreview",
+        "title": "Polyester: Open Live Preview",
+        "icon": "$(open-preview)"
       }
     ],
     "keybindings": [
@@ -52,8 +79,70 @@
         "key": "ctrl+alt+p",
         "mac": "cmd+alt+p",
         "when": "editorLangId == polyester"
+      },
+      {
+        "command": "polyester.searchComponents",
+        "key": "ctrl+shift+d",
+        "mac": "cmd+shift+d",
+        "when": "editorLangId == polyester"
+      },
+      {
+        "command": "polyester.showDocsAtCursor",
+        "key": "ctrl+shift+/",
+        "mac": "cmd+shift+/",
+        "when": "editorLangId == polyester && editorTextFocus"
+      },
+      {
+        "command": "polyester.openPreview",
+        "key": "ctrl+shift+v",
+        "mac": "cmd+shift+v",
+        "when": "editorLangId == polyester"
       }
     ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "polyester",
+          "title": "Polyester",
+          "icon": "$(file-code)"
+        }
+      ]
+    },
+    "views": {
+      "polyester": [
+        {
+          "id": "polyesterDocs",
+          "name": "Components"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "polyesterDocs",
+        "contents": "Browse Polyester components by category.\n\nClick a component to view its documentation.\n\n[Search Components](command:polyester.searchComponents)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "polyester.refreshDocs",
+          "when": "view == polyesterDocs",
+          "group": "navigation"
+        },
+        {
+          "command": "polyester.searchComponents",
+          "when": "view == polyesterDocs",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "polyester.showComponentDocs",
+          "when": "view == polyesterDocs && viewItem == component",
+          "group": "inline"
+        }
+      ]
+    },
     "configuration": {
       "type": "object",
       "title": "Polyester",
@@ -78,7 +167,8 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
+    "compile": "tsc -p ./ && npm run build-reference",
+    "build-reference": "node scripts/build-reference.js",
     "watch": "tsc -watch -p ./"
   },
   "devDependencies": {

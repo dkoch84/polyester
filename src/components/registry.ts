@@ -55,10 +55,10 @@ export const COMPONENTS: ComponentDef[] = [
   },
   {
     name: "columns",
-    description: "Create a multi-column layout.",
+    description: "Create a multi-column layout with optional custom ratios.",
     category: "layout",
     args: [
-      { name: "count", description: "Number of columns", default: "2" },
+      { name: "spec", description: "Number of columns or ratio string (e.g., '2' or '60 40' or '1fr 2fr')", default: "2" },
     ],
     flags: [
       { name: "gap", short: "g", description: "Gap between columns", hasValue: true, default: "1.5rem" },
@@ -66,6 +66,8 @@ export const COMPONENTS: ComponentDef[] = [
     examples: [
       "/columns 2 { content }",
       "/columns 3 --gap 2rem { ... }",
+      '/columns "60 40" { ... }',
+      '/columns "1fr 2fr" { ... }',
     ],
     hasBlock: true,
   },
@@ -270,7 +272,7 @@ export const COMPONENTS: ComponentDef[] = [
   },
   {
     name: "image",
-    description: "Insert an image with sizing and positioning options.",
+    description: "Insert an image with sizing, positioning, and shape options.",
     category: "content",
     args: [
       { name: "path", description: "Image file path or URL", required: true },
@@ -281,10 +283,13 @@ export const COMPONENTS: ComponentDef[] = [
       { name: "alt", description: "Alt text for accessibility", hasValue: true },
       { name: "caption", description: "Image caption", hasValue: true },
       { name: "align", description: "Alignment (left, center, right)", hasValue: true, default: "center" },
+      { name: "shape", description: "Image shape (square, circle, rounded)", hasValue: true, default: "square", values: ["square", "circle", "rounded"] },
+      { name: "size", short: "s", description: "Size for circle/square images (sets both width and height)", hasValue: true },
     ],
     examples: [
       '/image "photo.jpg" --width 50%',
       '/image "diagram.png" --caption "Figure 1" --align center',
+      '/image "avatar.jpg" --shape circle --size 100px',
     ],
     hasBlock: false,
   },
@@ -387,6 +392,99 @@ export const COMPONENTS: ComponentDef[] = [
       "/style { .poly-code-block pre { background: #282828; } }",
     ],
     hasBlock: true,
+  },
+
+  // ======== New Resume/Document Components ========
+  {
+    name: "icon",
+    description: "Display a Lucide icon inline.",
+    category: "content",
+    args: [
+      { name: "name", description: "Icon name (e.g., mail, github, phone)", required: true },
+    ],
+    flags: [
+      { name: "size", short: "s", description: "Icon size", hasValue: true, default: "1em" },
+      { name: "color", short: "c", description: "Icon color", hasValue: true, default: "currentColor" },
+    ],
+    examples: [
+      "/icon mail",
+      "/icon github --size 1.5rem --color blue",
+      "/icon phone -c gray",
+    ],
+    hasBlock: false,
+  },
+  {
+    name: "inline",
+    description: "Arrange children horizontally in a row.",
+    category: "layout",
+    args: [],
+    flags: [
+      { name: "gap", short: "g", description: "Gap between items", hasValue: true, default: "0.5rem" },
+      { name: "align", short: "a", description: "Vertical alignment (start, center, end, baseline)", hasValue: true, default: "center", values: ["start", "center", "end", "baseline"] },
+      { name: "wrap", short: "w", description: "Wrap items to next line when needed" },
+    ],
+    examples: [
+      "/inline { /icon mail /text \"email@example.com\" }",
+      "/inline --gap 1rem --align center { content }",
+      "/inline --wrap { /tag \"A\" /tag \"B\" /tag \"C\" }",
+    ],
+    hasBlock: true,
+  },
+  {
+    name: "tag",
+    description: "Display a badge/pill/tag element.",
+    category: "content",
+    args: [
+      { name: "label", description: "Tag text", required: true },
+    ],
+    flags: [
+      { name: "color", short: "c", description: "Tag color", hasValue: true },
+      { name: "variant", short: "v", description: "Style variant (filled, outline)", hasValue: true, default: "filled", values: ["filled", "outline"] },
+    ],
+    examples: [
+      '/tag "Docker"',
+      '/tag "Kubernetes" --color blue',
+      '/tag "AWS" --variant outline',
+    ],
+    hasBlock: false,
+  },
+  {
+    name: "progress",
+    description: "Display a progress/rating visualization.",
+    category: "content",
+    args: [
+      { name: "value", description: "Current value", required: true },
+    ],
+    flags: [
+      { name: "max", short: "m", description: "Maximum value", hasValue: true, default: "5" },
+      { name: "style", short: "s", description: "Display style (circles, bar)", hasValue: true, default: "circles", values: ["circles", "bar"] },
+      { name: "color", short: "c", description: "Fill color", hasValue: true },
+      { name: "empty-color", description: "Empty indicator color", hasValue: true },
+    ],
+    examples: [
+      "/progress 4",
+      "/progress 4.5 --max 5 --style circles",
+      "/progress 80 --max 100 --style bar --color green",
+    ],
+    hasBlock: false,
+  },
+  {
+    name: "divider",
+    description: "Insert a horizontal divider/separator.",
+    category: "layout",
+    args: [],
+    flags: [
+      { name: "style", short: "s", description: "Line style (solid, dashed, dotted)", hasValue: true, default: "solid", values: ["solid", "dashed", "dotted"] },
+      { name: "color", short: "c", description: "Line color", hasValue: true },
+      { name: "margin", short: "m", description: "Vertical margin", hasValue: true, default: "1rem" },
+      { name: "width", short: "w", description: "Line width/thickness", hasValue: true, default: "1px" },
+    ],
+    examples: [
+      "/divider",
+      "/divider --style dashed --color gray",
+      "/divider --margin 2rem --width 2px",
+    ],
+    hasBlock: false,
   },
 ];
 

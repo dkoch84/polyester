@@ -4,6 +4,8 @@
  * Each component receives a context and returns HTML.
  */
 
+import { getIcon } from "./icons.js";
+
 export interface ComponentContext {
   /** Parsed arguments (positional as _0, _1, etc; flags by name) */
   args: Record<string, string | boolean>;
@@ -89,12 +91,31 @@ const page: Component = (ctx) => {
 /**
  * /columns - Multi-column layout
  * Usage: /columns 2 -g 1.5cm { content }
+ * Usage: /columns "60 40" { content }
+ * Usage: /columns "1fr 2fr" { content }
  */
 const columns: Component = (ctx) => {
-  const count = getPositional(ctx.args, 0, "2");
+  const spec = getPositional(ctx.args, 0, "2");
   const gap = getArg(ctx.args, "g", "") || getArg(ctx.args, "gap", "1.5rem");
 
-  const style = `grid-template-columns: repeat(${count}, 1fr); gap: ${gap};`;
+  // Determine grid-template-columns based on spec
+  let gridTemplate: string;
+  if (/^\d+$/.test(spec)) {
+    // Simple number: equal columns
+    gridTemplate = `repeat(${spec}, 1fr)`;
+  } else if (spec.includes("fr")) {
+    // Already a CSS grid template (e.g., "1fr 2fr")
+    gridTemplate = spec;
+  } else if (/^[\d\s]+$/.test(spec)) {
+    // Space-separated numbers as ratios (e.g., "60 40")
+    const parts = spec.trim().split(/\s+/);
+    gridTemplate = parts.map((p) => `${p}fr`).join(" ");
+  } else {
+    // Fallback: use as-is
+    gridTemplate = spec;
+  }
+
+  const style = `grid-template-columns: ${gridTemplate}; gap: ${gap};`;
   const children = ctx.compileChildren();
 
   return {
@@ -756,16 +777,19 @@ const checkbox: Component = (ctx) => {
 };
 
 /**
- * /image - Image with sizing
+ * /image - Image with sizing and shape
  * Usage: /image "photo.jpg" --width 50%
+ * Usage: /image "avatar.jpg" --shape circle --size 100px
  */
 const image: Component = (ctx) => {
   const path = getPositional(ctx.args, 0, "");
-  const width = getArg(ctx.args, "width", "") || getArg(ctx.args, "w", "");
-  const height = getArg(ctx.args, "height", "") || getArg(ctx.args, "h", "");
+  const size = getArg(ctx.args, "size", "") || getArg(ctx.args, "s", "");
+  const width = getArg(ctx.args, "width", "") || getArg(ctx.args, "w", "") || size;
+  const height = getArg(ctx.args, "height", "") || getArg(ctx.args, "h", "") || size;
   const alt = getArg(ctx.args, "alt", "");
   const caption = getArg(ctx.args, "caption", "");
   const align = getArg(ctx.args, "align", "center");
+  const shape = getArg(ctx.args, "shape", "square");
 
   ctx.addStyle(`
     .poly-figure {
@@ -784,6 +808,13 @@ const image: Component = (ctx) => {
       max-width: 100%;
       height: auto;
     }
+    .poly-figure img.shape-circle {
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .poly-figure img.shape-rounded {
+      border-radius: 8px;
+    }
     .poly-figure figcaption {
       margin-top: 0.5rem;
       font-size: 0.9em;
@@ -796,7 +827,8 @@ const image: Component = (ctx) => {
   if (width) style += `width: ${width};`;
   if (height) style += `height: ${height};`;
 
-  const imgHtml = `<img src="${escapeHtml(path)}" alt="${escapeHtml(alt)}" style="${style}">`;
+  const shapeClass = shape !== "square" ? ` shape-${shape}` : "";
+  const imgHtml = `<img src="${escapeHtml(path)}" alt="${escapeHtml(alt)}" class="${shapeClass.trim()}" style="${style}">`;
   const captionHtml = caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : "";
 
   return {
@@ -887,6 +919,200 @@ const shape: Component = (ctx) => {
   }
 };
 
+/**
+ * /icon - Lucide icon display
+ * Usage: /icon mail --size 1rem --color blue
+ */
+const icon: Component = (ctx) => {
+  const name = getPositional(ctx.args, 0, "");
+  const size = getArg(ctx.args, "size", "") || getArg(ctx.args, "s", "1em");
+  const color = getArg(ctx.args, "color", "") || getArg(ctx.args, "c", "currentColor");
+
+  if (!name) {
+    return { html: `<span class="poly-icon-error">[icon: name required]</span>` };
+  }
+
+  const svg = getIcon(name, { size, color });
+  if (!svg) {
+    return { html: `<span class="poly-icon-error">[icon: "${escapeHtml(name)}" not found]</span>` };
+  }
+
+  return { html: `<span class="poly-icon">${svg}</span>` };
+};
+
+/**
+ * /inline - Horizontal layout container
+ * Usage: /inline --gap 1rem { /icon mail /text "email" }
+ */
+const inline: Component = (ctx) => {
+  const gap = getArg(ctx.args, "gap", "") || getArg(ctx.args, "g", "0.5rem");
+  const align = getArg(ctx.args, "align", "") || getArg(ctx.args, "a", "center");
+  const wrap = hasFlag(ctx.args, "wrap") || hasFlag(ctx.args, "w");
+
+  const alignMap: Record<string, string> = {
+    start: "flex-start",
+    center: "center",
+    end: "flex-end",
+    baseline: "baseline",
+  };
+  const alignItems = alignMap[align] || "center";
+
+  ctx.addStyle(`
+    .poly-inline {
+      display: inline-flex;
+      align-items: ${alignItems};
+      gap: ${gap};
+    }
+    .poly-inline.wrap {
+      flex-wrap: wrap;
+    }
+  `);
+
+  const wrapClass = wrap ? " wrap" : "";
+  const children = ctx.compileChildren();
+
+  return {
+    html: `<span class="poly-inline${wrapClass}">${children}</span>`,
+  };
+};
+
+/**
+ * /tag - Badge/pill component
+ * Usage: /tag "Docker" --color blue --variant outline
+ */
+const tag: Component = (ctx) => {
+  const label = getPositional(ctx.args, 0, "");
+  const color = getArg(ctx.args, "color", "") || getArg(ctx.args, "c", "");
+  const variant = getArg(ctx.args, "variant", "") || getArg(ctx.args, "v", "filled");
+
+  ctx.addStyle(`
+    .poly-tag {
+      display: inline-block;
+      padding: 0.2em 0.6em;
+      font-size: 0.85em;
+      font-weight: 500;
+      border-radius: 9999px;
+      white-space: nowrap;
+    }
+    .poly-tag.filled {
+      background: #e5e7eb;
+      color: #374151;
+    }
+    .poly-tag.outline {
+      background: transparent;
+      border: 1px solid #d1d5db;
+      color: #374151;
+    }
+  `);
+
+  let style = "";
+  if (color) {
+    if (variant === "outline") {
+      style = `border-color: ${color}; color: ${color};`;
+    } else {
+      // For filled, use lighter background
+      style = `background: ${color}; color: white;`;
+    }
+  }
+
+  return {
+    html: `<span class="poly-tag ${variant}" style="${style}">${escapeHtml(label)}</span>`,
+  };
+};
+
+/**
+ * /progress - Value visualization (circles or bar)
+ * Usage: /progress 4 --max 5 --style circles
+ * Usage: /progress 80 --max 100 --style bar
+ */
+const progress: Component = (ctx) => {
+  const valueStr = getPositional(ctx.args, 0, "0");
+  const value = parseFloat(valueStr);
+  const maxStr = getArg(ctx.args, "max", "") || getArg(ctx.args, "m", "5");
+  const max = parseFloat(maxStr);
+  const displayStyle = getArg(ctx.args, "style", "") || getArg(ctx.args, "s", "circles");
+  const color = getArg(ctx.args, "color", "") || getArg(ctx.args, "c", "");
+  const emptyColor = getArg(ctx.args, "empty-color", "");
+
+  if (displayStyle === "bar") {
+    // Bar style
+    const percentage = Math.min(100, Math.max(0, (value / max) * 100));
+    const fillColor = color || "#3b82f6";
+    const bgColor = emptyColor || "#e5e7eb";
+
+    ctx.addStyle(`
+      .poly-progress-bar {
+        display: inline-block;
+        width: 100%;
+        max-width: 200px;
+        height: 8px;
+        background: ${bgColor};
+        border-radius: 4px;
+        overflow: hidden;
+        vertical-align: middle;
+      }
+      .poly-progress-bar-fill {
+        height: 100%;
+        border-radius: 4px;
+        transition: width 0.3s ease;
+      }
+    `);
+
+    return {
+      html: `<span class="poly-progress-bar"><span class="poly-progress-bar-fill" style="width: ${percentage}%; background: ${fillColor};"></span></span>`,
+    };
+  } else {
+    // Circles style (default)
+    const fillColor = color || "#3b82f6";
+    const bgColor = emptyColor || "#e5e7eb";
+    const fullCount = Math.floor(value);
+    const hasHalf = value - fullCount >= 0.5;
+    const emptyCount = Math.ceil(max) - fullCount - (hasHalf ? 1 : 0);
+
+    // Unicode circles: ● (filled), ◐ (half), ○ (empty)
+    let circles = "";
+    for (let i = 0; i < fullCount; i++) {
+      circles += `<span style="color: ${fillColor};">●</span>`;
+    }
+    if (hasHalf) {
+      circles += `<span style="color: ${fillColor};">◐</span>`;
+    }
+    for (let i = 0; i < emptyCount; i++) {
+      circles += `<span style="color: ${bgColor};">○</span>`;
+    }
+
+    ctx.addStyle(`
+      .poly-progress-circles {
+        display: inline-flex;
+        gap: 0.15em;
+        font-size: 1em;
+        vertical-align: middle;
+      }
+    `);
+
+    return {
+      html: `<span class="poly-progress-circles">${circles}</span>`,
+    };
+  }
+};
+
+/**
+ * /divider - Horizontal separator
+ * Usage: /divider --style dashed --color gray
+ */
+const divider: Component = (ctx) => {
+  const lineStyle = getArg(ctx.args, "style", "") || getArg(ctx.args, "s", "solid");
+  const color = getArg(ctx.args, "color", "") || getArg(ctx.args, "c", "#e5e7eb");
+  const margin = getArg(ctx.args, "margin", "") || getArg(ctx.args, "m", "1rem");
+  const width = getArg(ctx.args, "width", "") || getArg(ctx.args, "w", "1px");
+
+  const style = `border: none; border-top: ${width} ${lineStyle} ${color}; margin: ${margin} 0;`;
+
+  return {
+    html: `<hr class="poly-divider" style="${style}">`,
+  };
+};
+
 // Export all components
 export const components: Record<string, Component> = {
   page,
@@ -910,4 +1136,9 @@ export const components: Record<string, Component> = {
   fold,
   shape,
   style,
+  icon,
+  inline,
+  tag,
+  progress,
+  divider,
 };

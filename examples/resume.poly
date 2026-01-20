@@ -1,0 +1,195 @@
+/page A4 --margin 1.5cm
+
+/style {
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    line-height: 1.4;
+    color: #1f2937;
+  }
+  h1 { margin: 0 0 0.25rem 0; font-size: 2rem; }
+  h2 {
+    margin: 1.5rem 0 0.75rem 0;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #4f46e5;
+    border-bottom: 2px solid #4f46e5;
+    padding-bottom: 0.25rem;
+  }
+  h3 { margin: 0.75rem 0 0.25rem 0; font-size: 1rem; }
+  p { margin: 0.5rem 0; }
+  .job-company { font-weight: 600; }
+  .job-meta { color: #6b7280; font-size: 0.9rem; }
+}
+
+/columns "65 35" --gap 2rem {
+  /region {
+    # Jane Smith
+
+    /text "Senior Software Engineer" --size 1.1rem --color "#6b7280"
+
+    /divider --margin 0.75rem
+
+    /inline --gap 1.5rem --wrap {
+      /inline --gap 0.25rem {
+        /icon mail --size 0.9rem
+        /text "jane@example.com"
+      }
+      /inline --gap 0.25rem {
+        /icon phone --size 0.9rem
+        /text "+1 555-123-4567"
+      }
+      /inline --gap 0.25rem {
+        /icon map-pin --size 0.9rem
+        /text "San Francisco, CA"
+      }
+    }
+
+    /inline --gap 1rem {
+      /inline --gap 0.25rem {
+        /icon github --size 0.9rem
+        /text "github.com/janesmith"
+      }
+      /inline --gap 0.25rem {
+        /icon linkedin --size 0.9rem
+        /text "linkedin.com/in/janesmith"
+      }
+    }
+
+    ## Experience
+
+    ### Senior Software Engineer
+
+    /inline --gap 0.5rem {
+      /text "Acme Corp" --bold
+      /icon calendar --size 0.85rem --color "#6b7280"
+      /text "2021 - Present" --color "#6b7280"
+      /icon map-pin --size 0.85rem --color "#6b7280"
+      /text "Remote" --color "#6b7280"
+    }
+
+    - Led development of microservices platform serving 10M+ users
+    - Designed and implemented real-time event processing pipeline
+    - Mentored team of 5 junior engineers, improving team velocity by 40%
+
+    /divider --style dashed --color "#e5e7eb" --margin 0.75rem
+
+    ### Software Engineer
+
+    /inline --gap 0.5rem {
+      /text "TechStart Inc" --bold
+      /icon calendar --size 0.85rem --color "#6b7280"
+      /text "2018 - 2021" --color "#6b7280"
+      /icon map-pin --size 0.85rem --color "#6b7280"
+      /text "San Francisco" --color "#6b7280"
+    }
+
+    - Built customer-facing API serving 1M requests/day
+    - Reduced infrastructure costs by 35% through optimization
+    - Implemented CI/CD pipeline reducing deployment time from hours to minutes
+
+    /divider --style dashed --color "#e5e7eb" --margin 0.75rem
+
+    ### Junior Developer
+
+    /inline --gap 0.5rem {
+      /text "WebAgency Co" --bold
+      /icon calendar --size 0.85rem --color "#6b7280"
+      /text "2016 - 2018" --color "#6b7280"
+      /icon map-pin --size 0.85rem --color "#6b7280"
+      /text "Oakland, CA" --color "#6b7280"
+    }
+
+    - Developed responsive web applications for 20+ clients
+    - Created reusable component library used across projects
+  }
+
+  /region {
+    ## Skills
+
+    /inline --gap 0.5rem {
+      /text "Kubernetes"
+      /progress 5 --color "#4f46e5"
+    }
+
+    /inline --gap 0.5rem {
+      /text "TypeScript"
+      /progress 5 --color "#4f46e5"
+    }
+
+    /inline --gap 0.5rem {
+      /text "Python"
+      /progress 4 --color "#4f46e5"
+    }
+
+    /inline --gap 0.5rem {
+      /text "Go"
+      /progress 4 --color "#4f46e5"
+    }
+
+    /inline --gap 0.5rem {
+      /text "AWS"
+      /progress 4.5 --color "#4f46e5"
+    }
+
+    /inline --gap 0.5rem {
+      /text "PostgreSQL"
+      /progress 4 --color "#4f46e5"
+    }
+
+    ## Technologies
+
+    /inline --gap 0.4rem --wrap {
+      /tag "Docker"
+      /tag "Kubernetes"
+      /tag "Terraform"
+      /tag "AWS"
+      /tag "GCP"
+      /tag "PostgreSQL"
+      /tag "Redis"
+      /tag "GraphQL"
+      /tag "gRPC"
+      /tag "React"
+      /tag "Node.js"
+      /tag "Linux"
+    }
+
+    ## Education
+
+    ### B.S. Computer Science
+
+    /inline --gap 0.25rem {
+      /icon graduation-cap --size 0.85rem --color "#6b7280"
+      /text "UC Berkeley" --color "#6b7280"
+    }
+
+    /inline --gap 0.25rem {
+      /icon calendar --size 0.85rem --color "#6b7280"
+      /text "2012 - 2016" --color "#6b7280"
+    }
+
+    ## Certifications
+
+    /inline --gap 0.25rem {
+      /icon award --size 0.9rem --color "#4f46e5"
+      /text "AWS Solutions Architect"
+    }
+
+    /inline --gap 0.25rem {
+      /icon award --size 0.9rem --color "#4f46e5"
+      /text "CKA (Kubernetes)"
+    }
+
+    ## Languages
+
+    /inline --gap 0.5rem {
+      /text "English"
+      /text "(Native)" --color "#6b7280"
+    }
+
+    /inline --gap 0.5rem {
+      /text "Spanish"
+      /text "(Professional)" --color "#6b7280"
+    }
+  }
+}

@@ -24,6 +24,7 @@ import {
   getComponent,
   formatComponentHelp,
   formatComponentsList,
+  COMPONENTS,
 } from "../components/registry.js";
 
 interface CliArgs {
@@ -36,6 +37,7 @@ interface CliArgs {
   name?: string;
   watch?: boolean;
   help?: boolean;
+  json?: boolean;
 }
 
 function parseArgs(args: string[]): CliArgs {
@@ -49,6 +51,8 @@ function parseArgs(args: string[]): CliArgs {
 
     if (arg === "-h" || arg === "--help") {
       result.help = true;
+    } else if (arg === "--json") {
+      result.json = true;
     } else if (arg === "-o" || arg === "--output") {
       result.output = args[++i];
     } else if (arg === "-f" || arg === "--format") {
@@ -114,7 +118,25 @@ Examples:
 `);
 }
 
-function printComponentHelp(componentName?: string): void {
+function printComponentHelp(componentName?: string, asJson?: boolean): void {
+  if (asJson) {
+    // Output component data as JSON for tooling consumption
+    if (componentName) {
+      const name = componentName.replace(/^\//, "");
+      const component = getComponent(name);
+      if (component) {
+        console.log(JSON.stringify(component, null, 2));
+      } else {
+        console.error(JSON.stringify({ error: `Unknown component: ${componentName}` }));
+        process.exit(1);
+      }
+    } else {
+      // Output all components
+      console.log(JSON.stringify(COMPONENTS, null, 2));
+    }
+    return;
+  }
+
   if (!componentName) {
     // List all components
     console.log("Polyester Components\n");
@@ -296,7 +318,7 @@ async function main(): Promise<void> {
       break;
 
     case "help":
-      printComponentHelp(args.input);
+      printComponentHelp(args.input, args.json);
       break;
 
     case "theme":

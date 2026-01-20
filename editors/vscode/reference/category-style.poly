@@ -1,0 +1,237 @@
+/page A4 --margin 0 --max-width none
+
+/style {
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+  }
+  .poly-grid {
+    align-items: stretch;
+  }
+  .poly-grid > .poly-region:first-child {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .poly-grid > .poly-region:first-child .poly-code-block pre {
+    background: transparent !important;
+    margin: 0;
+    padding: 0;
+  }
+  .poly-grid > .poly-region:first-child .poly-code-block code {
+    color: #e6e6e6;
+    font-size: 13px;
+  }
+  h1, h2, h3 { margin-top: 0; }
+}
+
+/region --bg linear-gradient(135deg,#8b5cf6,#a855f7) --padding 2rem {
+  /text "Style Components" --bold --size 2rem --color white
+  /text "Visual elements for design flair" --color rgba(255,255,255,0.8)
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /hero --bg gradient {
+        # Welcome
+
+        Your hero content here
+      }
+    }
+  }
+
+  /region --bg #f8fafc --padding 1.5rem {
+    ## /hero
+
+    /text "Full-width banner sections with gradient backgrounds" --italic --color #64748b
+
+    /hero --bg gradient {
+      /text "Hero Section" --bold --size 1.5rem --color white
+      /text "Perfect for page headers and landing sections" --color rgba(255,255,255,0.8)
+    }
+
+    /region --bg #eff6ff --padding 0.75rem --radius 8px {
+      **Key flags:** `--bg gradient` for purple-blue gradient, or custom colors
+    }
+  }
+
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /card --icon rocket {
+        ## Feature Title
+
+        Description of the feature
+        goes here.
+      }
+    }
+  }
+
+  /region --bg white --padding 1.5rem {
+    ## /card
+
+    /text "Styled cards with optional icons" --italic --color #64748b
+
+    /columns 2 --gap 1rem {
+      /card --icon rocket {
+        /text "Launch Ready" --bold
+        Ship your documents faster with Polyester.
+      }
+      /card --icon star {
+        /text "Best Quality" --bold
+        Professional output every time.
+      }
+    }
+
+    /region --bg #eff6ff --padding 0.75rem --radius 8px {
+      **Key flags:** `--icon` for emoji/icon, `--bg` for background color
+    }
+  }
+
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /button primary "Get Started"
+      /button secondary "Learn More"
+      /button "Plain Button"
+    }
+  }
+
+  /region --bg #f8fafc --padding 1.5rem {
+    ## /button
+
+    /text "Styled button elements" --italic --color #64748b
+
+    /frame --bg white --padding 1rem --radius 8px {
+      /columns 3 --gap 1rem {
+        /center {
+          /button primary "Primary"
+        }
+        /center {
+          /button secondary "Secondary"
+        }
+        /center {
+          /button "Default"
+        }
+      }
+    }
+
+    /region --bg #eff6ff --padding 0.75rem --radius 8px {
+      **Key flags:** `primary`, `secondary` for predefined styles
+    }
+  }
+
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /shape circle
+        --size 50px
+        --fill #3b82f6
+
+      /shape rect
+        --width 100px
+        --height 50px
+        --fill #10b981
+    }
+  }
+
+  /region --bg white --padding 1.5rem {
+    ## /shape
+
+    /text "Basic geometric shapes" --italic --color #64748b
+
+    /columns 4 --gap 1rem {
+      /center {
+        /shape circle --size 40px --fill #3b82f6
+        /text "circle" --size 0.75rem --color #64748b
+      }
+      /center {
+        /shape rect --width 50px --height 30px --fill #10b981
+        /text "rect" --size 0.75rem --color #64748b
+      }
+      /center {
+        /shape circle --size 40px --fill transparent --stroke #ef4444
+        /text "stroke" --size 0.75rem --color #64748b
+      }
+      /center {
+        /shape rect --width 40px --height 40px --fill #f59e0b --radius 8px
+        /text "rounded" --size 0.75rem --color #64748b
+      }
+    }
+
+    /region --bg #eff6ff --padding 0.75rem --radius 8px {
+      **Key flags:** `--size`, `--fill`, `--stroke`, `--radius`
+    }
+  }
+
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /style {
+        h1 { color: purple; }
+        .poly-card {
+          background: #1e293b;
+          color: white;
+        }
+      }
+    }
+  }
+
+  /region --bg #f8fafc --padding 1.5rem {
+    ## /style
+
+    /text "Inject custom CSS for fine-grained control" --italic --color #64748b
+
+    /frame --bg white --padding 1rem --radius 8px {
+      The `/style` command lets you write raw CSS to customize any element. Target HTML elements (h1, p, a) or Polyester classes (.poly-card, .poly-frame).
+    }
+
+    /region --bg #eff6ff --padding 0.75rem --radius 8px {
+      **Tip:** Use browser DevTools to find class names for any component.
+    }
+  }
+
+}
+
+/region --bg #1e293b --padding 2rem {
+  /center {
+    /text "Style Components Summary" --bold --size 1.25rem --color white
+  }
+
+  /columns 3 --gap 1rem {
+
+    /frame --bg #334155 --padding 1rem --radius 8px {
+      /text "Sections" --bold --color #8b5cf6 --size 0.9rem
+      /text "/hero" --color white - banner sections
+      /text "/card" --color white - feature cards
+    }
+
+    /frame --bg #334155 --padding 1rem --radius 8px {
+      /text "Elements" --bold --color #ec4899 --size 0.9rem
+      /text "/button" --color white - clickable buttons
+      /text "/shape" --color white - geometric shapes
+    }
+
+    /frame --bg #334155 --padding 1rem --radius 8px {
+      /text "Customization" --bold --color #f59e0b --size 0.9rem
+      /text "/style" --color white - custom CSS
+    }
+
+  }
+}

@@ -1,0 +1,336 @@
+/page A4 --margin 0 --max-width none
+
+/style {
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+  }
+  .poly-grid {
+    align-items: stretch;
+  }
+  .poly-grid > .poly-region:first-child {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .poly-grid > .poly-region:first-child .poly-code-block pre {
+    background: transparent !important;
+    margin: 0;
+    padding: 0;
+  }
+  .poly-grid > .poly-region:first-child .poly-code-block code {
+    color: #e6e6e6;
+    font-size: 13px;
+  }
+  h1, h2, h3 { margin-top: 0; }
+}
+
+/region --bg linear-gradient(135deg,#ec4899,#8b5cf6) --padding 2rem {
+  /text "Colors" --bold --size 2rem --color white
+  /text "Hex codes, named colors, and how to use them" --color rgba(255,255,255,0.8)
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /text "Red" --color #ff0000
+      /text "Red" --color #f00
+      /text "Red" --color red
+
+      /region --bg #3b82f6 {
+        Blue background
+      }
+    }
+  }
+
+  /region --bg #f8fafc --padding 1.5rem {
+    ## Three Ways to Write Colors
+
+    /text "All three produce the same red" --italic --color #64748b
+
+    /columns 3 --gap 1rem {
+
+      /frame --bg white --padding 1rem --radius 8px {
+        /frame --bg #ff0000 --padding 0.5rem --radius 4px {
+          /text "#ff0000" --color white --size 0.85rem
+        }
+        /text "Hex (6 digits)" --bold --size 0.9rem
+        Full precision. Same as Illustrator's hex field.
+      }
+
+      /frame --bg white --padding 1rem --radius 8px {
+        /frame --bg #f00 --padding 0.5rem --radius 4px {
+          /text "#f00" --color white --size 0.85rem
+        }
+        /text "Hex (3 digits)" --bold --size 0.9rem
+        Shorthand. #f00 = #ff0000
+      }
+
+      /frame --bg white --padding 1rem --radius 8px {
+        /frame --bg red --padding 0.5rem --radius 4px {
+          /text "red" --color white --size 0.85rem
+        }
+        /text "Named" --bold --size 0.9rem
+        140+ built-in color names.
+      }
+
+    }
+  }
+
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code css {
+      /* Hex breakdown */
+      #3b82f6
+       │ │ │
+       │ │ └── blue: f6 (246)
+       │ └──── green: 82 (130)
+       └────── red: 3b (59)
+
+      /* Result: a nice blue */
+    }
+  }
+
+  /region --bg white --padding 1.5rem {
+    ## Understanding Hex Codes
+
+    /text "Six characters = Red, Green, Blue (two each)" --italic --color #64748b
+
+    /frame --bg #f8fafc --padding 1.5rem --radius 8px {
+      /text "#" --size 2rem --bold --color #64748b
+      /text "3b" --size 2rem --bold --color #ef4444
+      /text "82" --size 2rem --bold --color #10b981
+      /text "f6" --size 2rem --bold --color #3b82f6
+
+      /region --padding 1rem {
+        Each pair is a value from 00 (none) to ff (full):
+        - **00** = 0 in decimal (none of this color)
+        - **ff** = 255 in decimal (maximum of this color)
+      }
+
+      /columns 3 --gap 1rem {
+        /frame --bg #ff0000 --padding 0.5rem --radius 4px {
+          /text "#ff0000" --color white --size 0.85rem
+          /text "Full red, no green/blue" --color white --size 0.75rem
+        }
+        /frame --bg #00ff00 --padding 0.5rem --radius 4px {
+          /text "#00ff00" --color black --size 0.85rem
+          /text "Full green" --color black --size 0.75rem
+        }
+        /frame --bg #0000ff --padding 0.5rem --radius 4px {
+          /text "#0000ff" --color white --size 0.85rem
+          /text "Full blue" --color white --size 0.75rem
+        }
+      }
+    }
+  }
+
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /region --bg rgba(0,0,0,0.5) {
+        50% transparent black
+      }
+
+      /region --bg rgba(59,130,246,0.2) {
+        20% transparent blue
+      }
+
+      /text "Ghost text"
+        --color rgba(0,0,0,0.3)
+    }
+  }
+
+  /region --bg #f8fafc --padding 1.5rem {
+    ## Transparency with RGBA
+
+    /text "Add a fourth value for opacity" --italic --color #64748b
+
+    /frame --bg white --padding 1.5rem --radius 8px {
+      /code css {
+        rgba(red, green, blue, alpha)
+        rgba(59,  130,  246,  0.5)
+                              └── 50% visible
+      }
+
+      /region --padding 1rem {
+        The alpha value goes from:
+        - **0** = fully transparent (invisible)
+        - **1** = fully opaque (solid)
+      }
+
+      /frame --bg url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><rect width="10" height="10" fill="%23ccc"/><rect x="10" y="10" width="10" height="10" fill="%23ccc"/></svg>') --padding 1rem {
+        /columns 5 --gap 0.5rem {
+          /frame --bg rgba(59,130,246,0.2) --padding 0.5rem --radius 4px {
+            /text "0.2" --size 0.75rem
+          }
+          /frame --bg rgba(59,130,246,0.4) --padding 0.5rem --radius 4px {
+            /text "0.4" --size 0.75rem
+          }
+          /frame --bg rgba(59,130,246,0.6) --padding 0.5rem --radius 4px {
+            /text "0.6" --size 0.75rem
+          }
+          /frame --bg rgba(59,130,246,0.8) --padding 0.5rem --radius 4px {
+            /text "0.8" --size 0.75rem
+          }
+          /frame --bg rgba(59,130,246,1) --padding 0.5rem --radius 4px {
+            /text "1.0" --color white --size 0.75rem
+          }
+        }
+      }
+    }
+  }
+
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /hero --bg gradient {
+        Default purple-blue
+      }
+
+      /region --bg linear-gradient(
+        to right,
+        #ec4899,
+        #8b5cf6
+      ) {
+        Custom gradient
+      }
+    }
+  }
+
+  /region --bg white --padding 1.5rem {
+    ## Gradients
+
+    /text "Smooth transitions between colors" --italic --color #64748b
+
+    /frame --bg #f8fafc --padding 1.5rem --radius 8px {
+      /code css {
+        linear-gradient(direction, color1, color2, ...)
+      }
+
+      /region --padding 1rem {
+        /text "Direction options:" --bold --size 0.9rem
+        - `to right` - left to right
+        - `to bottom` - top to bottom
+        - `135deg` - diagonal angle
+      }
+
+      /columns 2 --gap 1rem {
+        /frame --bg linear-gradient(to right,#3b82f6,#10b981) --padding 1rem --radius 8px {
+          /text "to right" --color white --size 0.85rem
+        }
+        /frame --bg linear-gradient(to bottom,#f59e0b,#ef4444) --padding 1rem --radius 8px {
+          /text "to bottom" --color white --size 0.85rem
+        }
+        /frame --bg linear-gradient(135deg,#a855f7,#ec4899) --padding 1rem --radius 8px {
+          /text "135deg" --color white --size 0.85rem
+        }
+        /frame --bg linear-gradient(to right,#ef4444,#f59e0b,#10b981,#3b82f6) --padding 1rem --radius 8px {
+          /text "multi-color" --color white --size 0.85rem
+        }
+      }
+    }
+  }
+
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /text "Tomato" --color tomato
+      /text "Coral" --color coral
+      /text "Steel Blue" --color steelblue
+      /text "Slate Gray" --color slategray
+      /text "Papaya Whip" --color papayawhip
+    }
+  }
+
+  /region --bg #f8fafc --padding 1.5rem {
+    ## Named Colors
+
+    /text "140+ built-in color names" --italic --color #64748b
+
+    /columns 4 --gap 0.5rem {
+      /frame --bg tomato --padding 0.5rem --radius 4px {
+        /text "tomato" --color white --size 0.75rem
+      }
+      /frame --bg coral --padding 0.5rem --radius 4px {
+        /text "coral" --color white --size 0.75rem
+      }
+      /frame --bg gold --padding 0.5rem --radius 4px {
+        /text "gold" --size 0.75rem
+      }
+      /frame --bg mediumseagreen --padding 0.5rem --radius 4px {
+        /text "mediumseagreen" --color white --size 0.7rem
+      }
+      /frame --bg steelblue --padding 0.5rem --radius 4px {
+        /text "steelblue" --color white --size 0.75rem
+      }
+      /frame --bg slateblue --padding 0.5rem --radius 4px {
+        /text "slateblue" --color white --size 0.75rem
+      }
+      /frame --bg orchid --padding 0.5rem --radius 4px {
+        /text "orchid" --color white --size 0.75rem
+      }
+      /frame --bg hotpink --padding 0.5rem --radius 4px {
+        /text "hotpink" --color white --size 0.75rem
+      }
+    }
+
+    /region --bg #fef3c7 --padding 1rem --radius 8px {
+      **Tip:** Great for quick prototyping, but hex codes give you more control for final designs.
+    }
+  }
+
+}
+
+/region --bg #1e293b --padding 2rem {
+  /center {
+    /text "Color Quick Reference" --bold --size 1.25rem --color white
+  }
+
+  /columns 4 --gap 1rem {
+
+    /frame --bg #334155 --padding 1rem --radius 8px {
+      /text "Hex" --bold --color #ec4899 --size 0.9rem
+      /text "#ff0000" --color white - full
+      /text "#f00" --color white - shorthand
+      /text "#3b82f6" --color white - any color
+    }
+
+    /frame --bg #334155 --padding 1rem --radius 8px {
+      /text "RGBA" --bold --color #8b5cf6 --size 0.9rem
+      /text "rgba(r,g,b,a)" --color white
+      /text "Values: 0-255" --color #94a3b8 --size 0.85rem
+      /text "Alpha: 0-1" --color #94a3b8 --size 0.85rem
+    }
+
+    /frame --bg #334155 --padding 1rem --radius 8px {
+      /text "Gradient" --bold --color #3b82f6 --size 0.9rem
+      /text "linear-gradient(" --color white
+      /text "  direction," --color white
+      /text "  colors...)" --color white
+    }
+
+    /frame --bg #334155 --padding 1rem --radius 8px {
+      /text "Named" --bold --color #10b981 --size 0.9rem
+      /text "red, blue, green" --color white
+      /text "tomato, coral" --color white
+      /text "steelblue..." --color white
+    }
+
+  }
+}

@@ -1,0 +1,295 @@
+/page A4 --margin 0 --max-width none
+
+/style {
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+  }
+  .poly-grid {
+    align-items: stretch;
+  }
+  .poly-grid > .poly-region:first-child {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .poly-grid > .poly-region:first-child .poly-code-block pre {
+    background: transparent !important;
+    margin: 0;
+    padding: 0;
+  }
+  .poly-grid > .poly-region:first-child .poly-code-block code {
+    color: #e6e6e6;
+    font-size: 13px;
+  }
+  h1, h2, h3, h4 { margin-top: 0; }
+}
+
+/region --bg linear-gradient(135deg,#f59e0b,#ef4444) --padding 2rem {
+  /text "HTML for Designers" --bold --size 2rem --color white
+  /text "What h1, h2, p, and friends actually mean" --color rgba(255,255,255,0.8)
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /style {
+        h1 { color: purple; }
+        h2 { color: blue; }
+        p { line-height: 1.8; }
+      }
+
+      # Main Headline
+
+      ## Section Title
+
+      Regular paragraph text.
+    }
+  }
+
+  /region --bg #f8fafc --padding 1.5rem {
+    ## The Heading Hierarchy
+
+    /text "Like headline styles in InDesign" --italic --color #64748b
+
+    /frame --bg white --padding 1.5rem --radius 8px {
+      /text "h1 - Main Title" --size 2rem --bold
+      /text "The biggest headline. One per page, like a newspaper masthead." --color #64748b --size 0.9rem
+
+      /region --padding 0.5rem { }
+
+      /text "h2 - Section Title" --size 1.5rem --bold
+      /text "Major sections. Like chapter titles in a book." --color #64748b --size 0.9rem
+
+      /region --padding 0.5rem { }
+
+      /text "h3 - Subsection" --size 1.25rem --bold
+      /text "Breaks up content within sections." --color #64748b --size 0.9rem
+
+      /region --padding 0.5rem { }
+
+      /text "p - Paragraph" --size 1rem
+      /text "Regular body text. The default for content." --color #64748b --size 0.9rem
+    }
+  }
+
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code markdown {
+      # This becomes h1
+      ## This becomes h2
+      ### This becomes h3
+
+      This becomes p (paragraph)
+    }
+  }
+
+  /region --bg white --padding 1.5rem {
+    ## Markdown to HTML
+
+    /text "Your Markdown automatically creates these elements" --italic --color #64748b
+
+    /frame --bg #f8fafc --padding 1.5rem --radius 8px {
+      | Markdown | HTML | Purpose |
+      |----------|------|---------|
+      | `# Title` | h1 | Main headline |
+      | `## Section` | h2 | Section title |
+      | `### Sub` | h3 | Subsection |
+      | plain text | p | Paragraph |
+      | `**bold**` | strong | Emphasis |
+      | `*italic*` | em | Subtle emphasis |
+    }
+
+    /region --bg #eff6ff --padding 1rem --radius 8px {
+      **This is why /style works:** When you write `h1 { color: red; }`, you're styling all your `# Headings`.
+    }
+  }
+
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /style {
+        body {
+          font-family: Georgia;
+          background: #fefefe;
+        }
+      }
+
+      All text on the page now
+      uses Georgia font.
+    }
+  }
+
+  /region --bg #f8fafc --padding 1.5rem {
+    ## The body Element
+
+    /text "The entire document - like master page settings" --italic --color #64748b
+
+    /frame --bg white --padding 1.5rem --radius 8px {
+      Styling `body` affects **everything** unless overridden.
+
+      /columns 2 --gap 1rem {
+        /frame --bg #f0fdf4 --padding 1rem --radius 8px {
+          /text "Common body styles" --bold --size 0.9rem
+          - `font-family` - default typeface
+          - `font-size` - base text size
+          - `line-height` - default leading
+          - `color` - default text color
+          - `background` - page background
+        }
+
+        /frame --bg #fef3c7 --padding 1rem --radius 8px {
+          /text "Designer analogy" --bold --size 0.9rem
+
+          Like setting up your **document defaults** in InDesign before placing any content.
+        }
+      }
+    }
+  }
+
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /style {
+        .poly-card {
+          background: #1e293b;
+          color: white;
+        }
+        .poly-frame {
+          border-color: purple;
+        }
+      }
+
+      /card { Styled card }
+      /frame { Styled frame }
+    }
+  }
+
+  /region --bg white --padding 1.5rem {
+    ## Polyester Classes
+
+    /text "Each component has a class you can style" --italic --color #64748b
+
+    /frame --bg #f8fafc --padding 1.5rem --radius 8px {
+      | Component | CSS Class |
+      |-----------|-----------|
+      | /card | `.poly-card` |
+      | /frame | `.poly-frame` |
+      | /region | `.poly-region` |
+      | /columns | `.poly-columns` |
+      | /grid | `.poly-grid` |
+      | /code | `.poly-code-block` |
+      | /table | `.poly-table` |
+      | /button | `.poly-button` |
+    }
+
+    /region --bg #f0fdf4 --padding 1rem --radius 8px {
+      **Power user tip:** Inspect the HTML output to discover all available classes.
+    }
+  }
+
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code css {
+      /* Style all paragraphs */
+      p {
+        color: #333;
+      }
+
+      /* Style only first paragraph */
+      p:first-of-type {
+        font-size: 1.2rem;
+      }
+
+      /* Style links on hover */
+      a:hover {
+        color: purple;
+      }
+    }
+  }
+
+  /region --bg #f8fafc --padding 1.5rem {
+    ## CSS Selectors Cheat Sheet
+
+    /text "How to target specific elements" --italic --color #64748b
+
+    /columns 2 --gap 1rem {
+
+      /frame --bg white --padding 1rem --radius 8px {
+        /text "Basic" --bold --color #3b82f6 --size 0.9rem
+        `p` - all paragraphs
+        `h1` - all h1 headings
+        `.poly-card` - all cards
+      }
+
+      /frame --bg white --padding 1rem --radius 8px {
+        /text "Pseudo" --bold --color #a855f7 --size 0.9rem
+        `:first-child` - first item
+        `:hover` - on mouse over
+        `:last-child` - last item
+      }
+
+      /frame --bg white --padding 1rem --radius 8px {
+        /text "Descendant" --bold --color #10b981 --size 0.9rem
+        `.poly-card p` - paragraphs inside cards
+        `h2 + p` - paragraph after h2
+      }
+
+      /frame --bg white --padding 1rem --radius 8px {
+        /text "Attribute" --bold --color #f59e0b --size 0.9rem
+        `[href]` - has href attribute
+        `a[href^="http"]` - external links
+      }
+
+    }
+  }
+
+}
+
+/region --bg #1e293b --padding 2rem {
+  /center {
+    /text "Element Reference" --bold --size 1.25rem --color white
+  }
+
+  /columns 3 --gap 1rem {
+
+    /frame --bg #334155 --padding 1rem --radius 8px {
+      /text "Headings" --bold --color #f59e0b --size 0.9rem
+      /text "h1" --color white - main title
+      /text "h2" --color white - section
+      /text "h3" --color white - subsection
+      /text "h4-h6" --color white - minor
+    }
+
+    /frame --bg #334155 --padding 1rem --radius 8px {
+      /text "Content" --bold --color #3b82f6 --size 0.9rem
+      /text "p" --color white - paragraph
+      /text "a" --color white - link
+      /text "strong" --color white - bold
+      /text "em" --color white - italic
+    }
+
+    /frame --bg #334155 --padding 1rem --radius 8px {
+      /text "Structure" --bold --color #10b981 --size 0.9rem
+      /text "body" --color white - whole doc
+      /text "div" --color white - container
+      /text "span" --color white - inline wrap
+    }
+
+  }
+}

@@ -30,6 +30,7 @@
     "vitest": "^3.0.0"
   },
   "dependencies": {
+    "lucide-static": "^0.562.0",
     "puppeteer": "^24.35.0",
     "rehype-highlight": "^7.0.2",
     "rehype-stringify": "^10.0.1",

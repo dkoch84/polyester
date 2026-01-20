@@ -1,0 +1,174 @@
+/page A4 --margin 0 --max-width none
+
+/style {
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+  }
+  .poly-grid {
+    align-items: stretch;
+  }
+  .poly-grid > .poly-region:first-child {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .poly-grid > .poly-region:first-child .poly-code-block pre {
+    background: transparent !important;
+    margin: 0;
+    padding: 0;
+  }
+  .poly-grid > .poly-region:first-child .poly-code-block code {
+    color: #e6e6e6;
+    font-size: 13px;
+  }
+  h1, h2, h3 { margin-top: 0; }
+}
+
+/region --bg linear-gradient(135deg,#f59e0b,#f97316) --padding 2rem {
+  /text "Interactive Components" --bold --size 2rem --color white
+  /text "Elements with user interaction" --color rgba(255,255,255,0.8)
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /fold "Click to expand" {
+        Hidden content that
+        appears when clicked.
+
+        Can contain any content!
+      }
+
+      /fold "Open by default" --open {
+        This section starts
+        expanded.
+      }
+    }
+  }
+
+  /region --bg #f8fafc --padding 1.5rem {
+    ## /fold
+
+    /text "Collapsible sections that expand on click" --italic --color #64748b
+
+    /frame --bg white --padding 1rem --radius 8px {
+      /fold "Click me to see more" {
+        This is the hidden content that appears when you click the title. Perfect for FAQs, optional details, or keeping documents compact.
+
+        You can put **any content** inside, including other components!
+      }
+
+      /fold "Another section" {
+        Each fold section works independently.
+      }
+    }
+
+    /region --bg #eff6ff --padding 0.75rem --radius 8px {
+      **Key flags:** `--open` to start expanded
+    }
+  }
+
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /checkbox "Task one" --checked
+      /checkbox "Task two"
+      /checkbox "Task three"
+    }
+  }
+
+  /region --bg white --padding 1.5rem {
+    ## /checkbox
+
+    /text "Checkable task items for to-do lists" --italic --color #64748b
+
+    /frame --bg #f8fafc --padding 1rem --radius 8px {
+      /checkbox "Write documentation" --checked
+      /checkbox "Review code changes" --checked
+      /checkbox "Deploy to production"
+      /checkbox "Send announcement"
+    }
+
+    /region --bg #eff6ff --padding 0.75rem --radius 8px {
+      **Key flags:** `--checked` to pre-check the item
+    }
+  }
+
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      # Use Cases
+
+      /fold "FAQs" {
+        Great for frequently
+        asked questions.
+      }
+
+      /fold "Detailed specs" {
+        Hide technical details
+        until needed.
+      }
+    }
+  }
+
+  /region --bg #f8fafc --padding 1.5rem {
+    ## Common Patterns
+
+    /text "When to use interactive components" --italic --color #64748b
+
+    /columns 2 --gap 1rem {
+      /frame --bg white --padding 1rem --radius 8px {
+        /text "/fold" --bold --color #f59e0b
+        - FAQ sections
+        - Expandable details
+        - Code examples
+        - Long form content
+        - Documentation
+      }
+      /frame --bg white --padding 1rem --radius 8px {
+        /text "/checkbox" --bold --color #f59e0b
+        - Task lists
+        - Checklists
+        - Progress tracking
+        - Interactive forms
+      }
+    }
+  }
+
+}
+
+/region --bg #1e293b --padding 2rem {
+  /center {
+    /text "Interactive Components Summary" --bold --size 1.25rem --color white
+  }
+
+  /columns 2 --gap 2rem {
+
+    /frame --bg #334155 --padding 1rem --radius 8px {
+      /text "/fold" --bold --color #f59e0b --size 1.1rem
+      Collapsible content sections
+      /region --padding 0.5rem {}
+      /text "Flags:" --color #94a3b8 --size 0.85rem
+      /text "--open" --color white - start expanded
+    }
+
+    /frame --bg #334155 --padding 1rem --radius 8px {
+      /text "/checkbox" --bold --color #f59e0b --size 1.1rem
+      Checkable task items
+      /region --padding 0.5rem {}
+      /text "Flags:" --color #94a3b8 --size 0.85rem
+      /text "--checked" --color white - pre-checked
+    }
+
+  }
+}

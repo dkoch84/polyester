@@ -1,0 +1,306 @@
+/page A4 --margin 0 --max-width none
+
+/style {
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+  }
+  .poly-grid {
+    align-items: stretch;
+  }
+  .poly-grid > .poly-region:first-child {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .poly-grid > .poly-region:first-child .poly-code-block pre {
+    background: transparent !important;
+    margin: 0;
+    padding: 0;
+  }
+  .poly-grid > .poly-region:first-child .poly-code-block code {
+    color: #e6e6e6;
+    font-size: 13px;
+  }
+  h1, h2, h3 { margin-top: 0; }
+  .demo-box {
+    background: #e0f2fe;
+    border: 2px dashed #0ea5e9;
+    padding: 0.5rem;
+    text-align: center;
+    font-size: 0.85rem;
+  }
+}
+
+/region --bg linear-gradient(135deg,#3b82f6,#10b981) --padding 2rem {
+  /text "Layout Basics" --bold --size 2rem --color white
+  /text "Margin, padding, and gap - the space between things" --color rgba(255,255,255,0.8)
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /frame --padding 2rem
+        --border "2px solid blue" {
+        Content with padding
+      }
+    }
+  }
+
+  /region --bg #f8fafc --padding 1.5rem {
+    ## Padding: Space Inside
+
+    /text "The breathing room between your content and its border" --italic --color #64748b
+
+    /frame --bg white --padding 1.5rem --radius 8px {
+      /center {
+        /style {
+          .padding-demo {
+            border: 3px solid #3b82f6;
+            background: #dbeafe;
+          }
+          .padding-demo-inner {
+            background: white;
+            padding: 0.5rem;
+            border: 1px dashed #94a3b8;
+          }
+        }
+
+        /frame --padding 2rem --border "3px solid #3b82f6" --bg #dbeafe {
+          /frame --bg white --padding 0.5rem --border "1px dashed #94a3b8" {
+            Your content
+          }
+        }
+      }
+
+      /region --padding 1rem {
+        /text "The blue area is the padding" --color #3b82f6 --size 0.9rem
+
+        Like **text inset** in InDesign - the space between frame edge and text.
+      }
+    }
+  }
+
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /frame --margin 2rem
+        --border "2px solid red" {
+        Content with margin
+      }
+
+      /frame --border "2px solid red" {
+        No margin
+      }
+    }
+  }
+
+  /region --bg white --padding 1.5rem {
+    ## Margin: Space Outside
+
+    /text "Pushes other elements away from this one" --italic --color #64748b
+
+    /frame --bg #f8fafc --padding 1.5rem --radius 8px {
+      /center {
+        /frame --bg #fef2f2 --padding 2rem {
+          /frame --border "3px solid #ef4444" --bg white --padding 1rem {
+            Content
+          }
+        }
+      }
+
+      /region --padding 1rem {
+        /text "The pink area is the margin" --color #ef4444 --size 0.9rem
+
+        Like **offset path** in Illustrator - invisible space that keeps things apart.
+      }
+    }
+
+    /region --bg #fef3c7 --padding 1rem --radius 8px {
+      **Key difference:** Padding is inside the border, margin is outside.
+    }
+  }
+
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /columns 3 --gap 1rem {
+        /card { One }
+        /card { Two }
+        /card { Three }
+      }
+    }
+  }
+
+  /region --bg #f8fafc --padding 1.5rem {
+    ## Gap: Space Between Items
+
+    /text "The gutters in your grid or column layout" --italic --color #64748b
+
+    /frame --bg white --padding 1.5rem --radius 8px {
+      /columns 3 --gap 1rem {
+        /frame --bg #dbeafe --padding 1rem --radius 4px {
+          /center { One }
+        }
+        /frame --bg #dbeafe --padding 1rem --radius 4px {
+          /center { Two }
+        }
+        /frame --bg #dbeafe --padding 1rem --radius 4px {
+          /center { Three }
+        }
+      }
+
+      /region --padding 1rem {
+        /text "The white space between boxes is the gap" --color #64748b --size 0.9rem
+
+        Exactly like **gutters** in InDesign or Figma's auto-layout spacing.
+      }
+    }
+  }
+
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /frame --border "2px solid black"
+        --radius 0 {
+        Sharp corners (0)
+      }
+
+      /frame --border "2px solid black"
+        --radius 8px {
+        Slightly rounded (8px)
+      }
+
+      /frame --border "2px solid black"
+        --radius 50% {
+        Fully round (50%)
+      }
+    }
+  }
+
+  /region --bg white --padding 1.5rem {
+    ## Border Radius: Corner Roundness
+
+    /text "Just like the corner radius tool in Illustrator" --italic --color #64748b
+
+    /columns 3 --gap 1rem {
+
+      /frame --bg #f8fafc --padding 1rem --radius 0 --border "2px solid #1e293b" {
+        /center {
+          /text "0" --bold --size 1.5rem
+          Sharp
+        }
+      }
+
+      /frame --bg #f8fafc --padding 1rem --radius 12px --border "2px solid #1e293b" {
+        /center {
+          /text "12px" --bold --size 1.5rem
+          Rounded
+        }
+      }
+
+      /frame --bg #f8fafc --padding 1rem --radius 50% --border "2px solid #1e293b" {
+        /center {
+          /text "50%" --bold --size 1.5rem
+          Circle
+        }
+      }
+
+    }
+
+    /region --bg #eff6ff --padding 1rem --radius 8px {
+      **Common values:** 4px (subtle), 8px (modern), 12px (friendly), 9999px (pill shape)
+    }
+  }
+
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /frame --padding 1rem
+        --margin 0.5rem
+        --border "1px solid gray"
+        --radius 8px
+        --bg white {
+        A complete box
+      }
+    }
+  }
+
+  /region --bg #f8fafc --padding 1.5rem {
+    ## Putting It Together
+
+    /text "The CSS box model in Polyester terms" --italic --color #64748b
+
+    /frame --bg white --padding 1.5rem --radius 8px {
+      /center {
+        /frame --bg #fef2f2 --padding 1.5rem {
+          /text "margin" --size 0.75rem --color #ef4444
+
+          /frame --border "3px solid #1e293b" --radius 8px {
+            /frame --bg #dbeafe --padding 1.5rem {
+              /text "padding" --size 0.75rem --color #3b82f6
+
+              /frame --bg white --padding 1rem --radius 4px {
+                /center { content }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    /region --padding 1rem {
+      From outside in: **margin** → **border** → **padding** → **content**
+    }
+  }
+
+}
+
+/region --bg #1e293b --padding 2rem {
+  /center {
+    /text "Quick Reference" --bold --size 1.25rem --color white
+  }
+
+  /columns 4 --gap 1rem {
+
+    /frame --bg #334155 --padding 1rem --radius 8px {
+      /text "padding" --bold --color #3b82f6 --size 0.9rem
+      /text "Space inside" --color #94a3b8 --size 0.85rem
+      Between border and content
+    }
+
+    /frame --bg #334155 --padding 1rem --radius 8px {
+      /text "margin" --bold --color #ef4444 --size 0.9rem
+      /text "Space outside" --color #94a3b8 --size 0.85rem
+      Pushes others away
+    }
+
+    /frame --bg #334155 --padding 1rem --radius 8px {
+      /text "gap" --bold --color #10b981 --size 0.9rem
+      /text "Space between" --color #94a3b8 --size 0.85rem
+      Gutters in grids
+    }
+
+    /frame --bg #334155 --padding 1rem --radius 8px {
+      /text "radius" --bold --color #f59e0b --size 0.9rem
+      /text "Corner roundness" --color #94a3b8 --size 0.85rem
+      0 = sharp, higher = rounder
+    }
+
+  }
+}

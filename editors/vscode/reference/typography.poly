@@ -1,0 +1,346 @@
+/page A4 --margin 0 --max-width none
+
+/style {
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+  }
+  .poly-grid {
+    align-items: stretch;
+  }
+  .poly-grid > .poly-region:first-child {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .poly-grid > .poly-region:first-child .poly-code-block pre {
+    background: transparent !important;
+    margin: 0;
+    padding: 0;
+  }
+  .poly-grid > .poly-region:first-child .poly-code-block code {
+    color: #e6e6e6;
+    font-size: 13px;
+  }
+  h1, h2, h3 { margin-top: 0; }
+}
+
+/region --bg linear-gradient(135deg,#1e293b,#475569) --padding 2rem {
+  /text "Typography" --bold --size 2rem --color white
+  /text "Font size, weight, spacing, and alignment" --color rgba(255,255,255,0.8)
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /text "Small" --size 0.875rem
+      /text "Normal" --size 1rem
+      /text "Large" --size 1.5rem
+      /text "Huge" --size 3rem
+
+      /style {
+        h1 { font-size: 2.5rem; }
+        p { font-size: 1.1rem; }
+      }
+    }
+  }
+
+  /region --bg #f8fafc --padding 1.5rem {
+    ## Font Size
+
+    /text "How big or small your text appears" --italic --color #64748b
+
+    /frame --bg white --padding 1.5rem --radius 8px {
+      /text "0.875rem" --size 0.875rem --color #64748b
+      Small / caption text (~14px)
+
+      /text "1rem" --size 1rem
+      Body text - the default (~16px)
+
+      /text "1.5rem" --size 1.5rem
+      Subheadings (~24px)
+
+      /text "2.5rem" --size 2.5rem --bold
+      Headlines (~40px)
+    }
+
+    /region --bg #eff6ff --padding 1rem --radius 8px {
+      **Designer tip:** Use rem units so sizes scale together. A ratio like 1.25x between levels creates visual harmony.
+    }
+  }
+
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /text "Light" --weight 300
+      /text "Regular" --weight 400
+      /text "Medium" --weight 500
+      /text "Semibold" --weight 600
+      /text "Bold" --weight 700
+      /text "Black" --weight 900
+
+      /text "Bold shorthand" --bold
+    }
+  }
+
+  /region --bg white --padding 1.5rem {
+    ## Font Weight
+
+    /text "The thickness/boldness of characters" --italic --color #64748b
+
+    /frame --bg #f8fafc --padding 1.5rem --radius 8px {
+      /style {
+        .weight-row { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 0.5rem; }
+        .weight-num { font-family: monospace; color: #3b82f6; width: 3rem; }
+        .weight-name { color: #64748b; width: 5rem; font-size: 0.9rem; }
+        .weight-sample { font-size: 1.1rem; }
+      }
+
+      /region {
+        /frame --padding 0.25rem { /text "300" --color #3b82f6 /text "Light" --color #64748b --size 0.85rem /text "The quick brown fox" --weight 300 --size 1.1rem }
+        /frame --padding 0.25rem { /text "400" --color #3b82f6 /text "Regular" --color #64748b --size 0.85rem /text "The quick brown fox" --weight 400 --size 1.1rem }
+        /frame --padding 0.25rem { /text "500" --color #3b82f6 /text "Medium" --color #64748b --size 0.85rem /text "The quick brown fox" --weight 500 --size 1.1rem }
+        /frame --padding 0.25rem { /text "600" --color #3b82f6 /text "Semibold" --color #64748b --size 0.85rem /text "The quick brown fox" --weight 600 --size 1.1rem }
+        /frame --padding 0.25rem { /text "700" --color #3b82f6 /text "Bold" --color #64748b --size 0.85rem /text "The quick brown fox" --weight 700 --size 1.1rem }
+        /frame --padding 0.25rem { /text "900" --color #3b82f6 /text "Black" --color #64748b --size 0.85rem /text "The quick brown fox" --weight 900 --size 1.1rem }
+      }
+    }
+
+    /region --bg #eff6ff --padding 1rem --radius 8px {
+      **Shorthand:** Use `--bold` flag instead of `--weight 700` for convenience.
+    }
+  }
+
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /style {
+        .tight {
+          line-height: 1;
+        }
+        .normal {
+          line-height: 1.5;
+        }
+        .loose {
+          line-height: 2;
+        }
+      }
+    }
+  }
+
+  /region --bg #f8fafc --padding 1.5rem {
+    ## Line Height (Leading)
+
+    /text "Vertical space between lines of text" --italic --color #64748b
+
+    /frame --bg white --padding 1.5rem --radius 8px {
+      /columns 3 --gap 1rem {
+
+        /frame --bg #f8fafc --padding 1rem --radius 8px {
+          /text "line-height: 1" --bold --size 0.85rem --color #3b82f6
+          /region {
+            /style { p { line-height: 1; font-size: 0.9rem; } }
+            The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs.
+          }
+          /text "Tight - headlines only" --size 0.75rem --color #64748b
+        }
+
+        /frame --bg #f8fafc --padding 1rem --radius 8px {
+          /text "line-height: 1.5" --bold --size 0.85rem --color #10b981
+          /region {
+            /style { p { line-height: 1.5; font-size: 0.9rem; } }
+            The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs.
+          }
+          /text "Normal - body text" --size 0.75rem --color #64748b
+        }
+
+        /frame --bg #f8fafc --padding 1rem --radius 8px {
+          /text "line-height: 2" --bold --size 0.85rem --color #a855f7
+          /region {
+            /style { p { line-height: 2; font-size: 0.9rem; } }
+            The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs.
+          }
+          /text "Loose - airy feel" --size 0.75rem --color #64748b
+        }
+
+      }
+    }
+
+    /region --bg #fef3c7 --padding 1rem --radius 8px {
+      **Same as InDesign:** Line height 1.5 means 150% of font size. A 16px font gets 24px line height.
+    }
+  }
+
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /style {
+        .tight-tracking {
+          letter-spacing: -0.02em;
+        }
+        .loose-tracking {
+          letter-spacing: 0.1em;
+        }
+      }
+
+      /text "TIGHT TRACKING"
+        --tracking tight
+      /text "LOOSE TRACKING"
+        --tracking wide
+    }
+  }
+
+  /region --bg white --padding 1.5rem {
+    ## Letter Spacing (Tracking)
+
+    /text "Space between individual characters" --italic --color #64748b
+
+    /frame --bg #f8fafc --padding 1.5rem --radius 8px {
+      /center {
+        /style {
+          .track-demo-tight { letter-spacing: -0.03em; }
+          .track-demo-normal { letter-spacing: 0; }
+          .track-demo-wide { letter-spacing: 0.15em; }
+        }
+
+        /text "HEADLINES" --size 1.5rem --bold
+        /text "letter-spacing: -0.02em (tighter)" --size 0.75rem --color #64748b
+
+        /region --padding 0.5rem { }
+
+        /text "BODY TEXT" --size 1.5rem
+        /text "letter-spacing: 0 (normal)" --size 0.75rem --color #64748b
+
+        /region --padding 0.5rem { }
+
+        /text "S P A C E D" --size 1.5rem --bold
+        /text "letter-spacing: 0.1em (wider)" --size 0.75rem --color #64748b
+      }
+    }
+
+    /region --bg #eff6ff --padding 1rem --radius 8px {
+      **Exactly like tracking in InDesign.** Negative values tighten, positive values loosen. Use `em` units so it scales with font size.
+    }
+  }
+
+}
+
+/grid "280px 1fr" {
+
+  /region --bg #282828 --padding 1rem {
+    /code polyester {
+      /center {
+        Built-in centering
+      }
+
+      /region {
+        /style { p { text-align: right; } }
+        Right-aligned via CSS
+      }
+
+      /region {
+        /style { p { text-align: justify; } }
+        Justified via CSS
+      }
+    }
+  }
+
+  /region --bg #f8fafc --padding 1.5rem {
+    ## Text Alignment
+
+    /text "Horizontal positioning of text" --italic --color #64748b
+
+    /frame --bg white --padding 1.5rem --radius 8px {
+      /columns 2 --gap 1rem {
+
+        /frame --bg #dbeafe --padding 1rem --radius 8px --border "2px solid #3b82f6" {
+          /text "Built-in: /center" --bold --size 0.85rem --color #3b82f6
+          /center {
+            The quick brown fox jumps over the lazy dog.
+          }
+          /text "Use /center { } for centered content" --size 0.75rem --color #64748b
+        }
+
+        /frame --bg #f8fafc --padding 1rem --radius 8px {
+          /text "CSS: text-align: left" --bold --size 0.85rem --color #64748b
+          The quick brown fox jumps over the lazy dog.
+          /text "Default alignment (no CSS needed)" --size 0.75rem --color #64748b
+        }
+
+        /frame --bg #f8fafc --padding 1rem --radius 8px {
+          /text "CSS: text-align: right" --bold --size 0.85rem --color #10b981
+          /region {
+            /style { p { text-align: right; } }
+            The quick brown fox jumps over the lazy dog.
+          }
+          /text "Requires /style block" --size 0.75rem --color #64748b
+        }
+
+        /frame --bg #f8fafc --padding 1rem --radius 8px {
+          /text "CSS: text-align: justify" --bold --size 0.85rem --color #f59e0b
+          /region {
+            /style { p { text-align: justify; } }
+            The quick brown fox jumps over the lazy dog. Pack my box with five dozen.
+          }
+          /text "Requires /style block" --size 0.75rem --color #64748b
+        }
+
+      }
+    }
+
+    /region --bg #eff6ff --padding 1rem --radius 8px {
+      **Note:** `/center` is the only built-in alignment component. For right-align or justify, use a `/style` block with CSS `text-align`.
+    }
+  }
+
+}
+
+/region --bg #1e293b --padding 2rem {
+  /center {
+    /text "Typography Quick Reference" --bold --size 1.25rem --color white
+  }
+
+  /columns 4 --gap 1rem {
+
+    /frame --bg #334155 --padding 1rem --radius 8px {
+      /text "font-size" --bold --color #3b82f6 --size 0.9rem
+      /text "1rem" --color white - body (~16px)
+      /text "1.5rem" --color white - subhead
+      /text "2rem" --color white - headline
+    }
+
+    /frame --bg #334155 --padding 1rem --radius 8px {
+      /text "font-weight" --bold --color #a855f7 --size 0.9rem
+      /text "400" --color white - regular
+      /text "600" --color white - semibold
+      /text "700" --color white - bold
+    }
+
+    /frame --bg #334155 --padding 1rem --radius 8px {
+      /text "line-height" --bold --color #10b981 --size 0.9rem
+      /text "1" --color white - tight
+      /text "1.5" --color white - body
+      /text "2" --color white - loose
+    }
+
+    /frame --bg #334155 --padding 1rem --radius 8px {
+      /text "letter-spacing" --bold --color #f59e0b --size 0.9rem
+      /text "-0.02em" --color white - tight
+      /text "0" --color white - normal
+      /text "0.1em" --color white - wide
+    }
+
+  }
+}
