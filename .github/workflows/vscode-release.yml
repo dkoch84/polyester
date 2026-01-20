@@ -21,7 +21,13 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Build Polyester CLI
+        run: npm run build
+
+      - name: Install extension dependencies
         working-directory: editors/vscode
         run: npm ci
 
