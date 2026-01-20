@@ -248,6 +248,42 @@ body {
   color: #ebdbb2;
 }
 
+/* Responsive: hide code sidebar on smaller screens */
+@media (max-width: 900px) {
+  .poly-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .poly-grid > .poly-region:first-child {
+    display: none !important;
+  }
+}
+
+/* Responsive: stack columns on mobile */
+@media (max-width: 768px) {
+  .poly-columns {
+    flex-direction: column !important;
+  }
+  .poly-columns > * {
+    flex: 1 1 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* Responsive: reduce 4-column grids on tablet */
+@media (max-width: 900px) {
+  .poly-columns[style*="--poly-columns: 4"] {
+    --poly-columns: 2 !important;
+  }
+}
+
+/* Responsive: reduce 3-column grids on smaller screens */
+@media (max-width: 768px) {
+  .poly-columns[style*="--poly-columns: 3"],
+  .poly-columns[style*="--poly-columns: 4"] {
+    --poly-columns: 1 !important;
+  }
+}
+
     .poly-code-block {
       position: relative;
       margin: 1rem 0;
@@ -435,6 +471,13 @@ body {
     .poly-figure img {
       max-width: 100%;
       height: auto;
+    }
+    .poly-figure img.shape-circle {
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .poly-figure img.shape-rounded {
+      border-radius: 8px;
     }
     .poly-figure figcaption {
       margin-top: 0.5rem;
@@ -1821,7 +1864,7 @@ body {
 <div class="poly-columns" style="grid-template-columns: repeat(2, 1fr); gap: 3rem;"><div class="poly-region" style=""><div class="poly-content"><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
 <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.</p>
 <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.</p></div></div>
-<div class="poly-region" style=""><div class="poly-frame" style="border: 2px solid black; border-radius: 4px; padding: 0;"><figure class="poly-figure align-center"><img src="d3.png" alt="" style="width: 100%;"><figcaption>important data</figcaption></figure></div>
+<div class="poly-region" style=""><div class="poly-frame" style="border: 2px solid black; border-radius: 4px; padding: 0;"><figure class="poly-figure align-center"><img src="d3.png" alt="" class="" style="width: 100%;"><figcaption>important data</figcaption></figure></div>
 <div class="poly-region" style="padding: 1rem; "></div>
 <div class="poly-content"><p>Similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio.</p></div></div></div></div></div>
 <div class="poly-grid" style="grid-template-columns: 420px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><pre><code class="language-polyester">## Why Polyester?
@@ -1980,11 +2023,11 @@ then renders to your target format.</p></div></div></details>
 <details class="poly-fold"><summary>Advanced configuration</summary><div class="poly-fold-content"><div class="poly-content"><p>Configuration options for power users.
 Theme customization, output formats, and more.</p></div></div></details></div>
 <div class="poly-region" style=""><div class="poly-content"><h3>Task Lists</h3></div>
-<div class="poly-checkbox checked"><input type="checkbox" id="cb-jru8xpn" checked disabled><label for="cb-jru8xpn">Write documentation</label></div>
-<div class="poly-checkbox checked"><input type="checkbox" id="cb-5dry73a" checked disabled><label for="cb-5dry73a">Add syntax highlighting</label></div>
-<div class="poly-checkbox checked"><input type="checkbox" id="cb-swedv1l" checked disabled><label for="cb-swedv1l">Create VSCode extension</label></div>
-<div class="poly-checkbox checked"><input type="checkbox" id="cb-48pc7bz" checked disabled><label for="cb-48pc7bz">Build Neovim plugin</label></div>
-<div class="poly-checkbox"><input type="checkbox" id="cb-eoaike1"  disabled><label for="cb-eoaike1">World domination</label></div>
+<div class="poly-checkbox checked"><input type="checkbox" id="cb-diyux9k" checked disabled><label for="cb-diyux9k">Write documentation</label></div>
+<div class="poly-checkbox checked"><input type="checkbox" id="cb-xd4w8fx" checked disabled><label for="cb-xd4w8fx">Add syntax highlighting</label></div>
+<div class="poly-checkbox checked"><input type="checkbox" id="cb-5qftorp" checked disabled><label for="cb-5qftorp">Create VSCode extension</label></div>
+<div class="poly-checkbox checked"><input type="checkbox" id="cb-oyo8wnt" checked disabled><label for="cb-oyo8wnt">Build Neovim plugin</label></div>
+<div class="poly-checkbox"><input type="checkbox" id="cb-jt7mqlw"  disabled><label for="cb-jt7mqlw">World domination</label></div>
 <div class="poly-region" style="padding: 1rem; "><div class="poly-content"><p>Progress: 4/5 complete</p></div></div></div></div></div></div>
 <div class="poly-grid" style="grid-template-columns: 420px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><pre><code class="language-polyester"><span class="poly-hl-command">/region</span> <span class="poly-hl-flag">--bg</span> #fef3c7 <span class="poly-hl-flag">--padding</span> 3rem <span class="poly-hl-brace">{</span>
 

@@ -26,6 +26,42 @@
   .poly-grid > .poly-region:first-child .poly-code-block code {
     color: #ebdbb2;
   }
+
+  /* Responsive: hide code sidebar on smaller screens */
+  @media (max-width: 900px) {
+    .poly-grid {
+      grid-template-columns: 1fr !important;
+    }
+    .poly-grid > .poly-region:first-child {
+      display: none !important;
+    }
+  }
+
+  /* Responsive: stack columns on mobile */
+  @media (max-width: 768px) {
+    .poly-columns {
+      flex-direction: column !important;
+    }
+    .poly-columns > * {
+      flex: 1 1 100% !important;
+      max-width: 100% !important;
+    }
+  }
+
+  /* Responsive: reduce 4-column grids on tablet */
+  @media (max-width: 900px) {
+    .poly-columns[style*="--poly-columns: 4"] {
+      --poly-columns: 2 !important;
+    }
+  }
+
+  /* Responsive: reduce 3-column grids on smaller screens */
+  @media (max-width: 768px) {
+    .poly-columns[style*="--poly-columns: 3"],
+    .poly-columns[style*="--poly-columns: 4"] {
+      --poly-columns: 1 !important;
+    }
+  }
 }
 
 /grid "420px 1fr" {
