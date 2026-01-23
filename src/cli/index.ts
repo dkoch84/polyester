@@ -17,6 +17,7 @@ import { readFileSync, writeFileSync, watch } from "node:fs";
 import { resolve, basename, dirname, extname } from "node:path";
 import { parse } from "../parser/parser.js";
 import { compileToHtml } from "../backends/html/compiler.js";
+import { compileToSvg } from "../backends/svg/compiler.js";
 import { loadTheme, listThemes, saveTheme, themeToCSS } from "../themes/loader.js";
 import { importTheme, ImporterFormat } from "../themes/importers/index.js";
 import { loadConfig } from "../config/index.js";
@@ -84,7 +85,7 @@ function printHelp(): void {
 Polyester - Document authoring language
 
 Usage:
-  poly build <input.poly> [-o output] [--format html|pdf] [--theme name]
+  poly build <input.poly> [-o output] [--format html|pdf|svg] [--theme name]
   poly watch <input.poly> [--format html|pdf]
   poly help [component]
   poly theme import <file> --name <name> [--format <format>]
@@ -99,7 +100,7 @@ Commands:
 
 Options:
   -o, --output <file>   Output file path
-  -f, --format <fmt>    Output format: html (default), pdf
+  -f, --format <fmt>    Output format: html (default), pdf, svg
                         For theme import: xresources, pywal, base16, kitty, alacritty
   -t, --theme <name>    Theme for syntax highlighting (default: default)
   -n, --name <name>     Name for imported theme
@@ -223,19 +224,44 @@ async function buildPdf(inputPath: string, outputPath: string, themeName?: strin
   console.log(`✓ Compiled ${inputPath} → ${outputPath} (theme: ${theme.name})`);
 }
 
+function buildSvg(inputPath: string, outputPath: string, options?: { width?: number }): void {
+  const absoluteInput = resolve(inputPath);
+  const source = readFileSync(absoluteInput, "utf-8");
+
+  // Parse
+  const ast = parse(source);
+
+  // Compile to SVG
+  const { svg } = compileToSvg(ast, {
+    width: options?.width ?? 800,
+  });
+
+  // Output
+  const absoluteOutput = resolve(outputPath);
+  writeFileSync(absoluteOutput, svg);
+  console.log(`✓ Compiled ${inputPath} → ${outputPath}`);
+}
+
 async function build(inputPath: string, outputPath?: string, themeName?: string, format?: string): Promise<void> {
   // Determine format from output extension or explicit format
   let outputFormat = format || "html";
   if (!format && outputPath) {
     const ext = extname(outputPath).toLowerCase();
     if (ext === ".pdf") outputFormat = "pdf";
+    else if (ext === ".svg") outputFormat = "svg";
   }
 
   // Determine output path
-  const finalOutput = outputPath || inputPath.replace(/\.poly$/, outputFormat === "pdf" ? ".pdf" : ".html");
+  let defaultExt = ".html";
+  if (outputFormat === "pdf") defaultExt = ".pdf";
+  else if (outputFormat === "svg") defaultExt = ".svg";
+
+  const finalOutput = outputPath || inputPath.replace(/\.poly$/, defaultExt);
 
   if (outputFormat === "pdf") {
     await buildPdf(inputPath, finalOutput, themeName);
+  } else if (outputFormat === "svg") {
+    buildSvg(inputPath, finalOutput);
   } else {
     buildHtml(inputPath, finalOutput, themeName);
   }

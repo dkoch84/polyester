@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 709.6" width="800" height="709.6">
+  <defs>
+    <linearGradient id="polyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea"/>
+      <stop offset="100%" style="stop-color:#764ba2"/>
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="#ffffff"/>
+<rect x="0" y="40" width="800" height="370" fill="url(#polyGradient)"/>
+<text x="400" y="148" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="48" fill="#ffffff" font-weight="600" text-anchor="middle">Polyester</text>
+<text x="400" y="192" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" fill="#ffffff" font-weight="normal" font-style="italic" text-anchor="middle">A document authoring language for humans</text>
+<a href="https://github.com/polyester/docs" target="_blank"><rect x="321" y="217" width="158" height="44" rx="8" fill="#8b5cf6" stroke="none" stroke-width="0"/>
+  <text x="400" y="244" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" fill="#ffffff" text-anchor="middle" font-weight="600">Get Started</text></a>
+<a href="https://github.com/polyester" target="_blank"><rect x="330" y="291" width="140" height="44" rx="8" fill="transparent" stroke="#8b5cf6" stroke-width="2"/>
+  <text x="400" y="318" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" fill="#8b5cf6" text-anchor="middle" font-weight="600">GitHub</text></a>
+<text x="40" y="478" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="600" fill="#1a1a1a">Quick Example</text>
+<rect x="40" y="516" width="720" height="92" rx="8" fill="#1e1e1e"/>
+<text x="56" y="546" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/hero</text><text x="98" y="546" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> </text><text x="106.4" y="546" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--bg</text><text x="140" y="546" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> gradient </text><text x="224" y="546" font-family="ui-monospace, monospace" font-size="14" fill="#d2a8ff">{</text>
+<text x="56" y="566" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">  </text><text x="72.8" y="566" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/text</text><text x="114.8" y="566" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> </text><text x="123.2" y="566" font-family="ui-monospace, monospace" font-size="14" fill="#a5d6ff">"Hello World"</text><text x="232.4" y="566" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> </text><text x="240.8" y="566" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--bold</text><text x="291.20000000000005" y="566" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> </text><text x="299.6" y="566" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--size</text><text x="350" y="566" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> 2rem</text>
+<text x="56" y="586" font-family="ui-monospace, monospace" font-size="14" fill="#d2a8ff">}</text>
+<text x="40" y="653.6" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">This is a paragraph with some text about how Polyester works.</text>
+</svg>

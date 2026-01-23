@@ -1,0 +1,19 @@
+/page A4
+
+/hero --bg gradient {
+  /text "Polyester" --bold --size 3rem
+  /text "A document authoring language for humans" --size 1.25rem --italic
+
+  /button primary "Get Started" --href "https://github.com/polyester/docs"
+  /button secondary "GitHub" --href "https://github.com/polyester"
+}
+
+## Quick Example
+
+/code polyester {
+/hero --bg gradient {
+  /text "Hello World" --bold --size 2rem
+}
+}
+
+This is a paragraph with some text about how Polyester works.

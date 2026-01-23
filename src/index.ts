@@ -6,3 +6,4 @@
 
 export * from "./parser/index.js";
 export * from "./backends/html/index.js";
+export * from "./backends/svg/index.js";

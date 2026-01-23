@@ -3,6 +3,7 @@
 /hero --bg gradient {
   /text "Polyester" --bold --size 3rem
   /text "A document authoring language for humans" --size 1.25rem --italic
+  /button primary "Documentation" --href "https://dkoch84.github.io/polyester/"
 }
 
 Polyester is a document authoring language that occupies an interesting niche in the markup landscape. It combines the readability of **Markdown** with the structured power of **LaTeX**, sitting alongside **Typst** as a modern alternative for document creation.
@@ -42,21 +43,168 @@ Curly braces contain nested content, enabling structured layouts without escapin
 ## Compared to Neighbors
 
 /table --header --bordered {
-Feature | Markdown | LaTeX | Typst | Polyester
-Learning curve | Low | High | Medium | Low
-Layout control | Minimal | Full | Full | Full
-Syntax style | Implicit | `\command{}` | `#command()` | `/command {}`
-Pipes/transforms | No | No | Limited | Yes
-CSS-like styling | No | No | Partial | Yes
+Feature | Markdown | LaTeX | Typst | React | Polyester
+Learning curve | Low | High | Medium | Medium | Low
+Layout control | Minimal | Full | Full | Full | Full
+Syntax style | Implicit | `\command{}` | `#command()` | `<Component />` | `/command {}`
+Props/flags | No | Yes | Yes | Yes | Yes
+Children/blocks | No | Yes | Yes | Yes | Yes
+Pipes/transforms | No | No | Limited | Chains | Yes
+CSS-like styling | No | No | Partial | Yes | Yes
+Output | HTML | PDF | PDF/HTML | DOM | HTML/PDF/SVG
 }
 
-## Strengths
+### The React Connection
 
-- **Layout primitives**: Grid, columns, regions with CSS-like properties (`--gap`, `--bg`, `--padding`)
-- **Component library**: Cards, heroes, buttons—web-inspired but document-focused
-- **Multiple outputs**: HTML and PDF from the same source
-- **Readable source**: Someone unfamiliar can parse a `.poly` file easily
+Polyester borrows heavily from React's mental model:
 
----
+- **Components** - Reusable building blocks with defined interfaces
+- **Props as flags** - `/button primary "Label" --href "/path"` mirrors `<Button variant="primary" href="/path">Label</Button>`
+- **Children as blocks** - `{ content }` is like `{children}` in JSX
+- **Composition** - Nest components freely to build complex layouts
 
-Polyester feels designed for people who want LaTeX's power, Markdown's simplicity, and modern web-style layouts without learning three different systems.
+The difference: Polyester targets *documents*, not applications. No state, no hooks, no reactivity—just declarative markup that compiles to static output.
+
+## Components
+
+Polyester includes **25+ built-in components** across four categories:
+
+### Layout Components
+
+- `page` - Document setup (size, margins, orientation)
+- `columns` - Multi-column layouts with configurable gap
+- `grid` - CSS grid layouts with template definitions
+- `region` - Styled container with background and padding
+- `sidebar` - Two-panel layout with fixed sidebar
+- `center` - Horizontal centering
+- `vcenter` - Vertical and horizontal centering
+- `frame` - Bordered box with radius options
+- `inline` - Horizontal arrangement with gap control
+- `divider` - Visual separator lines
+
+### Content Components
+
+- `text` - Styled text with size, color, weight options
+- `quote` - Block quotes and pull quotes
+- `code` - Syntax-highlighted code blocks
+- `table` - Tables with header, striped, bordered options
+- `list` - Ordered/unordered lists with custom markers
+- `checkbox` - Task items with checked state
+- `image` - Images with width, caption, and alt text
+- `icon` - Lucide icons with size and color
+- `tag` - Badges and labels with variants
+- `progress` - Progress bars and circle indicators
+
+### Style Components
+
+- `hero` - Hero sections with gradient backgrounds
+- `card` - Cards with optional icon and shadow
+- `button` - Clickable buttons with variants
+- `shape` - SVG shapes (circle, rect, etc.)
+- `style` - Raw CSS injection
+
+### Interactive Components
+
+- `fold` - Collapsible sections with toggle
+
+## New in Recent Updates
+
+### Inline Layout
+
+/code polyester {
+/inline --gap 1rem {
+  /icon mail
+  /text "email@example.com"
+}
+}
+
+Arrange elements horizontally with flexible gap and alignment options.
+
+### Tags and Badges
+
+/code polyester {
+/inline --gap 0.5rem {
+  /tag "Docker"
+  /tag "Kubernetes" --color blue
+  /tag "AWS" --variant outline
+}
+}
+
+### Progress Indicators
+
+/code polyester {
+/progress 4 --max 5 --style circles
+/progress 80 --max 100 --style bar --color green
+}
+
+### Lucide Icons
+
+/code polyester {
+/icon github --size 1.5rem
+/icon mail --color blue
+/icon phone
+}
+
+### Dividers
+
+/code polyester {
+/divider --style dashed --color gray
+}
+
+## Editor Support
+
+### VSCode Extension
+
+Full IDE integration with:
+
+- Syntax highlighting with custom TextMate grammar
+- LSP integration (completions, hover docs, diagnostics)
+- **Live Preview** - See rendered output in a side panel
+- **Component Browser** - Sidebar with all components by category
+- **Search Components** - Quick picker to find and insert components
+- Build to HTML (`Ctrl+Alt+H`) and PDF (`Ctrl+Alt+P`)
+- Docs at cursor (`Ctrl+Shift+/`)
+
+### Neovim Plugin
+
+Native Vim experience with:
+
+- Syntax highlighting
+- LSP integration via nvim-lspconfig
+- `:PolyBuild [html|pdf]` command
+- `:PolyPreview` - Build and open in viewer
+- Auto-build on save (optional)
+- PDF viewer integration (zathura, mupdf, evince)
+
+/code lua {
+require("polyester").setup({
+  default_format = "pdf",
+  pdf_viewer = "zathura",
+  auto_build = true,
+})
+}
+
+## Output Formats
+
+- **HTML** - Standalone documents with embedded CSS
+- **PDF** - Via Puppeteer/Chrome rendering
+- **SVG** - For embedding in READMEs and documentation
+
+/code bash {
+poly build document.poly                    # HTML (default)
+poly build document.poly --format pdf       # PDF
+poly build document.poly --format svg       # SVG
+}
+
+## Theming
+
+Import colorschemes from your terminal configuration:
+
+/code bash {
+poly theme import ~/.Xresources --name xresources
+poly theme import ~/.config/kitty/kitty.conf --name kitty
+poly theme import ~/.cache/wal/colors.json --name pywal
+poly build doc.poly --theme kitty
+}
+
+Supported formats: Xresources, kitty, alacritty, pywal, base16.

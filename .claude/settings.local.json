@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install)",
+      "Bash(npm run build:*)",
+      "Bash(node dist/cli/index.js build:*)",
+      "Bash(npm install:*)",
+      "Bash(node dist/lsp/server.js:*)",
+      "Bash(npm run compile:*)",
+      "Bash(node /home/daniel/work/projects/polyester/dist/cli/index.js:*)",
+      "Bash(node dist/cli/index.js:*)",
+      "Bash(bash:*)",
+      "Bash(npm test:*)",
+      "Bash(code --install-extension:*)",
+      "Bash(npx @vscode/vsce package:*)"
+    ]
+  }
+}

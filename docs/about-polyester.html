@@ -219,6 +219,27 @@
     }
   
 
+    .poly-button {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.375rem;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      border: 1px solid #e5e5e5;
+      background: white;
+    }
+    .poly-button-primary {
+      background: #3b82f6;
+      color: white;
+      border-color: #3b82f6;
+    }
+    .poly-button-secondary {
+      background: #f3f4f6;
+      color: #374151;
+    }
+  
+
     .poly-code-block {
       position: relative;
       margin: 1rem 0;
@@ -378,70 +399,567 @@
       background: rgba(255, 255, 255, 0.05);
     }
   
-/* Syntax highlighting: default */
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: ui-monospace, monospace;
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+    /* Polyester syntax highlighting */
+    .poly-hl-command { color: #ff7b72; font-weight: 500; }
+    .poly-hl-flag { color: #79c0ff; }
+    .poly-hl-string { color: #a5d6ff; }
+    .poly-hl-pipe { color: #ffa657; font-weight: 500; }
+    .poly-hl-brace { color: #d2a8ff; }
+  
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: ui-monospace, monospace;
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+    /* Polyester syntax highlighting */
+    .poly-hl-command { color: #ff7b72; font-weight: 500; }
+    .poly-hl-flag { color: #79c0ff; }
+    .poly-hl-string { color: #a5d6ff; }
+    .poly-hl-pipe { color: #ffa657; font-weight: 500; }
+    .poly-hl-brace { color: #d2a8ff; }
+  
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: ui-monospace, monospace;
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+    /* Polyester syntax highlighting */
+    .poly-hl-command { color: #ff7b72; font-weight: 500; }
+    .poly-hl-flag { color: #79c0ff; }
+    .poly-hl-string { color: #a5d6ff; }
+    .poly-hl-pipe { color: #ffa657; font-weight: 500; }
+    .poly-hl-brace { color: #d2a8ff; }
+  
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: ui-monospace, monospace;
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+    /* Polyester syntax highlighting */
+    .poly-hl-command { color: #ff7b72; font-weight: 500; }
+    .poly-hl-flag { color: #79c0ff; }
+    .poly-hl-string { color: #a5d6ff; }
+    .poly-hl-pipe { color: #ffa657; font-weight: 500; }
+    .poly-hl-brace { color: #d2a8ff; }
+  
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: ui-monospace, monospace;
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+    /* Polyester syntax highlighting */
+    .poly-hl-command { color: #ff7b72; font-weight: 500; }
+    .poly-hl-flag { color: #79c0ff; }
+    .poly-hl-string { color: #a5d6ff; }
+    .poly-hl-pipe { color: #ffa657; font-weight: 500; }
+    .poly-hl-brace { color: #d2a8ff; }
+  
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: ui-monospace, monospace;
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+    /* Polyester syntax highlighting */
+    .poly-hl-command { color: #ff7b72; font-weight: 500; }
+    .poly-hl-flag { color: #79c0ff; }
+    .poly-hl-string { color: #a5d6ff; }
+    .poly-hl-pipe { color: #ffa657; font-weight: 500; }
+    .poly-hl-brace { color: #d2a8ff; }
+  
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: ui-monospace, monospace;
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+    /* Polyester syntax highlighting */
+    .poly-hl-command { color: #ff7b72; font-weight: 500; }
+    .poly-hl-flag { color: #79c0ff; }
+    .poly-hl-string { color: #a5d6ff; }
+    .poly-hl-pipe { color: #ffa657; font-weight: 500; }
+    .poly-hl-brace { color: #d2a8ff; }
+  
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: ui-monospace, monospace;
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+    /* Polyester syntax highlighting */
+    .poly-hl-command { color: #ff7b72; font-weight: 500; }
+    .poly-hl-flag { color: #79c0ff; }
+    .poly-hl-string { color: #a5d6ff; }
+    .poly-hl-pipe { color: #ffa657; font-weight: 500; }
+    .poly-hl-brace { color: #d2a8ff; }
+  
+/* Syntax highlighting: gruvbox */
 .poly-content pre {
-  background: #0d1117;
-  color: #c9d1d9;
+  background: #1d2021;
+  color: #ebdbb2;
 }
 
-.hljs { background: #0d1117; color: #c9d1d9; }
+.hljs { background: #1d2021; color: #ebdbb2; }
 
 .hljs-comment,
-.hljs-quote { color: #8b949e; }
+.hljs-quote { color: #928374; }
 
 .hljs-keyword,
-.hljs-selector-tag { color: #ff7b72; }
+.hljs-selector-tag { color: #cc241d; }
 
 .hljs-string,
 .hljs-symbol,
-.hljs-bullet { color: #a5d6ff; }
+.hljs-bullet { color: #98971a; }
 
 .hljs-number,
-.hljs-literal { color: #79c0ff; }
+.hljs-literal { color: #689d6a; }
 
 .hljs-title,
 .hljs-section,
-.hljs-title.function_ { color: #d2a8ff; }
+.hljs-title.function_ { color: #b16286; }
 
 .hljs-type,
-.hljs-title.class_ { color: #ffa657; }
+.hljs-title.class_ { color: #d79921; }
 
 .hljs-variable,
-.hljs-template-variable { color: #ffa657; }
+.hljs-template-variable { color: #fabd2f; }
 
-.hljs-built_in { color: #ffa657; }
+.hljs-built_in { color: #d3869b; }
 
 .hljs-attr,
-.hljs-attribute { color: #79c0ff; }
+.hljs-attribute { color: #d79921; }
 
-.hljs-property { color: #79c0ff; }
+.hljs-property { color: #458588; }
 
-.hljs-params { color: #c9d1d9; }
+.hljs-params { color: #ebdbb2; }
 
-.hljs-meta { color: #8b949e; }
+.hljs-meta { color: #928374; }
 
 .hljs-name,
-.hljs-tag { color: #7ee787; }
+.hljs-tag { color: #cc241d; }
 
 .hljs-selector-id,
-.hljs-selector-class { color: #7ee787; }
+.hljs-selector-class { color: #98971a; }
 
-.hljs-regexp { color: #a5d6ff; }
+.hljs-regexp { color: #689d6a; }
 
-.hljs-operator { color: #c9d1d9; }
+.hljs-operator { color: #ebdbb2; }
 
-.hljs-punctuation { color: #c9d1d9; }
+.hljs-punctuation { color: #ebdbb2; }
 
-.hljs-addition { color: #aff5b4; background: #033a16; }
+.hljs-addition { color: #98971a; }
 
-.hljs-deletion { color: #ffa198; background: #490202; }
+.hljs-deletion { color: #cc241d; }
   </style>
 </head>
 <body>
   <div class="poly-document">
 
 <section class="poly-hero" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; "><span class="poly-text" style="font-size: 3rem; font-weight: bold; ">Polyester</span>
-<span class="poly-text" style="font-size: 1.25rem; font-style: italic; ">A document authoring language for humans</span></section>
+<span class="poly-text" style="font-size: 1.25rem; font-style: italic; ">A document authoring language for humans</span>
+<button class="poly-button poly-button-primary">Documentation</button></section>
 <div class="poly-content"><p>Polyester is a document authoring language that occupies an interesting niche in the markup landscape. It combines the readability of <strong>Markdown</strong> with the structured power of <strong>LaTeX</strong>, sitting alongside <strong>Typst</strong> as a modern alternative for document creation.</p>
 <h2>Core Philosophy</h2>
 <p>Polyester uses a <code>/command</code> syntax that's intuitive and readable. Unlike LaTeX's backslash escapes or Typst's hash-based functions, Polyester commands feel more like CLI invocations—familiar territory for developers.</p>
@@ -461,16 +979,121 @@
 <h3>Block Nesting</h3>
 <p>Curly braces contain nested content, enabling structured layouts without escaping into a different mode.</p>
 <h2>Compared to Neighbors</h2></div>
-<table class="poly-table bordered"><thead><tr><th style=""><div class="poly-content">Feature</th><th style="">Markdown</th><th style="">LaTeX</th><th style="">Typst</th><th style="">Polyester</th></tr></thead><tbody><tr><td style="">Learning curve</td><td style="">Low</td><td style="">High</td><td style="">Medium</td><td style="">Low</td></tr><tr><td style="">Layout control</td><td style="">Minimal</td><td style="">Full</td><td style="">Full</td><td style="">Full</td></tr><tr><td style="">Syntax style</td><td style="">Implicit</td><td style=""><code>\command{}</code></td><td style=""><code>#command()</code></td><td style=""><code>/command {}</code></td></tr><tr><td style="">Pipes/transforms</td><td style="">No</td><td style="">No</td><td style="">Limited</td><td style="">Yes</td></tr><tr><td style="">CSS-like styling</td><td style="">No</td><td style="">No</td><td style="">Partial</td><td style="">Yes</div></td></tr></tbody></table>
-<div class="poly-content"><h2>Strengths</h2>
+<table class="poly-table bordered"><thead><tr><th style=""><div class="poly-content">Feature</th><th style="">Markdown</th><th style="">LaTeX</th><th style="">Typst</th><th style="">React</th><th style="">Polyester</th></tr></thead><tbody><tr><td style="">Learning curve</td><td style="">Low</td><td style="">High</td><td style="">Medium</td><td style="">Medium</td><td style="">Low</td></tr><tr><td style="">Layout control</td><td style="">Minimal</td><td style="">Full</td><td style="">Full</td><td style="">Full</td><td style="">Full</td></tr><tr><td style="">Syntax style</td><td style="">Implicit</td><td style=""><code>\command{}</code></td><td style=""><code>#command()</code></td><td style=""><code>&#x3C;Component /></code></td><td style=""><code>/command {}</code></td></tr><tr><td style="">Props/flags</td><td style="">No</td><td style="">Yes</td><td style="">Yes</td><td style="">Yes</td><td style="">Yes</td></tr><tr><td style="">Children/blocks</td><td style="">No</td><td style="">Yes</td><td style="">Yes</td><td style="">Yes</td><td style="">Yes</td></tr><tr><td style="">Pipes/transforms</td><td style="">No</td><td style="">No</td><td style="">Limited</td><td style="">Chains</td><td style="">Yes</td></tr><tr><td style="">CSS-like styling</td><td style="">No</td><td style="">No</td><td style="">Partial</td><td style="">Yes</td><td style="">Yes</td></tr><tr><td style="">Output</td><td style="">HTML</td><td style="">PDF</td><td style="">PDF/HTML</td><td style="">DOM</td><td style="">HTML/PDF/SVG</div></td></tr></tbody></table>
+<div class="poly-content"><h3>The React Connection</h3>
+<p>Polyester borrows heavily from React's mental model:</p>
 <ul>
-<li><strong>Layout primitives</strong>: Grid, columns, regions with CSS-like properties (<code>--gap</code>, <code>--bg</code>, <code>--padding</code>)</li>
-<li><strong>Component library</strong>: Cards, heroes, buttons—web-inspired but document-focused</li>
-<li><strong>Multiple outputs</strong>: HTML and PDF from the same source</li>
-<li><strong>Readable source</strong>: Someone unfamiliar can parse a <code>.poly</code> file easily</li>
+<li><strong>Components</strong> - Reusable building blocks with defined interfaces</li>
+<li><strong>Props as flags</strong> - <code>/button primary "Label" --href "/path"</code> mirrors <code>&#x3C;Button variant="primary" href="/path">Label&#x3C;/Button></code></li>
+<li><strong>Children as blocks</strong> - <code>{ content }</code> is like <code>{children}</code> in JSX</li>
+<li><strong>Composition</strong> - Nest components freely to build complex layouts</li>
 </ul>
-<hr>
-<p>Polyester feels designed for people who want LaTeX's power, Markdown's simplicity, and modern web-style layouts without learning three different systems.</p></div>
+<p>The difference: Polyester targets <em>documents</em>, not applications. No state, no hooks, no reactivity—just declarative markup that compiles to static output.</p>
+<h2>Components</h2>
+<p>Polyester includes <strong>25+ built-in components</strong> across four categories:</p>
+<h3>Layout Components</h3>
+<ul>
+<li><code>page</code> - Document setup (size, margins, orientation)</li>
+<li><code>columns</code> - Multi-column layouts with configurable gap</li>
+<li><code>grid</code> - CSS grid layouts with template definitions</li>
+<li><code>region</code> - Styled container with background and padding</li>
+<li><code>sidebar</code> - Two-panel layout with fixed sidebar</li>
+<li><code>center</code> - Horizontal centering</li>
+<li><code>vcenter</code> - Vertical and horizontal centering</li>
+<li><code>frame</code> - Bordered box with radius options</li>
+<li><code>inline</code> - Horizontal arrangement with gap control</li>
+<li><code>divider</code> - Visual separator lines</li>
+</ul>
+<h3>Content Components</h3>
+<ul>
+<li><code>text</code> - Styled text with size, color, weight options</li>
+<li><code>quote</code> - Block quotes and pull quotes</li>
+<li><code>code</code> - Syntax-highlighted code blocks</li>
+<li><code>table</code> - Tables with header, striped, bordered options</li>
+<li><code>list</code> - Ordered/unordered lists with custom markers</li>
+<li><code>checkbox</code> - Task items with checked state</li>
+<li><code>image</code> - Images with width, caption, and alt text</li>
+<li><code>icon</code> - Lucide icons with size and color</li>
+<li><code>tag</code> - Badges and labels with variants</li>
+<li><code>progress</code> - Progress bars and circle indicators</li>
+</ul>
+<h3>Style Components</h3>
+<ul>
+<li><code>hero</code> - Hero sections with gradient backgrounds</li>
+<li><code>card</code> - Cards with optional icon and shadow</li>
+<li><code>button</code> - Clickable buttons with variants</li>
+<li><code>shape</code> - SVG shapes (circle, rect, etc.)</li>
+<li><code>style</code> - Raw CSS injection</li>
+</ul>
+<h3>Interactive Components</h3>
+<ul>
+<li><code>fold</code> - Collapsible sections with toggle</li>
+</ul>
+<h2>New in Recent Updates</h2>
+<h3>Inline Layout</h3></div>
+<div class="poly-code-block"><pre><code class="language-polyester"><span class="poly-hl-command">/inline</span> <span class="poly-hl-flag">--gap</span> 1rem <span class="poly-hl-brace">{</span>
+  <span class="poly-hl-command">/icon</span> mail
+  <span class="poly-hl-command">/text</span> <span class="poly-hl-string">&quot;email@example.com&quot;</span>
+<span class="poly-hl-brace">}</span></code></pre></div>
+<div class="poly-content"><p>Arrange elements horizontally with flexible gap and alignment options.</p>
+<h3>Tags and Badges</h3></div>
+<div class="poly-code-block"><pre><code class="language-polyester"><span class="poly-hl-command">/inline</span> <span class="poly-hl-flag">--gap</span> 0.5rem <span class="poly-hl-brace">{</span>
+  <span class="poly-hl-command">/tag</span> <span class="poly-hl-string">&quot;Docker&quot;</span>
+  <span class="poly-hl-command">/tag</span> <span class="poly-hl-string">&quot;Kubernetes&quot;</span> <span class="poly-hl-flag">--color</span> blue
+  <span class="poly-hl-command">/tag</span> <span class="poly-hl-string">&quot;AWS&quot;</span> <span class="poly-hl-flag">--variant</span> outline
+<span class="poly-hl-brace">}</span></code></pre></div>
+<div class="poly-content"><h3>Progress Indicators</h3></div>
+<div class="poly-code-block"><pre><code class="language-polyester"><span class="poly-hl-command">/progress</span> 4 <span class="poly-hl-flag">--max</span> 5 <span class="poly-hl-flag">--style</span> circles
+<span class="poly-hl-command">/progress</span> 80 <span class="poly-hl-flag">--max</span> 100 <span class="poly-hl-flag">--style</span> bar <span class="poly-hl-flag">--color</span> green</code></pre></div>
+<div class="poly-content"><h3>Lucide Icons</h3></div>
+<div class="poly-code-block"><pre><code class="language-polyester"><span class="poly-hl-command">/icon</span> github <span class="poly-hl-flag">--size</span> 1.5rem
+<span class="poly-hl-command">/icon</span> mail <span class="poly-hl-flag">--color</span> blue
+<span class="poly-hl-command">/icon</span> phone</code></pre></div>
+<div class="poly-content"><h3>Dividers</h3></div>
+<div class="poly-code-block"><pre><code class="language-polyester"><span class="poly-hl-command">/divider</span> <span class="poly-hl-flag">--style</span> dashed <span class="poly-hl-flag">--color</span> gray</code></pre></div>
+<div class="poly-content"><h2>Editor Support</h2>
+<h3>VSCode Extension</h3>
+<p>Full IDE integration with:</p>
+<ul>
+<li>Syntax highlighting with custom TextMate grammar</li>
+<li>LSP integration (completions, hover docs, diagnostics)</li>
+<li><strong>Live Preview</strong> - See rendered output in a side panel</li>
+<li><strong>Component Browser</strong> - Sidebar with all components by category</li>
+<li><strong>Search Components</strong> - Quick picker to find and insert components</li>
+<li>Build to HTML (<code>Ctrl+Alt+H</code>) and PDF (<code>Ctrl+Alt+P</code>)</li>
+<li>Docs at cursor (<code>Ctrl+Shift+/</code>)</li>
+</ul>
+<h3>Neovim Plugin</h3>
+<p>Native Vim experience with:</p>
+<ul>
+<li>Syntax highlighting</li>
+<li>LSP integration via nvim-lspconfig</li>
+<li><code>:PolyBuild [html|pdf]</code> command</li>
+<li><code>:PolyPreview</code> - Build and open in viewer</li>
+<li>Auto-build on save (optional)</li>
+<li>PDF viewer integration (zathura, mupdf, evince)</li>
+</ul></div>
+<div class="poly-code-block"><pre><code class="language-lua">require(&quot;polyester&quot;).setup({
+  default_format = &quot;pdf&quot;,
+  pdf_viewer = &quot;zathura&quot;,
+  auto_build = true,
+})</code></pre></div>
+<div class="poly-content"><h2>Output Formats</h2>
+<ul>
+<li><strong>HTML</strong> - Standalone documents with embedded CSS</li>
+<li><strong>PDF</strong> - Via Puppeteer/Chrome rendering</li>
+<li><strong>SVG</strong> - For embedding in READMEs and documentation</li>
+</ul></div>
+<div class="poly-code-block"><pre><code class="language-bash">poly build document.poly                    # HTML (default)
+poly build document.poly --format pdf       # PDF
+poly build document.poly --format svg       # SVG</code></pre></div>
+<div class="poly-content"><h2>Theming</h2>
+<p>Import colorschemes from your terminal configuration:</p></div>
+<div class="poly-code-block"><pre><code class="language-bash">poly theme import ~/.Xresources --name xresources
+poly theme import ~/.config/kitty/kitty.conf --name kitty
+poly theme import ~/.cache/wal/colors.json --name pywal
+poly build doc.poly --theme kitty</code></pre></div>
+<div class="poly-content"><p>Supported formats: Xresources, kitty, alacritty, pywal, base16.</p></div>
   </div>
 </body>
 </html>
