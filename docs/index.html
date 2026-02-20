@@ -5,12 +5,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>index</title>
   <style>
+/* Spacing tokens: custom */
+:root {
+  --poly-spacing-base: 1rem;
+  --poly-spacing-page-margin: 2cm;
+  --poly-spacing-section-gap: 2rem;
+  --poly-spacing-column-gap: 1.5rem;
+  --poly-spacing-card-padding: 1.5rem;
+  --poly-spacing-block-padding: 1rem;
+}
+/* Style tokens: custom */
+:root {
+  --poly-color-primary: #3b82f6;
+  --poly-color-primary-light: #60a5fa;
+  --poly-color-primary-dark: #2563eb;
+  --poly-color-secondary: #475569;
+  --poly-color-accent: #d97706;
+  --poly-color-bg: #ffffff;
+  --poly-color-surface: #f9fafb;
+  --poly-color-text: #1a1a1a;
+  --poly-color-text-muted: #666666;
+  --poly-color-border: #e5e5e5;
+  --poly-color-link: #3b82f6;
+  --poly-color-success: #16a34a;
+  --poly-color-warning: #d97706;
+  --poly-color-error: #dc2626;
+  --poly-font-body: system-ui, -apple-system, sans-serif;
+  --poly-font-heading: system-ui, -apple-system, sans-serif;
+  --poly-font-mono: ui-monospace, monospace;
+  --poly-radius: 0.5rem;
+  --poly-border-width: 1px;
+  --poly-shadow-card: none;
+  --poly-shadow-elevated: 0 4px 12px rgba(0,0,0,0.1);
+  --poly-hero-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --poly-hero-text: #ffffff;
+}
 
 /* Polyester Base Styles */
 .poly-document {
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: var(--poly-font-body, system-ui, -apple-system, sans-serif);
   line-height: 1.6;
-  color: #1a1a1a;
+  color: var(--poly-color-text, #1a1a1a);
+  background: var(--poly-color-bg, #ffffff);
   max-width: 800px;
   margin: 0 auto;
   padding: 2rem;
@@ -25,7 +61,7 @@
 }
 
 .poly-content {
-  margin-bottom: 1rem;
+  margin-bottom: var(--poly-spacing-base, 1rem);
 }
 
 .poly-content p {
@@ -33,6 +69,7 @@
 }
 
 .poly-content h1, .poly-content h2, .poly-content h3 {
+  font-family: var(--poly-font-heading, system-ui, -apple-system, sans-serif);
   margin: 1.5em 0 0.5em 0;
   line-height: 1.3;
 }
@@ -44,16 +81,16 @@
 /* Component styles */
 .poly-columns {
   display: grid;
-  gap: 1.5rem;
+  gap: var(--poly-spacing-column-gap, 1.5rem);
 }
 
 .poly-grid {
   display: grid;
-  gap: 1rem;
+  gap: var(--poly-spacing-column-gap, 1rem);
 }
 
 .poly-region {
-  padding: 1rem;
+  padding: var(--poly-spacing-block-padding, 1rem);
 }
 
 .poly-sidebar {
@@ -61,7 +98,7 @@
 }
 
 .poly-quote {
-  border-left: 4px solid #e5e5e5;
+  border-left: 4px solid var(--poly-color-primary, #e5e5e5);
   padding-left: 1rem;
   margin: 1rem 0;
   font-style: italic;
@@ -72,7 +109,7 @@
   font-size: 1.5rem;
   text-align: center;
   padding: 2rem;
-  color: #666;
+  color: var(--poly-color-text-muted, #666);
 }
 
 .poly-hero {
@@ -81,9 +118,10 @@
 }
 
 .poly-card {
-  border: 1px solid #e5e5e5;
-  border-radius: 0.5rem;
-  padding: 1.5rem;
+  border: var(--poly-border-width, 1px) solid var(--poly-color-border, #e5e5e5);
+  border-radius: var(--poly-radius, 0.5rem);
+  padding: var(--poly-spacing-card-padding, 1.5rem);
+  box-shadow: var(--poly-shadow-card, none);
 }
 
 .poly-text {
@@ -101,17 +139,18 @@
 }
 
 .poly-content code {
-  background: #f3f4f6;
+  background: var(--poly-color-surface, #f3f4f6);
   padding: 0.125em 0.25em;
-  border-radius: 0.25em;
+  border-radius: var(--poly-radius, 0.25em);
+  font-family: var(--poly-font-mono, ui-monospace, monospace);
   font-size: 0.9em;
 }
 
 .poly-content pre {
   background: #0d1117;
   color: #c9d1d9;
-  padding: 1rem;
-  border-radius: 0.5rem;
+  padding: var(--poly-spacing-block-padding, 1rem);
+  border-radius: var(--poly-radius, 0.5rem);
   overflow-x: auto;
   margin: 1em 0;
 }
@@ -122,7 +161,7 @@
   color: inherit;
 }
 
-/* Syntax highlighting (GitHub Dark theme) */
+/* Syntax highlighting (GitHub Dark theme — overridden by syntax CSS) */
 .hljs-comment,
 .hljs-quote { color: #8b949e; }
 
@@ -173,25 +212,25 @@
 }
 
 .poly-content th, .poly-content td {
-  border: 1px solid #e5e7eb;
+  border: var(--poly-border-width, 1px) solid var(--poly-color-border, #e5e7eb);
   padding: 0.5rem 0.75rem;
   text-align: left;
 }
 
 .poly-content th {
-  background: #f9fafb;
+  background: var(--poly-color-surface, #f9fafb);
   font-weight: 600;
 }
 
 .poly-content blockquote {
-  border-left: 4px solid #e5e5e5;
+  border-left: 4px solid var(--poly-color-primary, #e5e5e5);
   padding-left: 1rem;
   margin: 1em 0;
-  color: #666;
+  color: var(--poly-color-text-muted, #666);
 }
 
 .poly-content a {
-  color: #3b82f6;
+  color: var(--poly-color-link, #3b82f6);
   text-decoration: underline;
 }
 
@@ -202,8 +241,8 @@
 
 .poly-content hr {
   border: none;
-  border-top: 1px solid #e5e7eb;
-  margin: 2em 0;
+  border-top: var(--poly-border-width, 1px) solid var(--poly-color-border, #e5e7eb);
+  margin: var(--poly-spacing-section-gap, 2em) 0;
 }
 
 
@@ -289,7 +328,7 @@ body {
       margin: 1rem 0;
     }
     .poly-code-title {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.85em;
       padding: 0.5rem 1rem;
       background: #2d2d2d;
@@ -303,14 +342,14 @@ body {
     }
     .poly-code-block pre {
       margin: 0;
-      padding: 1rem;
+      padding: var(--poly-spacing-block-padding, 1rem);
       background: #1e1e1e;
       color: #e6e6e6;
       border-radius: 6px;
       overflow-x: auto;
     }
     .poly-code-block code {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.9em;
       color: #e6e6e6;
     }
@@ -349,42 +388,46 @@ body {
     .poly-button {
       display: inline-block;
       padding: 0.75rem 1.5rem;
-      border-radius: 0.375rem;
+      border-radius: var(--poly-radius, 0.375rem);
       font-weight: 500;
       text-decoration: none;
       cursor: pointer;
-      border: 1px solid #e5e5e5;
-      background: white;
+      border: var(--poly-border-width, 1px) solid var(--poly-color-border, #e5e5e5);
+      background: var(--poly-color-bg, white);
+      color: var(--poly-color-text, inherit);
     }
     .poly-button-primary {
-      background: #3b82f6;
+      background: var(--poly-color-primary, #3b82f6);
       color: white;
-      border-color: #3b82f6;
+      border-color: var(--poly-color-primary, #3b82f6);
     }
     .poly-button-secondary {
-      background: #f3f4f6;
-      color: #374151;
+      background: var(--poly-color-surface, #f3f4f6);
+      color: var(--poly-color-text, #374151);
+      border-color: var(--poly-color-border, #e5e5e5);
     }
   
 
     .poly-button {
       display: inline-block;
       padding: 0.75rem 1.5rem;
-      border-radius: 0.375rem;
+      border-radius: var(--poly-radius, 0.375rem);
       font-weight: 500;
       text-decoration: none;
       cursor: pointer;
-      border: 1px solid #e5e5e5;
-      background: white;
+      border: var(--poly-border-width, 1px) solid var(--poly-color-border, #e5e5e5);
+      background: var(--poly-color-bg, white);
+      color: var(--poly-color-text, inherit);
     }
     .poly-button-primary {
-      background: #3b82f6;
+      background: var(--poly-color-primary, #3b82f6);
       color: white;
-      border-color: #3b82f6;
+      border-color: var(--poly-color-primary, #3b82f6);
     }
     .poly-button-secondary {
-      background: #f3f4f6;
-      color: #374151;
+      background: var(--poly-color-surface, #f3f4f6);
+      color: var(--poly-color-text, #374151);
+      border-color: var(--poly-color-border, #e5e5e5);
     }
   
 
@@ -393,7 +436,7 @@ body {
       margin: 1rem 0;
     }
     .poly-code-title {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.85em;
       padding: 0.5rem 1rem;
       background: #2d2d2d;
@@ -407,14 +450,14 @@ body {
     }
     .poly-code-block pre {
       margin: 0;
-      padding: 1rem;
+      padding: var(--poly-spacing-block-padding, 1rem);
       background: #1e1e1e;
       color: #e6e6e6;
       border-radius: 6px;
       overflow-x: auto;
     }
     .poly-code-block code {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.9em;
       color: #e6e6e6;
     }
@@ -482,7 +525,7 @@ body {
     .poly-figure figcaption {
       margin-top: 0.5rem;
       font-size: 0.9em;
-      color: #666;
+      color: var(--poly-color-text-muted, #666);
       font-style: italic;
     }
   
@@ -492,7 +535,7 @@ body {
       margin: 1rem 0;
     }
     .poly-code-title {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.85em;
       padding: 0.5rem 1rem;
       background: #2d2d2d;
@@ -506,14 +549,14 @@ body {
     }
     .poly-code-block pre {
       margin: 0;
-      padding: 1rem;
+      padding: var(--poly-spacing-block-padding, 1rem);
       background: #1e1e1e;
       color: #e6e6e6;
       border-radius: 6px;
       overflow-x: auto;
     }
     .poly-code-block code {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.9em;
       color: #e6e6e6;
     }
@@ -554,7 +597,7 @@ body {
       margin: 1rem 0;
     }
     .poly-code-title {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.85em;
       padding: 0.5rem 1rem;
       background: #2d2d2d;
@@ -568,14 +611,14 @@ body {
     }
     .poly-code-block pre {
       margin: 0;
-      padding: 1rem;
+      padding: var(--poly-spacing-block-padding, 1rem);
       background: #1e1e1e;
       color: #e6e6e6;
       border-radius: 6px;
       overflow-x: auto;
     }
     .poly-code-block code {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.9em;
       color: #e6e6e6;
     }
@@ -616,7 +659,7 @@ body {
       margin: 1rem 0;
     }
     .poly-code-title {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.85em;
       padding: 0.5rem 1rem;
       background: #2d2d2d;
@@ -630,14 +673,14 @@ body {
     }
     .poly-code-block pre {
       margin: 0;
-      padding: 1rem;
+      padding: var(--poly-spacing-block-padding, 1rem);
       background: #1e1e1e;
       color: #e6e6e6;
       border-radius: 6px;
       overflow-x: auto;
     }
     .poly-code-block code {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.9em;
       color: #e6e6e6;
     }
@@ -678,7 +721,7 @@ body {
       margin: 1rem 0;
     }
     .poly-code-title {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.85em;
       padding: 0.5rem 1rem;
       background: #2d2d2d;
@@ -692,14 +735,14 @@ body {
     }
     .poly-code-block pre {
       margin: 0;
-      padding: 1rem;
+      padding: var(--poly-spacing-block-padding, 1rem);
       background: #1e1e1e;
       color: #e6e6e6;
       border-radius: 6px;
       overflow-x: auto;
     }
     .poly-code-block code {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.9em;
       color: #e6e6e6;
     }
@@ -740,7 +783,7 @@ body {
       margin: 1rem 0;
     }
     .poly-code-title {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.85em;
       padding: 0.5rem 1rem;
       background: #2d2d2d;
@@ -754,14 +797,14 @@ body {
     }
     .poly-code-block pre {
       margin: 0;
-      padding: 1rem;
+      padding: var(--poly-spacing-block-padding, 1rem);
       background: #1e1e1e;
       color: #e6e6e6;
       border-radius: 6px;
       overflow-x: auto;
     }
     .poly-code-block code {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.9em;
       color: #e6e6e6;
     }
@@ -802,7 +845,7 @@ body {
       margin: 1rem 0;
     }
     .poly-code-title {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.85em;
       padding: 0.5rem 1rem;
       background: #2d2d2d;
@@ -816,14 +859,14 @@ body {
     }
     .poly-code-block pre {
       margin: 0;
-      padding: 1rem;
+      padding: var(--poly-spacing-block-padding, 1rem);
       background: #1e1e1e;
       color: #e6e6e6;
       border-radius: 6px;
       overflow-x: auto;
     }
     .poly-code-block code {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.9em;
       color: #e6e6e6;
     }
@@ -864,7 +907,7 @@ body {
       margin: 1rem 0;
     }
     .poly-code-title {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.85em;
       padding: 0.5rem 1rem;
       background: #2d2d2d;
@@ -878,14 +921,14 @@ body {
     }
     .poly-code-block pre {
       margin: 0;
-      padding: 1rem;
+      padding: var(--poly-spacing-block-padding, 1rem);
       background: #1e1e1e;
       color: #e6e6e6;
       border-radius: 6px;
       overflow-x: auto;
     }
     .poly-code-block code {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.9em;
       color: #e6e6e6;
     }
@@ -926,7 +969,7 @@ body {
       margin: 1rem 0;
     }
     .poly-code-title {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.85em;
       padding: 0.5rem 1rem;
       background: #2d2d2d;
@@ -940,14 +983,14 @@ body {
     }
     .poly-code-block pre {
       margin: 0;
-      padding: 1rem;
+      padding: var(--poly-spacing-block-padding, 1rem);
       background: #1e1e1e;
       color: #e6e6e6;
       border-radius: 6px;
       overflow-x: auto;
     }
     .poly-code-block code {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.9em;
       color: #e6e6e6;
     }
@@ -988,7 +1031,7 @@ body {
       margin: 1rem 0;
     }
     .poly-code-title {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.85em;
       padding: 0.5rem 1rem;
       background: #2d2d2d;
@@ -1002,14 +1045,14 @@ body {
     }
     .poly-code-block pre {
       margin: 0;
-      padding: 1rem;
+      padding: var(--poly-spacing-block-padding, 1rem);
       background: #1e1e1e;
       color: #e6e6e6;
       border-radius: 6px;
       overflow-x: auto;
     }
     .poly-code-block code {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.9em;
       color: #e6e6e6;
     }
@@ -1057,14 +1100,15 @@ body {
     }
     .poly-table thead th {
       font-weight: 600;
-      border-bottom: 2px solid #e5e5e5;
+      background: var(--poly-color-surface, transparent);
+      border-bottom: 2px solid var(--poly-color-border, #e5e5e5);
     }
     .poly-table.bordered th,
     .poly-table.bordered td {
-      border: 1px solid #e5e5e5;
+      border: var(--poly-border-width, 1px) solid var(--poly-color-border, #e5e5e5);
     }
     .poly-table.striped tbody tr:nth-child(odd) {
-      background: #f9f9f9;
+      background: var(--poly-color-surface, #f9f9f9);
     }
     .poly-table.dark {
       color: #e6e6e6;
@@ -1086,7 +1130,7 @@ body {
       margin: 1rem 0;
     }
     .poly-code-title {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.85em;
       padding: 0.5rem 1rem;
       background: #2d2d2d;
@@ -1100,14 +1144,14 @@ body {
     }
     .poly-code-block pre {
       margin: 0;
-      padding: 1rem;
+      padding: var(--poly-spacing-block-padding, 1rem);
       background: #1e1e1e;
       color: #e6e6e6;
       border-radius: 6px;
       overflow-x: auto;
     }
     .poly-code-block code {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.9em;
       color: #e6e6e6;
     }
@@ -1148,7 +1192,7 @@ body {
       margin: 1rem 0;
     }
     .poly-code-title {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.85em;
       padding: 0.5rem 1rem;
       background: #2d2d2d;
@@ -1162,14 +1206,14 @@ body {
     }
     .poly-code-block pre {
       margin: 0;
-      padding: 1rem;
+      padding: var(--poly-spacing-block-padding, 1rem);
       background: #1e1e1e;
       color: #e6e6e6;
       border-radius: 6px;
       overflow-x: auto;
     }
     .poly-code-block code {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.9em;
       color: #e6e6e6;
     }
@@ -1207,43 +1251,43 @@ body {
 
     .poly-fold {
       margin: 1rem 0;
-      border: 1px solid #e5e5e5;
-      border-radius: 4px;
+      border: var(--poly-border-width, 1px) solid var(--poly-color-border, #e5e5e5);
+      border-radius: var(--poly-radius, 4px);
     }
     .poly-fold summary {
-      padding: 0.75rem 1rem;
+      padding: var(--poly-spacing-block-padding, 0.75rem 1rem);
       cursor: pointer;
       font-weight: 500;
-      background: #f9f9f9;
-      border-radius: 4px;
+      background: var(--poly-color-surface, #f9f9f9);
+      border-radius: var(--poly-radius, 4px);
     }
     .poly-fold[open] summary {
-      border-bottom: 1px solid #e5e5e5;
-      border-radius: 4px 4px 0 0;
+      border-bottom: var(--poly-border-width, 1px) solid var(--poly-color-border, #e5e5e5);
+      border-radius: var(--poly-radius, 4px) var(--poly-radius, 4px) 0 0;
     }
     .poly-fold .poly-fold-content {
-      padding: 1rem;
+      padding: var(--poly-spacing-block-padding, 1rem);
     }
   
 
     .poly-fold {
       margin: 1rem 0;
-      border: 1px solid #e5e5e5;
-      border-radius: 4px;
+      border: var(--poly-border-width, 1px) solid var(--poly-color-border, #e5e5e5);
+      border-radius: var(--poly-radius, 4px);
     }
     .poly-fold summary {
-      padding: 0.75rem 1rem;
+      padding: var(--poly-spacing-block-padding, 0.75rem 1rem);
       cursor: pointer;
       font-weight: 500;
-      background: #f9f9f9;
-      border-radius: 4px;
+      background: var(--poly-color-surface, #f9f9f9);
+      border-radius: var(--poly-radius, 4px);
     }
     .poly-fold[open] summary {
-      border-bottom: 1px solid #e5e5e5;
-      border-radius: 4px 4px 0 0;
+      border-bottom: var(--poly-border-width, 1px) solid var(--poly-color-border, #e5e5e5);
+      border-radius: var(--poly-radius, 4px) var(--poly-radius, 4px) 0 0;
     }
     .poly-fold .poly-fold-content {
-      padding: 1rem;
+      padding: var(--poly-spacing-block-padding, 1rem);
     }
   
 
@@ -1337,7 +1381,7 @@ body {
       margin: 1rem 0;
     }
     .poly-code-title {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.85em;
       padding: 0.5rem 1rem;
       background: #2d2d2d;
@@ -1351,14 +1395,14 @@ body {
     }
     .poly-code-block pre {
       margin: 0;
-      padding: 1rem;
+      padding: var(--poly-spacing-block-padding, 1rem);
       background: #1e1e1e;
       color: #e6e6e6;
       border-radius: 6px;
       overflow-x: auto;
     }
     .poly-code-block code {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.9em;
       color: #e6e6e6;
     }
@@ -1399,7 +1443,7 @@ body {
       margin: 1rem 0;
     }
     .poly-code-title {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.85em;
       padding: 0.5rem 1rem;
       background: #2d2d2d;
@@ -1413,14 +1457,132 @@ body {
     }
     .poly-code-block pre {
       margin: 0;
-      padding: 1rem;
+      padding: var(--poly-spacing-block-padding, 1rem);
       background: #1e1e1e;
       color: #e6e6e6;
       border-radius: 6px;
       overflow-x: auto;
     }
     .poly-code-block code {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+    /* Polyester syntax highlighting */
+    .poly-hl-command { color: #ff7b72; font-weight: 500; }
+    .poly-hl-flag { color: #79c0ff; }
+    .poly-hl-string { color: #a5d6ff; }
+    .poly-hl-pipe { color: #ffa657; font-weight: 500; }
+    .poly-hl-brace { color: #d2a8ff; }
+  
+
+    .poly-inline {
+      display: inline-flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .poly-inline.wrap {
+      flex-wrap: wrap;
+    }
+  
+
+    .poly-button {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--poly-radius, 0.375rem);
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      border: var(--poly-border-width, 1px) solid var(--poly-color-border, #e5e5e5);
+      background: var(--poly-color-bg, white);
+      color: var(--poly-color-text, inherit);
+    }
+    .poly-button-primary {
+      background: var(--poly-color-primary, #3b82f6);
+      color: white;
+      border-color: var(--poly-color-primary, #3b82f6);
+    }
+    .poly-button-secondary {
+      background: var(--poly-color-surface, #f3f4f6);
+      color: var(--poly-color-text, #374151);
+      border-color: var(--poly-color-border, #e5e5e5);
+    }
+  
+
+    .poly-button {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--poly-radius, 0.375rem);
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      border: var(--poly-border-width, 1px) solid var(--poly-color-border, #e5e5e5);
+      background: var(--poly-color-bg, white);
+      color: var(--poly-color-text, inherit);
+    }
+    .poly-button-primary {
+      background: var(--poly-color-primary, #3b82f6);
+      color: white;
+      border-color: var(--poly-color-primary, #3b82f6);
+    }
+    .poly-button-secondary {
+      background: var(--poly-color-surface, #f3f4f6);
+      color: var(--poly-color-text, #374151);
+      border-color: var(--poly-color-border, #e5e5e5);
+    }
+  
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: var(--poly-spacing-block-padding, 1rem);
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.9em;
       color: #e6e6e6;
     }
@@ -1461,7 +1623,7 @@ body {
       margin: 1rem 0;
     }
     .poly-code-title {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.85em;
       padding: 0.5rem 1rem;
       background: #2d2d2d;
@@ -1475,14 +1637,14 @@ body {
     }
     .poly-code-block pre {
       margin: 0;
-      padding: 1rem;
+      padding: var(--poly-spacing-block-padding, 1rem);
       background: #1e1e1e;
       color: #e6e6e6;
       border-radius: 6px;
       overflow-x: auto;
     }
     .poly-code-block code {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.9em;
       color: #e6e6e6;
     }
@@ -1523,7 +1685,7 @@ body {
       margin: 1rem 0;
     }
     .poly-code-title {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.85em;
       padding: 0.5rem 1rem;
       background: #2d2d2d;
@@ -1537,14 +1699,14 @@ body {
     }
     .poly-code-block pre {
       margin: 0;
-      padding: 1rem;
+      padding: var(--poly-spacing-block-padding, 1rem);
       background: #1e1e1e;
       color: #e6e6e6;
       border-radius: 6px;
       overflow-x: auto;
     }
     .poly-code-block code {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.9em;
       color: #e6e6e6;
     }
@@ -1585,7 +1747,7 @@ body {
       margin: 1rem 0;
     }
     .poly-code-title {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.85em;
       padding: 0.5rem 1rem;
       background: #2d2d2d;
@@ -1599,14 +1761,109 @@ body {
     }
     .poly-code-block pre {
       margin: 0;
-      padding: 1rem;
+      padding: var(--poly-spacing-block-padding, 1rem);
       background: #1e1e1e;
       color: #e6e6e6;
       border-radius: 6px;
       overflow-x: auto;
     }
     .poly-code-block code {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+    /* Polyester syntax highlighting */
+    .poly-hl-command { color: #ff7b72; font-weight: 500; }
+    .poly-hl-flag { color: #79c0ff; }
+    .poly-hl-string { color: #a5d6ff; }
+    .poly-hl-pipe { color: #ffa657; font-weight: 500; }
+    .poly-hl-brace { color: #d2a8ff; }
+  
+
+    .poly-inline {
+      display: inline-flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .poly-inline.wrap {
+      flex-wrap: wrap;
+    }
+  
+
+    .poly-button {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--poly-radius, 0.375rem);
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      border: var(--poly-border-width, 1px) solid var(--poly-color-border, #e5e5e5);
+      background: var(--poly-color-bg, white);
+      color: var(--poly-color-text, inherit);
+    }
+    .poly-button-primary {
+      background: var(--poly-color-primary, #3b82f6);
+      color: white;
+      border-color: var(--poly-color-primary, #3b82f6);
+    }
+    .poly-button-secondary {
+      background: var(--poly-color-surface, #f3f4f6);
+      color: var(--poly-color-text, #374151);
+      border-color: var(--poly-color-border, #e5e5e5);
+    }
+  
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: var(--poly-spacing-block-padding, 1rem);
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.9em;
       color: #e6e6e6;
     }
@@ -1647,7 +1904,7 @@ body {
       margin: 1rem 0;
     }
     .poly-code-title {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.85em;
       padding: 0.5rem 1rem;
       background: #2d2d2d;
@@ -1661,14 +1918,76 @@ body {
     }
     .poly-code-block pre {
       margin: 0;
-      padding: 1rem;
+      padding: var(--poly-spacing-block-padding, 1rem);
       background: #1e1e1e;
       color: #e6e6e6;
       border-radius: 6px;
       overflow-x: auto;
     }
     .poly-code-block code {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
+      font-size: 0.9em;
+      color: #e6e6e6;
+    }
+    .poly-code-lines {
+      display: table;
+      width: 100%;
+    }
+    .poly-code-line {
+      display: table-row;
+    }
+    .poly-code-line-number {
+      display: table-cell;
+      text-align: right;
+      padding-right: 1rem;
+      user-select: none;
+      color: #606060;
+      width: 1%;
+      white-space: nowrap;
+    }
+    .poly-code-line-content {
+      display: table-cell;
+      white-space: pre;
+      color: #e6e6e6;
+    }
+    .poly-code-line.highlighted {
+      background: rgba(255, 255, 0, 0.1);
+    }
+    /* Polyester syntax highlighting */
+    .poly-hl-command { color: #ff7b72; font-weight: 500; }
+    .poly-hl-flag { color: #79c0ff; }
+    .poly-hl-string { color: #a5d6ff; }
+    .poly-hl-pipe { color: #ffa657; font-weight: 500; }
+    .poly-hl-brace { color: #d2a8ff; }
+  
+
+    .poly-code-block {
+      position: relative;
+      margin: 1rem 0;
+    }
+    .poly-code-title {
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
+      font-size: 0.85em;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      color: #a0a0a0;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #404040;
+    }
+    .poly-code-title + pre {
+      margin-top: 0;
+      border-radius: 0 0 6px 6px;
+    }
+    .poly-code-block pre {
+      margin: 0;
+      padding: var(--poly-spacing-block-padding, 1rem);
+      background: #1e1e1e;
+      color: #e6e6e6;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .poly-code-block code {
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.9em;
       color: #e6e6e6;
     }
@@ -1767,63 +2086,63 @@ body {
       left: 0;
     }
   
-/* Syntax highlighting: default */
+/* Syntax highlighting: gruvbox */
 .poly-content pre {
-  background: #0d1117;
-  color: #c9d1d9;
+  background: #1d2021;
+  color: #ebdbb2;
 }
 
-.hljs { background: #0d1117; color: #c9d1d9; }
+.hljs { background: #1d2021; color: #ebdbb2; }
 
 .hljs-comment,
-.hljs-quote { color: #8b949e; }
+.hljs-quote { color: #928374; }
 
 .hljs-keyword,
-.hljs-selector-tag { color: #ff7b72; }
+.hljs-selector-tag { color: #cc241d; }
 
 .hljs-string,
 .hljs-symbol,
-.hljs-bullet { color: #a5d6ff; }
+.hljs-bullet { color: #98971a; }
 
 .hljs-number,
-.hljs-literal { color: #79c0ff; }
+.hljs-literal { color: #689d6a; }
 
 .hljs-title,
 .hljs-section,
-.hljs-title.function_ { color: #d2a8ff; }
+.hljs-title.function_ { color: #b16286; }
 
 .hljs-type,
-.hljs-title.class_ { color: #ffa657; }
+.hljs-title.class_ { color: #d79921; }
 
 .hljs-variable,
-.hljs-template-variable { color: #ffa657; }
+.hljs-template-variable { color: #fabd2f; }
 
-.hljs-built_in { color: #ffa657; }
+.hljs-built_in { color: #d3869b; }
 
 .hljs-attr,
-.hljs-attribute { color: #79c0ff; }
+.hljs-attribute { color: #d79921; }
 
-.hljs-property { color: #79c0ff; }
+.hljs-property { color: #458588; }
 
-.hljs-params { color: #c9d1d9; }
+.hljs-params { color: #ebdbb2; }
 
-.hljs-meta { color: #8b949e; }
+.hljs-meta { color: #928374; }
 
 .hljs-name,
-.hljs-tag { color: #7ee787; }
+.hljs-tag { color: #cc241d; }
 
 .hljs-selector-id,
-.hljs-selector-class { color: #7ee787; }
+.hljs-selector-class { color: #98971a; }
 
-.hljs-regexp { color: #a5d6ff; }
+.hljs-regexp { color: #689d6a; }
 
-.hljs-operator { color: #c9d1d9; }
+.hljs-operator { color: #ebdbb2; }
 
-.hljs-punctuation { color: #c9d1d9; }
+.hljs-punctuation { color: #ebdbb2; }
 
-.hljs-addition { color: #aff5b4; background: #033a16; }
+.hljs-addition { color: #98971a; }
 
-.hljs-deletion { color: #ffa198; background: #490202; }
+.hljs-deletion { color: #cc241d; }
   </style>
 </head>
 <body>
@@ -1838,7 +2157,7 @@ body {
     <span class="poly-hl-command">/button</span> primary <span class="poly-hl-string">&quot;Get Started&quot;</span>
   <span class="poly-hl-brace">}</span>
 <span class="poly-hl-brace">}</span></code></pre></div></div>
-<section class="poly-hero" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; "><div style="display: flex; align-items: center; justify-content: center; flex-direction: column; height: 90vh; min-height: 90vh;"><span class="poly-text" style="color: white; font-size: 4rem; font-weight: bold; letter-spacing: 0.1em; ">Polyester</span>
+<section class="poly-hero" style="background: var(--poly-hero-gradient, linear-gradient(135deg, #667eea 0%, #764ba2 100%)); color: var(--poly-hero-text, white); "><div style="display: flex; align-items: center; justify-content: center; flex-direction: column; height: 90vh; min-height: 90vh;"><span class="poly-text" style="color: white; font-size: 4rem; font-weight: bold; letter-spacing: 0.1em; ">Polyester</span>
 <div class="poly-region" style="padding: 1rem; "><div class="poly-content"><p>A document language that feels like home.</p>
 <p>Markdown simplicity meets programming power.</p></div></div>
 <div class="poly-region" style="padding: 2rem; "><button class="poly-button poly-button-primary">Get Started</button>
@@ -2023,44 +2342,70 @@ then renders to your target format.</p></div></div></details>
 <details class="poly-fold"><summary>Advanced configuration</summary><div class="poly-fold-content"><div class="poly-content"><p>Configuration options for power users.
 Theme customization, output formats, and more.</p></div></div></details></div>
 <div class="poly-region" style=""><div class="poly-content"><h3>Task Lists</h3></div>
-<div class="poly-checkbox checked"><input type="checkbox" id="cb-diyux9k" checked disabled><label for="cb-diyux9k">Write documentation</label></div>
-<div class="poly-checkbox checked"><input type="checkbox" id="cb-xd4w8fx" checked disabled><label for="cb-xd4w8fx">Add syntax highlighting</label></div>
-<div class="poly-checkbox checked"><input type="checkbox" id="cb-5qftorp" checked disabled><label for="cb-5qftorp">Create VSCode extension</label></div>
-<div class="poly-checkbox checked"><input type="checkbox" id="cb-oyo8wnt" checked disabled><label for="cb-oyo8wnt">Build Neovim plugin</label></div>
-<div class="poly-checkbox"><input type="checkbox" id="cb-jt7mqlw"  disabled><label for="cb-jt7mqlw">World domination</label></div>
+<div class="poly-checkbox checked"><input type="checkbox" id="cb-jebeft3" checked disabled><label for="cb-jebeft3">Write documentation</label></div>
+<div class="poly-checkbox checked"><input type="checkbox" id="cb-7mo3j4s" checked disabled><label for="cb-7mo3j4s">Add syntax highlighting</label></div>
+<div class="poly-checkbox checked"><input type="checkbox" id="cb-ae0eama" checked disabled><label for="cb-ae0eama">Create VSCode extension</label></div>
+<div class="poly-checkbox checked"><input type="checkbox" id="cb-gs593r3" checked disabled><label for="cb-gs593r3">Build Neovim plugin</label></div>
+<div class="poly-checkbox"><input type="checkbox" id="cb-5nj7q8b"  disabled><label for="cb-5nj7q8b">World domination</label></div>
 <div class="poly-region" style="padding: 1rem; "><div class="poly-content"><p>Progress: 4/5 complete</p></div></div></div></div></div></div>
 <div class="poly-grid" style="grid-template-columns: 420px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><pre><code class="language-polyester"><span class="poly-hl-command">/region</span> <span class="poly-hl-flag">--bg</span> #fef3c7 <span class="poly-hl-flag">--padding</span> 3rem <span class="poly-hl-brace">{</span>
 
-  ## Theming
+  ## Design System
+
+  <span class="poly-hl-command">/page</span> A4 <span class="poly-hl-flag">--style</span> playful <span class="poly-hl-flag">--spacing</span> compact
 
   <span class="poly-hl-command">/columns</span> 4 <span class="poly-hl-flag">--gap</span> 1rem <span class="poly-hl-brace">{</span>
-    <span class="poly-hl-command">/frame</span> <span class="poly-hl-flag">--bg</span> #282828 <span class="poly-hl-flag">--padding</span> 1rem <span class="poly-hl-brace">{</span>
-      <span class="poly-hl-command">/text</span> <span class="poly-hl-string">&quot;Gruvbox&quot;</span> <span class="poly-hl-flag">--color</span> #ebdbb2
+    <span class="poly-hl-command">/frame</span> <span class="poly-hl-flag">--bg</span> #1e40af <span class="poly-hl-flag">--padding</span> 1rem <span class="poly-hl-brace">{</span>
+      <span class="poly-hl-command">/text</span> <span class="poly-hl-string">&quot;Corporate&quot;</span> <span class="poly-hl-flag">--color</span> white
     <span class="poly-hl-brace">}</span>
-    <span class="poly-hl-command">/frame</span> <span class="poly-hl-flag">--bg</span> #2e3440 <span class="poly-hl-flag">--padding</span> 1rem <span class="poly-hl-brace">{</span>
-      <span class="poly-hl-command">/text</span> <span class="poly-hl-string">&quot;Nord&quot;</span> <span class="poly-hl-flag">--color</span> #eceff4
+    <span class="poly-hl-command">/frame</span> <span class="poly-hl-flag">--bg</span> #18181b <span class="poly-hl-flag">--padding</span> 1rem <span class="poly-hl-brace">{</span>
+      <span class="poly-hl-command">/text</span> <span class="poly-hl-string">&quot;Minimal&quot;</span> <span class="poly-hl-flag">--color</span> white
     <span class="poly-hl-brace">}</span>
-  <span class="poly-hl-brace">}</span>
-
-  <span class="poly-hl-command">/code</span> bash <span class="poly-hl-brace">{</span>
-    poly theme import ~/.Xresources
-    poly build doc.poly <span class="poly-hl-flag">--theme</span> my-theme
+    <span class="poly-hl-command">/frame</span> <span class="poly-hl-flag">--bg</span> #8b5cf6 <span class="poly-hl-flag">--padding</span> 1rem <span class="poly-hl-brace">{</span>
+      <span class="poly-hl-command">/text</span> <span class="poly-hl-string">&quot;Playful&quot;</span> <span class="poly-hl-flag">--color</span> white
+    <span class="poly-hl-brace">}</span>
+    <span class="poly-hl-command">/frame</span> <span class="poly-hl-flag">--bg</span> #0f172a <span class="poly-hl-flag">--padding</span> 1rem <span class="poly-hl-brace">{</span>
+      <span class="poly-hl-command">/text</span> <span class="poly-hl-string">&quot;Dark&quot;</span> <span class="poly-hl-flag">--color</span> #60a5fa
+    <span class="poly-hl-brace">}</span>
   <span class="poly-hl-brace">}</span>
 
 <span class="poly-hl-brace">}</span></code></pre></div></div>
-<div class="poly-region" style="background: #fef3c7; padding: 3rem; "><div class="poly-content"><h2>Theming</h2>
-<p>Import colorschemes from your terminal. Your documents match your aesthetic.</p></div>
-<div class="poly-columns" style="grid-template-columns: repeat(4, 1fr); gap: 1rem;"><div class="poly-frame" style="border: 1px solid #e5e5e5; border-radius: 8px; padding: 1rem; background: #282828;"><span class="poly-text" style="color: #ebdbb2; font-size: 0.9rem; ">Gruvbox</span></div>
-<div class="poly-frame" style="border: 1px solid #e5e5e5; border-radius: 8px; padding: 1rem; background: #2e3440;"><span class="poly-text" style="color: #eceff4; font-size: 0.9rem; ">Nord</span></div>
-<div class="poly-frame" style="border: 1px solid #e5e5e5; border-radius: 8px; padding: 1rem; background: #1d1f21;"><span class="poly-text" style="color: #c5c8c6; font-size: 0.9rem; ">Tomorrow</span></div>
-<div class="poly-frame" style="border: 1px solid #e5e5e5; border-radius: 8px; padding: 1rem; background: #002b36;"><span class="poly-text" style="color: #839496; font-size: 0.9rem; ">Solarized</span></div></div>
-<div class="poly-code-block"><pre><code class="language-bash"># Import from your terminal config
-poly theme import ~/.Xresources --name my-theme
-poly theme import ~/.config/kitty/kitty.conf --name kitty
-poly theme import ~/.cache/wal/colors.json --name pywal
+<div class="poly-region" style="background: #fef3c7; padding: 3rem; "><div class="poly-content"><h2>Design System</h2>
+<p>Three composable modules—<strong>style</strong>, <strong>spacing</strong>, and <strong>syntax</strong>—that mix independently.</p></div>
+<div class="poly-columns" style="grid-template-columns: repeat(4, 1fr); gap: 1rem;"><div class="poly-frame" style="border: 1px solid #e5e5e5; border-radius: 8px; padding: 1rem; background: #1e40af;"><span class="poly-text" style="color: white; font-size: 0.9rem; ">Corporate</span></div>
+<div class="poly-frame" style="border: 1px solid #e5e5e5; border-radius: 8px; padding: 1rem; background: #18181b;"><span class="poly-text" style="color: white; font-size: 0.9rem; ">Minimal</span></div>
+<div class="poly-frame" style="border: 1px solid #e5e5e5; border-radius: 8px; padding: 1rem; background: #8b5cf6;"><span class="poly-text" style="color: white; font-size: 0.9rem; ">Playful</span></div>
+<div class="poly-frame" style="border: 1px solid #e5e5e5; border-radius: 8px; padding: 1rem; background: #0f172a;"><span class="poly-text" style="color: #60a5fa; font-size: 0.9rem; ">Dark</span></div></div>
+<div class="poly-code-block"><pre><code class="language-bash"># Apply style + spacing presets
+poly build doc.poly --style corporate --spacing compact
 
-# Build with your theme
-poly build doc.poly --theme my-theme</code></pre></div></div></div>
+# Import terminal colorschemes
+poly theme import ~/.Xresources --name my-theme
+poly build doc.poly --theme my-theme</code></pre></div>
+<div class="poly-region" style="padding: 0.5rem; "><span class="poly-text" style="color: #64748b; font-size: 0.85rem; ">Learn more:</span>
+<span class="poly-inline"><button class="poly-button poly-button-secondary">Design Tokens</button>
+<button class="poly-button poly-button-secondary">Theme Studio</button></span></div></div></div>
+<div class="poly-grid" style="grid-template-columns: 420px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><pre><code class="language-polyester"><span class="poly-hl-command">/region</span> <span class="poly-hl-flag">--padding</span> 3rem <span class="poly-hl-brace">{</span>
+
+  ## Pagination
+
+  <span class="poly-hl-command">/page</span> <span class="poly-hl-flag">--pageless</span>
+
+  Content flows continuously...
+
+  <span class="poly-hl-command">/pagebreak</span>
+
+  New section starts here.
+
+<span class="poly-hl-brace">}</span></code></pre></div></div>
+<div class="poly-region" style="padding: 3rem; "><div class="poly-content"><h2>Pagination</h2>
+<p>Control how PDFs are paginated. Use <code>--pageless</code> for continuous scrolling, or <code>/pagebreak</code> for explicit control.</p></div>
+<div class="poly-columns" style="grid-template-columns: repeat(2, 1fr); gap: 2rem;"><div class="poly-frame" style="border: 1px solid #e5e5e5; border-radius: 8px; padding: 1.5rem; background: #f0f9ff;"><span class="poly-text" style="font-size: 0.9rem; font-weight: bold; ">Continuous</span>
+<div class="poly-code-block"><pre><code class="language-polyester"><span class="poly-hl-command">/page</span> <span class="poly-hl-flag">--pageless</span></code></pre></div>
+<div class="poly-content"><p>One long page. Tables and figures stay intact.</p></div></div>
+<div class="poly-frame" style="border: 1px solid #e5e5e5; border-radius: 8px; padding: 1.5rem; background: #f0fdf4;"><span class="poly-text" style="font-size: 0.9rem; font-weight: bold; ">Explicit Breaks</span>
+<div class="poly-code-block"><pre><code class="language-polyester"><span class="poly-hl-command">/pagebreak</span></code></pre></div>
+<div class="poly-content"><p>Force a new page at any point.</p></div></div></div></div></div>
 <div class="poly-grid" style="grid-template-columns: 420px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><pre><code class="language-polyester">## Editor Support
 
 <span class="poly-hl-command">/columns</span> 2 <span class="poly-hl-flag">--gap</span> 2rem <span class="poly-hl-brace">{</span>
@@ -2087,6 +2432,7 @@ poly build doc.poly --theme my-theme</code></pre></div></div></div>
 <li>Syntax highlighting</li>
 <li>Autocomplete for commands &#x26; flags</li>
 <li>Hover documentation</li>
+<li><strong>Theme Studio</strong> (<code>Ctrl+Shift+T</code>)</li>
 <li>Build commands (Ctrl+Alt+H, Ctrl+Alt+P)</li>
 <li>Error diagnostics</li>
 </ul></div></div>
@@ -2097,25 +2443,28 @@ poly build doc.poly --theme my-theme</code></pre></div></div></div>
 <li><code>:PolyBuild</code> and <code>:PolyPreview</code></li>
 <li>Auto-build on save</li>
 <li>Zathura PDF preview</li>
-</ul></div></div></div></div></div>
+</ul></div></div></div>
+<div class="poly-region" style="padding: 0.5rem; "><span class="poly-text" style="color: #64748b; font-size: 0.85rem; ">AI integration:</span>
+<span class="poly-inline"><button class="poly-button poly-button-secondary">MCP Server</button></span></div></div></div>
 <div class="poly-grid" style="grid-template-columns: 420px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><pre><code class="language-bash">npm install -g polyester
 
 poly build document.poly
 poly build document.poly --format pdf
-poly build document.poly --theme gruvbox
+poly build document.poly --style corporate --spacing spacious
 
 poly help
-poly help columns</code></pre></div></div>
+poly help columns
+poly style list</code></pre></div></div>
 <div class="poly-region" style="background: #f0fdf4; padding: 3rem; "><div class="poly-content"><h2>Quick Start</h2></div>
 <div class="poly-code-block"><pre><code class="language-bash">npm install -g polyester
 
 poly build document.poly
 poly build document.poly --format pdf
-poly build document.poly --theme gruvbox
+poly build document.poly --style corporate --spacing spacious
 
 poly help
 poly help columns
-poly help code</code></pre></div></div></div>
+poly style list</code></pre></div></div></div>
 <div class="poly-grid" style="grid-template-columns: 420px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><pre><code class="language-polyester">## Component Reference
 
 <span class="poly-hl-command">/columns</span> 4 <span class="poly-hl-flag">--gap</span> 1rem <span class="poly-hl-brace">{</span>
@@ -2127,6 +2476,7 @@ poly help code</code></pre></div></div></div>
       columns
       grid
       region
+      pagebreak
     <span class="poly-hl-brace">}</span>
   <span class="poly-hl-brace">}</span>
 
@@ -2137,16 +2487,18 @@ poly help code</code></pre></div></div></div>
       code
       table
       image
+      icon
+      tag
     <span class="poly-hl-brace">}</span>
   <span class="poly-hl-brace">}</span>
 
 <span class="poly-hl-brace">}</span></code></pre></div></div>
 <div class="poly-region" style="padding: 3rem; "><div class="poly-content"><h2>Component Reference</h2></div>
-<span class="poly-text" style="color: #64748b; ">21 built-in components across 4 categories</span>
+<span class="poly-text" style="color: #64748b; ">27 built-in components across 4 categories</span>
 <div class="poly-columns" style="grid-template-columns: repeat(4, 1fr); gap: 1rem;"><div class="poly-region" style=""><span class="poly-text" style="font-size: 0.9rem; font-weight: bold; ">Layout</span>
-<ul class="poly-list"><li><span style="position: absolute; left: 0;">></span> page</li><li><span style="position: absolute; left: 0;">></span> columns</li><li><span style="position: absolute; left: 0;">></span> grid</li><li><span style="position: absolute; left: 0;">></span> region</li><li><span style="position: absolute; left: 0;">></span> sidebar</li><li><span style="position: absolute; left: 0;">></span> center</li><li><span style="position: absolute; left: 0;">></span> vcenter</li><li><span style="position: absolute; left: 0;">></span> frame</li></ul></div>
+<ul class="poly-list"><li><span style="position: absolute; left: 0;">></span> page</li><li><span style="position: absolute; left: 0;">></span> columns</li><li><span style="position: absolute; left: 0;">></span> grid</li><li><span style="position: absolute; left: 0;">></span> region</li><li><span style="position: absolute; left: 0;">></span> sidebar</li><li><span style="position: absolute; left: 0;">></span> center</li><li><span style="position: absolute; left: 0;">></span> vcenter</li><li><span style="position: absolute; left: 0;">></span> frame</li><li><span style="position: absolute; left: 0;">></span> inline</li><li><span style="position: absolute; left: 0;">></span> divider</li><li><span style="position: absolute; left: 0;">></span> pagebreak</li></ul></div>
 <div class="poly-region" style=""><span class="poly-text" style="font-size: 0.9rem; font-weight: bold; ">Content</span>
-<ul class="poly-list"><li><span style="position: absolute; left: 0;">></span> text</li><li><span style="position: absolute; left: 0;">></span> quote</li><li><span style="position: absolute; left: 0;">></span> code</li><li><span style="position: absolute; left: 0;">></span> table</li><li><span style="position: absolute; left: 0;">></span> list</li><li><span style="position: absolute; left: 0;">></span> checkbox</li><li><span style="position: absolute; left: 0;">></span> image</li></ul></div>
+<ul class="poly-list"><li><span style="position: absolute; left: 0;">></span> text</li><li><span style="position: absolute; left: 0;">></span> quote</li><li><span style="position: absolute; left: 0;">></span> code</li><li><span style="position: absolute; left: 0;">></span> table</li><li><span style="position: absolute; left: 0;">></span> list</li><li><span style="position: absolute; left: 0;">></span> checkbox</li><li><span style="position: absolute; left: 0;">></span> image</li><li><span style="position: absolute; left: 0;">></span> icon</li><li><span style="position: absolute; left: 0;">></span> tag</li><li><span style="position: absolute; left: 0;">></span> progress</li></ul></div>
 <div class="poly-region" style=""><span class="poly-text" style="font-size: 0.9rem; font-weight: bold; ">Style</span>
 <ul class="poly-list"><li><span style="position: absolute; left: 0;">></span> hero</li><li><span style="position: absolute; left: 0;">></span> card</li><li><span style="position: absolute; left: 0;">></span> button</li><li><span style="position: absolute; left: 0;">></span> shape</li><li><span style="position: absolute; left: 0;">></span> style</li></ul></div>
 <div class="poly-region" style=""><span class="poly-text" style="font-size: 0.9rem; font-weight: bold; ">Interactive</span>
