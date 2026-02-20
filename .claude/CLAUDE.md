@@ -105,6 +105,32 @@ Settings:
 - `polyester.cliPath` - Path to CLI (auto-detected from workspace)
 - `polyester.lspPath` - Path to LSP server
 
+## Pre-Commit: Render All Outputs
+
+Before committing, always rebuild all rendered outputs so they stay in sync with source `.poly` files.
+
+```bash
+# 1. Build TypeScript first
+npm run build
+
+# 2. Render all docs pages as HTML
+node dist/cli/index.js build docs/index.poly -o docs/index.html
+node dist/cli/index.js build docs/mcp.poly -o docs/mcp.html
+node dist/cli/index.js build docs/design-system.poly -o docs/design-system.html
+node dist/cli/index.js build docs/theme-studio.poly -o docs/theme-studio.html
+
+# 3. Render about-polyester as SVG (used in README)
+node dist/cli/index.js build docs/about-polyester.poly -o docs/about-polyester.svg
+
+# 4. Render badge SVGs (used in README)
+node dist/cli/index.js build docs/badges/docs.poly -o docs/badges/docs.svg --width 118 --padding 0 --background none
+node dist/cli/index.js build docs/badges/editors.poly -o docs/badges/editors.svg --width 184 --padding 0 --background none
+node dist/cli/index.js build docs/badges/mcp.poly -o docs/badges/mcp.svg --width 92 --padding 0 --background none
+
+# 5. Render examples as HTML
+for f in examples/*.poly; do node dist/cli/index.js build "$f"; done
+```
+
 ## File Extension
 
 `.poly` files
