@@ -266,97 +266,16 @@ body {
   padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
-.poly-grid {
-  align-items: stretch;
-}
-.poly-grid > .poly-region:first-child {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 0.5rem 0.75rem !important;
-}
-.poly-grid > .poly-region:first-child .poly-code-block {
-  margin: 0;
-}
-.poly-grid > .poly-region:first-child .poly-code-block pre {
-  background: transparent !important;
-  margin: 0;
-  padding: 0;
-}
-.poly-grid > .poly-region:first-child .poly-code-block code {
-  color: #ebdbb2;
-}
 
-@media (max-width: 900px) {
-  .poly-grid {
-    grid-template-columns: 1fr !important;
+@media (max-width: 768px) {
+  .poly-columns {
+    flex-direction: column !important;
   }
-  .poly-grid > .poly-region:first-child {
-    display: none !important;
+  .poly-columns > * {
+    flex: 1 1 100% !important;
+    max-width: 100% !important;
   }
 }
-
-    .poly-code-block {
-      position: relative;
-      margin: 1rem 0;
-    }
-    .poly-code-title {
-      font-family: var(--poly-font-mono, ui-monospace, monospace);
-      font-size: 0.85em;
-      padding: 0.5rem 1rem;
-      background: #2d2d2d;
-      color: #a0a0a0;
-      border-radius: 6px 6px 0 0;
-      border-bottom: 1px solid #404040;
-    }
-    .poly-code-title + pre {
-      margin-top: 0;
-      border-radius: 0 0 6px 6px;
-    }
-    .poly-code-block pre {
-      margin: 0;
-      padding: var(--poly-spacing-block-padding, 1rem);
-      background: #1e1e1e;
-      color: #e6e6e6;
-      border-radius: 6px;
-      overflow-x: auto;
-    }
-    .poly-code-block code {
-      font-family: var(--poly-font-mono, ui-monospace, monospace);
-      font-size: 0.9em;
-      color: #e6e6e6;
-    }
-    .poly-code-lines {
-      display: table;
-      width: 100%;
-    }
-    .poly-code-line {
-      display: table-row;
-    }
-    .poly-code-line-number {
-      display: table-cell;
-      text-align: right;
-      padding-right: 1rem;
-      user-select: none;
-      color: #606060;
-      width: 1%;
-      white-space: nowrap;
-    }
-    .poly-code-line-content {
-      display: table-cell;
-      white-space: pre;
-      color: #e6e6e6;
-    }
-    .poly-code-line.highlighted {
-      background: rgba(255, 255, 0, 0.1);
-    }
-    /* Polyester syntax highlighting */
-    .poly-hl-command { color: #ff7b72; font-weight: 500; }
-    .poly-hl-flag { color: #79c0ff; }
-    .poly-hl-string { color: #a5d6ff; }
-    .poly-hl-pipe { color: #ffa657; font-weight: 500; }
-    .poly-hl-brace { color: #d2a8ff; }
-  
 
     .poly-button {
       display: inline-block;
@@ -381,128 +300,35 @@ body {
     }
   
 
-    .poly-code-block {
-      position: relative;
-      margin: 1rem 0;
+    .poly-figure {
+      margin: 1.5rem 0;
     }
-    .poly-code-title {
-      font-family: var(--poly-font-mono, ui-monospace, monospace);
-      font-size: 0.85em;
-      padding: 0.5rem 1rem;
-      background: #2d2d2d;
-      color: #a0a0a0;
-      border-radius: 6px 6px 0 0;
-      border-bottom: 1px solid #404040;
+    .poly-figure.align-center {
+      text-align: center;
     }
-    .poly-code-title + pre {
-      margin-top: 0;
-      border-radius: 0 0 6px 6px;
+    .poly-figure.align-left {
+      text-align: left;
     }
-    .poly-code-block pre {
-      margin: 0;
-      padding: var(--poly-spacing-block-padding, 1rem);
-      background: #1e1e1e;
-      color: #e6e6e6;
-      border-radius: 6px;
-      overflow-x: auto;
-    }
-    .poly-code-block code {
-      font-family: var(--poly-font-mono, ui-monospace, monospace);
-      font-size: 0.9em;
-      color: #e6e6e6;
-    }
-    .poly-code-lines {
-      display: table;
-      width: 100%;
-    }
-    .poly-code-line {
-      display: table-row;
-    }
-    .poly-code-line-number {
-      display: table-cell;
+    .poly-figure.align-right {
       text-align: right;
-      padding-right: 1rem;
-      user-select: none;
-      color: #606060;
-      width: 1%;
-      white-space: nowrap;
     }
-    .poly-code-line-content {
-      display: table-cell;
-      white-space: pre;
-      color: #e6e6e6;
+    .poly-figure img {
+      max-width: 100%;
+      height: auto;
     }
-    .poly-code-line.highlighted {
-      background: rgba(255, 255, 0, 0.1);
+    .poly-figure img.shape-circle {
+      border-radius: 50%;
+      object-fit: cover;
     }
-    /* Polyester syntax highlighting */
-    .poly-hl-command { color: #ff7b72; font-weight: 500; }
-    .poly-hl-flag { color: #79c0ff; }
-    .poly-hl-string { color: #a5d6ff; }
-    .poly-hl-pipe { color: #ffa657; font-weight: 500; }
-    .poly-hl-brace { color: #d2a8ff; }
-  
-
-    .poly-code-block {
-      position: relative;
-      margin: 1rem 0;
+    .poly-figure img.shape-rounded {
+      border-radius: 8px;
     }
-    .poly-code-title {
-      font-family: var(--poly-font-mono, ui-monospace, monospace);
-      font-size: 0.85em;
-      padding: 0.5rem 1rem;
-      background: #2d2d2d;
-      color: #a0a0a0;
-      border-radius: 6px 6px 0 0;
-      border-bottom: 1px solid #404040;
-    }
-    .poly-code-title + pre {
-      margin-top: 0;
-      border-radius: 0 0 6px 6px;
-    }
-    .poly-code-block pre {
-      margin: 0;
-      padding: var(--poly-spacing-block-padding, 1rem);
-      background: #1e1e1e;
-      color: #e6e6e6;
-      border-radius: 6px;
-      overflow-x: auto;
-    }
-    .poly-code-block code {
-      font-family: var(--poly-font-mono, ui-monospace, monospace);
+    .poly-figure figcaption {
+      margin-top: 0.5rem;
       font-size: 0.9em;
-      color: #e6e6e6;
+      color: var(--poly-color-text-muted, #666);
+      font-style: italic;
     }
-    .poly-code-lines {
-      display: table;
-      width: 100%;
-    }
-    .poly-code-line {
-      display: table-row;
-    }
-    .poly-code-line-number {
-      display: table-cell;
-      text-align: right;
-      padding-right: 1rem;
-      user-select: none;
-      color: #606060;
-      width: 1%;
-      white-space: nowrap;
-    }
-    .poly-code-line-content {
-      display: table-cell;
-      white-space: pre;
-      color: #e6e6e6;
-    }
-    .poly-code-line.highlighted {
-      background: rgba(255, 255, 0, 0.1);
-    }
-    /* Polyester syntax highlighting */
-    .poly-hl-command { color: #ff7b72; font-weight: 500; }
-    .poly-hl-flag { color: #79c0ff; }
-    .poly-hl-string { color: #a5d6ff; }
-    .poly-hl-pipe { color: #ffa657; font-weight: 500; }
-    .poly-hl-brace { color: #d2a8ff; }
   
 
     .poly-list {
@@ -567,192 +393,6 @@ body {
       position: absolute;
       left: 0;
     }
-  
-
-    .poly-code-block {
-      position: relative;
-      margin: 1rem 0;
-    }
-    .poly-code-title {
-      font-family: var(--poly-font-mono, ui-monospace, monospace);
-      font-size: 0.85em;
-      padding: 0.5rem 1rem;
-      background: #2d2d2d;
-      color: #a0a0a0;
-      border-radius: 6px 6px 0 0;
-      border-bottom: 1px solid #404040;
-    }
-    .poly-code-title + pre {
-      margin-top: 0;
-      border-radius: 0 0 6px 6px;
-    }
-    .poly-code-block pre {
-      margin: 0;
-      padding: var(--poly-spacing-block-padding, 1rem);
-      background: #1e1e1e;
-      color: #e6e6e6;
-      border-radius: 6px;
-      overflow-x: auto;
-    }
-    .poly-code-block code {
-      font-family: var(--poly-font-mono, ui-monospace, monospace);
-      font-size: 0.9em;
-      color: #e6e6e6;
-    }
-    .poly-code-lines {
-      display: table;
-      width: 100%;
-    }
-    .poly-code-line {
-      display: table-row;
-    }
-    .poly-code-line-number {
-      display: table-cell;
-      text-align: right;
-      padding-right: 1rem;
-      user-select: none;
-      color: #606060;
-      width: 1%;
-      white-space: nowrap;
-    }
-    .poly-code-line-content {
-      display: table-cell;
-      white-space: pre;
-      color: #e6e6e6;
-    }
-    .poly-code-line.highlighted {
-      background: rgba(255, 255, 0, 0.1);
-    }
-    /* Polyester syntax highlighting */
-    .poly-hl-command { color: #ff7b72; font-weight: 500; }
-    .poly-hl-flag { color: #79c0ff; }
-    .poly-hl-string { color: #a5d6ff; }
-    .poly-hl-pipe { color: #ffa657; font-weight: 500; }
-    .poly-hl-brace { color: #d2a8ff; }
-  
-
-    .poly-code-block {
-      position: relative;
-      margin: 1rem 0;
-    }
-    .poly-code-title {
-      font-family: var(--poly-font-mono, ui-monospace, monospace);
-      font-size: 0.85em;
-      padding: 0.5rem 1rem;
-      background: #2d2d2d;
-      color: #a0a0a0;
-      border-radius: 6px 6px 0 0;
-      border-bottom: 1px solid #404040;
-    }
-    .poly-code-title + pre {
-      margin-top: 0;
-      border-radius: 0 0 6px 6px;
-    }
-    .poly-code-block pre {
-      margin: 0;
-      padding: var(--poly-spacing-block-padding, 1rem);
-      background: #1e1e1e;
-      color: #e6e6e6;
-      border-radius: 6px;
-      overflow-x: auto;
-    }
-    .poly-code-block code {
-      font-family: var(--poly-font-mono, ui-monospace, monospace);
-      font-size: 0.9em;
-      color: #e6e6e6;
-    }
-    .poly-code-lines {
-      display: table;
-      width: 100%;
-    }
-    .poly-code-line {
-      display: table-row;
-    }
-    .poly-code-line-number {
-      display: table-cell;
-      text-align: right;
-      padding-right: 1rem;
-      user-select: none;
-      color: #606060;
-      width: 1%;
-      white-space: nowrap;
-    }
-    .poly-code-line-content {
-      display: table-cell;
-      white-space: pre;
-      color: #e6e6e6;
-    }
-    .poly-code-line.highlighted {
-      background: rgba(255, 255, 0, 0.1);
-    }
-    /* Polyester syntax highlighting */
-    .poly-hl-command { color: #ff7b72; font-weight: 500; }
-    .poly-hl-flag { color: #79c0ff; }
-    .poly-hl-string { color: #a5d6ff; }
-    .poly-hl-pipe { color: #ffa657; font-weight: 500; }
-    .poly-hl-brace { color: #d2a8ff; }
-  
-
-    .poly-code-block {
-      position: relative;
-      margin: 1rem 0;
-    }
-    .poly-code-title {
-      font-family: var(--poly-font-mono, ui-monospace, monospace);
-      font-size: 0.85em;
-      padding: 0.5rem 1rem;
-      background: #2d2d2d;
-      color: #a0a0a0;
-      border-radius: 6px 6px 0 0;
-      border-bottom: 1px solid #404040;
-    }
-    .poly-code-title + pre {
-      margin-top: 0;
-      border-radius: 0 0 6px 6px;
-    }
-    .poly-code-block pre {
-      margin: 0;
-      padding: var(--poly-spacing-block-padding, 1rem);
-      background: #1e1e1e;
-      color: #e6e6e6;
-      border-radius: 6px;
-      overflow-x: auto;
-    }
-    .poly-code-block code {
-      font-family: var(--poly-font-mono, ui-monospace, monospace);
-      font-size: 0.9em;
-      color: #e6e6e6;
-    }
-    .poly-code-lines {
-      display: table;
-      width: 100%;
-    }
-    .poly-code-line {
-      display: table-row;
-    }
-    .poly-code-line-number {
-      display: table-cell;
-      text-align: right;
-      padding-right: 1rem;
-      user-select: none;
-      color: #606060;
-      width: 1%;
-      white-space: nowrap;
-    }
-    .poly-code-line-content {
-      display: table-cell;
-      white-space: pre;
-      color: #e6e6e6;
-    }
-    .poly-code-line.highlighted {
-      background: rgba(255, 255, 0, 0.1);
-    }
-    /* Polyester syntax highlighting */
-    .poly-hl-command { color: #ff7b72; font-weight: 500; }
-    .poly-hl-flag { color: #79c0ff; }
-    .poly-hl-string { color: #a5d6ff; }
-    .poly-hl-pipe { color: #ffa657; font-weight: 500; }
-    .poly-hl-brace { color: #d2a8ff; }
   
 
     .poly-code-block {
@@ -1059,47 +699,14 @@ body {
   <div class="poly-document">
 
 
-<div class="poly-grid" style="grid-template-columns: 420px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><pre><code class="language-polyester"><span class="poly-hl-command">/hero</span> <span class="poly-hl-flag">--bg</span> gradient <span class="poly-hl-brace">{</span>
-  <span class="poly-hl-command">/vcenter</span> <span class="poly-hl-flag">--height</span> 60vh <span class="poly-hl-brace">{</span>
-    <span class="poly-hl-command">/text</span> <span class="poly-hl-string">&quot;Theme Studio&quot;</span> <span class="poly-hl-flag">--bold</span>
-    <span class="poly-hl-flag">--size</span> 3rem <span class="poly-hl-flag">--color</span> white
-
-    <span class="poly-hl-command">/text</span> <span class="poly-hl-string">&quot;Design themes visually&quot;</span>
-    <span class="poly-hl-flag">--size</span> 1.5rem <span class="poly-hl-flag">--color</span> white <span class="poly-hl-flag">--italic</span>
-  <span class="poly-hl-brace">}</span>
-<span class="poly-hl-brace">}</span></code></pre></div></div>
 <section class="poly-hero" style="background: var(--poly-hero-gradient, linear-gradient(135deg, #667eea 0%, #764ba2 100%)); color: var(--poly-hero-text, white); "><div style="display: flex; align-items: center; justify-content: center; flex-direction: column; height: 60vh; min-height: 60vh;"><span class="poly-text" style="color: white; font-size: 3rem; font-weight: bold; letter-spacing: 0.1em; ">Theme Studio</span>
 <span class="poly-text" style="color: white; font-size: 1.5rem; font-style: italic; ">Design themes visually</span>
 <div class="poly-region" style="padding: 1rem; "><div class="poly-content"><p>A visual theme editor built into VS Code. Tweak colors, fonts, and spacing with live preview.</p></div></div>
-<div class="poly-region" style="padding: 1rem; "><a class="poly-button poly-button-primary" href="index.html">Back to Home</a></div></div></section></div>
-<div class="poly-grid" style="grid-template-columns: 420px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><pre><code class="language-text">Polyester: Open Theme Studio
-
-Ctrl+Shift+T  (Linux/Windows)
-Cmd+Shift+T   (Mac)
-
-Condition: .poly file must be open</code></pre></div></div>
+<div class="poly-region" style="padding: 1rem; "><a class="poly-button poly-button-primary" href="index.html">Back to Home</a></div></div></section>
 <div class="poly-region" style="padding: 3rem; "><div class="poly-content"><h2>What It Is</h2>
 <p>Theme Studio is a webview panel inside VS Code that gives you direct control over Polyester's design tokens. Instead of editing JSON by hand, you see color pickers, font dropdowns, and spacing sliders—with changes reflected instantly in a live preview.</p></div>
-<div class="poly-frame" style="border: 1px solid #0ea5e9; border-radius: 8px; padding: 1.5rem; background: #f0f9ff;"><div class="poly-content"><p>Open it with <code>Ctrl+Shift+T</code> (or <code>Cmd+Shift+T</code> on Mac), or run <strong>Polyester: Open Theme Studio</strong> from the command palette. Requires a <code>.poly</code> file to be open.</p></div></div></div></div>
-<div class="poly-grid" style="grid-template-columns: 420px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><pre><code class="language-text">+--[ Controls ]--------+--[ Preview ]---------+
-|                      |                       |
-| Style: [Corporate v] |   /hero --bg gradient |
-|                      |     Title Text        |
-| Primary   [#1e40af]  |                       |
-| Secondary [#64748b]  |   ## Heading          |
-| Accent    [#f59e0b]  |                       |
-| Background[#ffffff]  |   Body text with      |
-| Surface   [#f8fafc]  |   **bold** and links  |
-| Text      [#1e293b]  |                       |
-|                      |   /card --icon star   |
-| Body Font [Inter  v] |     Card content      |
-| Heading   [Inter  v] |                       |
-| Mono      [JetBra v] |   /code typescript    |
-|                      |     const x = 42;     |
-| Radius  [===o======] |                       |
-| Spacing: [Default v] |   /table --header     |
-|                      |     Col A | Col B     |
-+----------------------+-----------------------+</code></pre></div></div>
+<div class="poly-frame" style="border: 1px solid #0ea5e9; border-radius: 8px; padding: 1.5rem; background: #f0f9ff;"><div class="poly-content"><p>Open it with <code>Ctrl+Shift+T</code> (or <code>Cmd+Shift+T</code> on Mac), or run <strong>Polyester: Open Theme Studio</strong> from the command palette. Requires a <code>.poly</code> file to be open.</p></div></div></div>
+<div class="poly-region" style="background: #f8fafc; padding: 3rem; "><figure class="poly-figure align-center"><img src="theme-studio-screenshot.png" alt="" class="" style="width: 100%;"><figcaption>Theme Studio — controls on the left, live preview on the right</figcaption></figure></div>
 <div class="poly-region" style="padding: 3rem; "><div class="poly-content"><h2>Features</h2></div>
 <div class="poly-columns" style="grid-template-columns: repeat(2, 1fr); gap: 2rem;"><div class="poly-region" style=""><div class="poly-content"><h3>Color Pickers</h3>
 <p>14 color tokens with native color picker inputs:</p></div>
@@ -1111,39 +718,13 @@ Condition: .poly file must be open</code></pre></div></div>
 <ul class="poly-list"><li><span style="position: absolute; left: 0;">•</span> <strong>Radius</strong> — Slider from 0 to 2rem</li><li><span style="position: absolute; left: 0;">•</span> <strong>Width</strong> — Dropdown: 1px, 2px, 3px</li><li><span style="position: absolute; left: 0;">•</span> <strong>Shadow</strong> — None, Subtle, Medium, Strong</li></ul></div>
 <div class="poly-region" style=""><div class="poly-content"><h3>Spacing Controls</h3>
 <p>Select a spacing preset (Compact, Default, Spacious) or fine-tune individual tokens:</p></div>
-<ul class="poly-list"><li><span style="position: absolute; left: 0;">•</span> Base spacing (0.5-2rem)</li><li><span style="position: absolute; left: 0;">•</span> Column gap (0.5-3rem)</li><li><span style="position: absolute; left: 0;">•</span> Card padding (0.5-3rem)</li><li><span style="position: absolute; left: 0;">•</span> Block padding (0.5-2rem)</li></ul></div></div></div></div>
-<div class="poly-grid" style="grid-template-columns: 420px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><pre><code class="language-text">Preview source:
-
-[ Reference ] [ My Document ]
-
-&quot;Reference&quot; shows a built-in component
-showcase (theme-demo.poly) that exercises
-every visual token.
-
-&quot;My Document&quot; shows the .poly file you
-have open in the editor. Changes are
-reflected when you save.</code></pre></div></div>
+<ul class="poly-list"><li><span style="position: absolute; left: 0;">•</span> Base spacing (0.5-2rem)</li><li><span style="position: absolute; left: 0;">•</span> Column gap (0.5-3rem)</li><li><span style="position: absolute; left: 0;">•</span> Card padding (0.5-3rem)</li><li><span style="position: absolute; left: 0;">•</span> Block padding (0.5-2rem)</li></ul></div></div></div>
 <div class="poly-region" style="background: #f8fafc; padding: 3rem; "><div class="poly-content"><h2>Live Preview</h2>
 <p>The right side of Theme Studio renders a live document that updates as you change tokens. No recompilation needed—CSS variables are swapped in real time.</p></div>
 <div class="poly-columns" style="grid-template-columns: repeat(2, 1fr); gap: 2rem;"><div class="poly-card"><div class="poly-card-icon">⭐</div><div class="poly-content"><h3>Reference Document</h3>
 <p>A built-in showcase that exercises every visual token—hero, cards, tables, code blocks, buttons. Always available as a baseline.</p></div></div>
 <div class="poly-card"><div class="poly-card-icon">⚡</div><div class="poly-content"><h3>Your Document</h3>
-<p>Toggle to preview your own <code>.poly</code> file. The active editor file is compiled and displayed. Re-renders when you save.</p></div></div></div></div></div>
-<div class="poly-grid" style="grid-template-columns: 420px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><div class="poly-code-title">~/.config/polyester/styles/acme.json</div><pre><code class="language-json">{
-  &quot;colors&quot;: {
-    &quot;primary&quot;: &quot;#e11d48&quot;,
-    &quot;primary-light&quot;: &quot;#fda4af&quot;,
-    &quot;background&quot;: &quot;#fafafa&quot;,
-    &quot;text&quot;: &quot;#1c1917&quot;
-  },
-  &quot;fonts&quot;: {
-    &quot;body&quot;: &quot;Lora, serif&quot;,
-    &quot;heading&quot;: &quot;Lora, serif&quot;
-  },
-  &quot;borders&quot;: {
-    &quot;radius&quot;: &quot;0.75rem&quot;
-  }
-}</code></pre></div></div>
+<p>Toggle to preview your own <code>.poly</code> file. The active editor file is compiled and displayed. Re-renders when you save.</p></div></div></div></div>
 <div class="poly-region" style="padding: 3rem; "><div class="poly-content"><h2>Export</h2>
 <p>When you've dialed in a look, export it for reuse.</p></div>
 <div class="poly-columns" style="grid-template-columns: repeat(2, 1fr); gap: 2rem;"><div class="poly-card"><div class="poly-card-icon">⭐</div><div class="poly-content"><h3>Save as JSON</h3>
@@ -1154,22 +735,15 @@ reflected when you save.</code></pre></div></div>
 <div class="poly-code-block"><pre><code class="language-css">:root {
   --poly-color-primary: #e11d48;
   --poly-font-body: Lora, serif;
-}</code></pre></div></div></div></div></div>
-<div class="poly-grid" style="grid-template-columns: 420px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><pre><code class="language-text">1. Open a .poly file in VS Code
-2. Press Ctrl+Shift+T
-3. Pick a style preset as starting point
-4. Tweak colors, fonts, spacing
-5. Preview against your document
-6. Export as JSON or copy CSS</code></pre></div></div>
+}</code></pre></div></div></div></div>
 <div class="poly-region" style="background: #f0fdf4; padding: 3rem; "><div class="poly-content"><h2>Getting Started</h2></div>
 <ol class="poly-list" start="1"><li style="list-style: none;"><span style="position: absolute; left: 0;">1.</span> Open a <code>.poly</code> file in VS Code</li><li style="list-style: none;"><span style="position: absolute; left: 0;">2.</span> Press <code>Ctrl+Shift+T</code> (or <code>Cmd+Shift+T</code> on Mac)</li><li style="list-style: none;"><span style="position: absolute; left: 0;">3.</span> Pick a style preset as a starting point</li><li style="list-style: none;"><span style="position: absolute; left: 0;">4.</span> Tweak colors, fonts, and spacing with the controls</li><li style="list-style: none;"><span style="position: absolute; left: 0;">5.</span> Toggle to "My Document" to see how your file looks</li><li style="list-style: none;"><span style="position: absolute; left: 0;">6.</span> Export as a reusable JSON style or copy the CSS</li></ol>
-<div class="poly-frame" style="border: 1px solid #22c55e; border-radius: 8px; padding: 1.5rem; background: #ecfdf5;"><div class="poly-content"><p>The Theme Studio requires the Polyester VS Code extension. Install it from the Extensions marketplace or build from source in <code>editors/vscode/</code>.</p></div></div></div></div>
-<div class="poly-grid" style="grid-template-columns: 420px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "></div>
+<div class="poly-frame" style="border: 1px solid #22c55e; border-radius: 8px; padding: 1.5rem; background: #ecfdf5;"><div class="poly-content"><p>The Theme Studio requires the Polyester VS Code extension. Install it from the Extensions marketplace or build from source in <code>editors/vscode/</code>.</p></div></div></div>
 <div class="poly-region" style="background: #282828; padding: 3rem; "><div style="text-align: center; display: flex; align-items: center; justify-content: center; flex-direction: column;"><span class="poly-text" style="color: white; font-size: 1.5rem; font-weight: bold; letter-spacing: 0.1em; ">Polyester Theme Studio</span>
 <div class="poly-region" style="padding: 1rem; "><span class="poly-inline"><a class="poly-button poly-button-secondary" href="index.html">Home</a>
 <a class="poly-button poly-button-secondary" href="cli.html">CLI Reference</a>
 <a class="poly-button poly-button-secondary" href="design-system.html">Design Tokens</a>
-<a class="poly-button poly-button-secondary" href="mcp.html">MCP Server</a></span></div></div></div></div>
+<a class="poly-button poly-button-secondary" href="mcp.html">MCP Server</a></span></div></div></div>
   </div>
 </body>
 </html>
