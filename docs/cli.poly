@@ -1,0 +1,283 @@
+/page A4 --margin 0 --max-width none
+
+/style {
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  @media (max-width: 768px) {
+    .poly-columns {
+      flex-direction: column !important;
+    }
+    .poly-columns > * {
+      flex: 1 1 100% !important;
+      max-width: 100% !important;
+    }
+  }
+}
+
+/hero --bg gradient {
+  /vcenter --height 60vh {
+    /text "CLI Reference" --bold --size 3rem --color white --tracking wide
+    /text "Build, watch, and manage Polyester documents" --size 1.5rem --color white --italic
+
+    /region --padding 1rem {
+      The `poly` command compiles `.poly` files to HTML, PDF, and SVG. Supports multi-file builds, theming, and file watching.
+    }
+
+    /region --padding 1rem {
+      /button primary "Back to Home" --href "index.html"
+    }
+  }
+}
+
+/region --padding 3rem {
+
+  ## Installation
+
+  /code bash {
+    npm install -g polyester
+  }
+
+  This gives you the `poly` command. You can also run it directly from a local install:
+
+  /code bash {
+    node dist/cli/index.js build document.poly
+  }
+
+}
+
+/region --bg #f8fafc --padding 3rem {
+
+  ## Commands
+
+  /table --header --bordered {
+    Command | Description
+    `poly build` | Compile `.poly` files to HTML, PDF, or SVG
+    `poly watch` | Watch a file and recompile on changes
+    `poly help` | List all components or show help for one
+    `poly theme import` | Import a colorscheme as a syntax theme
+    `poly theme list` | List available themes
+    `poly style list` | List available style modules
+    `poly spacing list` | List available spacing presets
+  }
+
+}
+
+/region --padding 3rem {
+
+  ## poly build
+
+  /code bash {
+    poly build <input.poly...> [-o output] [--format html|pdf|svg] [--theme name]
+  }
+
+  Compiles one or more `.poly` files. With a single file, you can specify an output path with `-o`. With multiple files, each produces an output file with the same name and a new extension.
+
+  /columns 2 --gap 2rem {
+
+    /frame --bg #f0f9ff --padding 1.5rem --radius 8px {
+      ### Single file
+
+      /code bash {
+        poly build report.poly
+        poly build report.poly -o out.html
+        poly build report.poly --format pdf -o report.pdf
+      }
+
+      Output defaults to `report.html` (or `.pdf`/`.svg` based on `--format`).
+    }
+
+    /frame --bg #f0fdf4 --padding 1.5rem --radius 8px {
+      ### Multiple files
+
+      /code bash {
+        poly build docs/*.poly
+        poly build a.poly b.poly c.poly
+        poly build docs/badges/*.poly --padding 0
+      }
+
+      Shell glob expansion handles wildcards. The `-o` flag is not allowed with multiple inputs.
+    }
+
+  }
+
+}
+
+/region --bg #f8fafc --padding 3rem {
+
+  ## Build Options
+
+  /table --header --bordered {
+    Flag | Description
+    `-o, --output <file>` | Output file path (single input only)
+    `-f, --format <fmt>` | Output format: `html` (default), `pdf`, `svg`
+    `-t, --theme <name>` | Composed theme (style + spacing + syntax)
+    `--style <name>` | Style module (colors, fonts, borders, shadows)
+    `--spacing <name>` | Spacing module: `compact`, `default`, `spacious`
+    `--width <px>` | SVG viewport width (default 800)
+    `--padding <px>` | SVG padding
+    `--background <color>` | SVG background color (use `none` for transparent)
+  }
+
+  Flags apply to all files in a multi-file build. This is useful for batch operations like building badges with shared settings.
+
+}
+
+/region --padding 3rem {
+
+  ## Output Formats
+
+  /columns 3 --gap 1.5rem {
+
+    /card --icon star {
+      ### HTML
+
+      Default format. Produces a standalone HTML file with embedded CSS, syntax highlighting, and all styles inlined.
+
+      /code bash {
+        poly build doc.poly
+      }
+    }
+
+    /card --icon bolt {
+      ### PDF
+
+      Renders HTML through Chrome via Puppeteer. Supports `/page` settings for paper size, margins, and pageless mode.
+
+      /code bash {
+        poly build doc.poly --format pdf
+      }
+    }
+
+    /card --icon rocket {
+      ### SVG
+
+      Renders content as an SVG image. Useful for README badges, social cards, and embeddable graphics.
+
+      /code bash {
+        poly build doc.poly --format svg
+      }
+    }
+
+  }
+
+}
+
+/region --bg #f8fafc --padding 3rem {
+
+  ## Theming
+
+  Three composable modules control the look of your documents.
+
+  /code bash {
+    # Use a composed theme
+    poly build doc.poly --theme gruvbox
+
+    # Mix individual modules
+    poly build doc.poly --style corporate --spacing compact
+
+    # Import a terminal colorscheme
+    poly theme import ~/.Xresources --name my-theme
+    poly build doc.poly --theme my-theme
+  }
+
+  /columns 3 --gap 1.5rem {
+
+    /frame --bg white --padding 1.5rem --radius 8px {
+      /text "Style" --bold --size 0.9rem
+      Colors, fonts, borders, and shadows. Sets the visual identity of the document.
+    }
+
+    /frame --bg white --padding 1.5rem --radius 8px {
+      /text "Spacing" --bold --size 0.9rem
+      Margins, padding, and gaps. Controls density — `compact`, `default`, or `spacious`.
+    }
+
+    /frame --bg white --padding 1.5rem --radius 8px {
+      /text "Syntax" --bold --size 0.9rem
+      Code block colors. Imported from terminal colorschemes or built-in presets.
+    }
+
+  }
+
+  /region --padding 0.5rem {
+    /text "Learn more:" --size 0.85rem --color #64748b
+
+    /inline --gap 1rem {
+      /button secondary "Design Tokens" --href "design-system.html"
+      /button secondary "Theme Studio" --href "theme-studio.html"
+    }
+  }
+
+}
+
+/region --padding 3rem {
+
+  ## poly watch
+
+  /code bash {
+    poly watch <input.poly> [--format html|pdf]
+  }
+
+  Watches a single file for changes and recompiles automatically. Useful during development alongside a browser with live reload.
+
+  /code bash {
+    poly watch document.poly
+    poly watch slides.poly --format pdf
+  }
+
+}
+
+/region --bg #f8fafc --padding 3rem {
+
+  ## poly help
+
+  /code bash {
+    poly help              # List all 27 components
+    poly help columns      # Show detailed help for /columns
+    poly help --json       # Output as JSON (for tooling)
+  }
+
+  Displays component documentation including arguments, flags, descriptions, and examples. The `--json` flag outputs structured data for editor extensions and the MCP server.
+
+}
+
+/region --padding 3rem {
+
+  ## Theme Import
+
+  Import colorschemes from terminal emulators and other tools.
+
+  /code bash {
+    poly theme import <file> --name <name> [--format <format>]
+  }
+
+  /table --header --bordered {
+    Format | Source
+    `xresources` | `~/.Xresources` files
+    `pywal` | pywal color files
+    `base16` | Base16 YAML schemes
+    `kitty` | Kitty terminal config
+    `alacritty` | Alacritty TOML/YAML config
+  }
+
+  The format is auto-detected from the file when possible. Use `--format` to override.
+
+}
+
+/region --bg #282828 --padding 3rem {
+  /center {
+    /text "Polyester CLI" --bold --size 1.5rem --color white --tracking wide
+
+    /region --padding 1rem {
+      /inline --gap 1rem {
+        /button secondary "Home" --href "index.html"
+        /button secondary "Design Tokens" --href "design-system.html"
+        /button secondary "MCP Server" --href "mcp.html"
+      }
+    }
+  }
+}

@@ -42,7 +42,7 @@ import {
 interface CliArgs {
   command: string;
   subcommand?: string;
-  input?: string;
+  inputs: string[];
   output?: string;
   format?: string;
   theme?: string;
@@ -60,6 +60,7 @@ interface CliArgs {
 function parseArgs(args: string[]): CliArgs {
   const result: CliArgs = {
     command: "",
+    inputs: [],
   };
 
   let i = 0;
@@ -95,8 +96,8 @@ function parseArgs(args: string[]): CliArgs {
         result.command = arg;
       } else if (!result.subcommand && (result.command === "theme" || result.command === "style" || result.command === "spacing")) {
         result.subcommand = arg;
-      } else if (!result.input) {
-        result.input = arg;
+      } else {
+        result.inputs.push(arg);
       }
     }
 
@@ -111,7 +112,7 @@ function printHelp(): void {
 Polyester - Document authoring language
 
 Usage:
-  poly build <input.poly> [-o output] [--format html|pdf|svg] [--theme name]
+  poly build <input.poly...> [-o output] [--format html|pdf|svg] [--theme name]
   poly watch <input.poly> [--format html|pdf]
   poly help [component]
   poly theme import <file> --name <name> [--format <format>]
@@ -120,7 +121,7 @@ Usage:
   poly spacing list
 
 Commands:
-  build           Compile a .poly file to HTML or PDF
+  build           Compile .poly files to HTML, PDF, or SVG
   watch           Watch file and recompile on changes
   help            List all components or show help for a specific component
   theme import    Import a colorscheme as a syntax theme
@@ -129,7 +130,7 @@ Commands:
   spacing list    List available spacing presets
 
 Options:
-  -o, --output <file>   Output file path
+  -o, --output <file>   Output file path (single input only)
   -f, --format <fmt>    Output format: html (default), pdf, svg
                         For theme import: xresources, pywal, base16, kitty, alacritty
   -t, --theme <name>    Composed theme (style + spacing + syntax)
@@ -144,6 +145,8 @@ Examples:
   poly build document.poly -o out.html --theme gruvbox
   poly build document.poly --style corporate --spacing compact
   poly build document.poly --format pdf -o out.pdf
+  poly build docs/*.poly                       Build all docs
+  poly build docs/badges/*.poly --padding 0    Build all badges
   poly watch document.poly
   poly help
   poly help columns
@@ -440,29 +443,35 @@ async function main(): Promise<void> {
 
   switch (args.command) {
     case "build":
-      if (!args.input) {
+      if (args.inputs.length === 0) {
         console.error("Error: No input file specified");
         printHelp();
         process.exit(1);
       }
-      await build(args.input, args.output, {
-        theme: args.theme,
-        style: args.style,
-        spacing: args.spacing,
-        format: args.format,
-        width: args.width,
-        padding: args.padding,
-        background: args.background,
-      });
+      if (args.inputs.length > 1 && args.output) {
+        console.error("Error: -o/--output cannot be used with multiple input files");
+        process.exit(1);
+      }
+      for (const inputFile of args.inputs) {
+        await build(inputFile, args.output, {
+          theme: args.theme,
+          style: args.style,
+          spacing: args.spacing,
+          format: args.format,
+          width: args.width,
+          padding: args.padding,
+          background: args.background,
+        });
+      }
       break;
 
     case "watch":
-      if (!args.input) {
+      if (args.inputs.length === 0) {
         console.error("Error: No input file specified");
         printHelp();
         process.exit(1);
       }
-      await watchFile(args.input, {
+      await watchFile(args.inputs[0], {
         theme: args.theme,
         style: args.style,
         spacing: args.spacing,
@@ -471,13 +480,13 @@ async function main(): Promise<void> {
       break;
 
     case "help":
-      printComponentHelp(args.input, args.json);
+      printComponentHelp(args.inputs[0], args.json);
       break;
 
     case "theme":
       switch (args.subcommand) {
         case "import":
-          if (!args.input) {
+          if (args.inputs.length === 0) {
             console.error("Error: No input file specified");
             console.error("Usage: poly theme import <file> --name <name>");
             process.exit(1);
@@ -487,7 +496,7 @@ async function main(): Promise<void> {
             console.error("Usage: poly theme import <file> --name <name>");
             process.exit(1);
           }
-          themeImport(args.input, args.name, args.format);
+          themeImport(args.inputs[0], args.name, args.format);
           break;
 
         case "list":

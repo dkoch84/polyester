@@ -686,9 +686,10 @@
     }
 
     /region --padding 0.5rem {
-      /text "AI integration:" --size 0.85rem --color #64748b
+      /text "More:" --size 0.85rem --color #64748b
 
       /inline --gap 1rem {
+        /button secondary "CLI Reference" --href "cli.html"
         /button secondary "MCP Server" --href "mcp.html"
       }
     }

@@ -973,6 +973,29 @@ body {
       border-color: var(--poly-color-border, #e5e5e5);
     }
   
+
+    .poly-button {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--poly-radius, 0.375rem);
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      border: var(--poly-border-width, 1px) solid var(--poly-color-border, #e5e5e5);
+      background: var(--poly-color-bg, white);
+      color: var(--poly-color-text, inherit);
+    }
+    .poly-button-primary {
+      background: var(--poly-color-primary, #3b82f6);
+      color: white;
+      border-color: var(--poly-color-primary, #3b82f6);
+    }
+    .poly-button-secondary {
+      background: var(--poly-color-surface, #f3f4f6);
+      color: var(--poly-color-text, #374151);
+      border-color: var(--poly-color-border, #e5e5e5);
+    }
+  
 /* Syntax highlighting: gruvbox */
 .poly-content pre {
   background: #1d2021;
@@ -1144,6 +1167,7 @@ reflected when you save.</code></pre></div></div>
 <div class="poly-grid" style="grid-template-columns: 420px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "></div>
 <div class="poly-region" style="background: #282828; padding: 3rem; "><div style="text-align: center; display: flex; align-items: center; justify-content: center; flex-direction: column;"><span class="poly-text" style="color: white; font-size: 1.5rem; font-weight: bold; letter-spacing: 0.1em; ">Polyester Theme Studio</span>
 <div class="poly-region" style="padding: 1rem; "><span class="poly-inline"><a class="poly-button poly-button-secondary" href="index.html">Home</a>
+<a class="poly-button poly-button-secondary" href="cli.html">CLI Reference</a>
 <a class="poly-button poly-button-secondary" href="design-system.html">Design Tokens</a>
 <a class="poly-button poly-button-secondary" href="mcp.html">MCP Server</a></span></div></div></div></div>
   </div>
