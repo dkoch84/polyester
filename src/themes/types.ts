@@ -1,9 +1,117 @@
 /**
  * Polyester Theme Types
  *
- * Themes define colors for syntax highlighting in code blocks.
- * Colors map to highlight.js CSS classes.
+ * Three composable modules:
+ *   Style   — colors, fonts, borders, shadows, hero
+ *   Spacing — density, gaps, margins, padding
+ *   Syntax  — code block highlighting (the original ThemeColors)
+ *
+ * A Theme composes one of each by reference (string) or inline (object).
  */
+
+// ─── Style Tokens ──────────────────────────────────────────────
+
+export interface StyleColors {
+  primary: string;
+  "primary-light": string;
+  "primary-dark": string;
+  secondary: string;
+  accent: string;
+  background: string;
+  surface: string;
+  text: string;
+  "text-muted": string;
+  border: string;
+  link: string;
+  success: string;
+  warning: string;
+  error: string;
+}
+
+export interface StyleFonts {
+  body: string;
+  heading: string;
+  mono: string;
+}
+
+export interface StyleBorders {
+  radius: string;
+  width: string;
+}
+
+export interface StyleShadows {
+  card: string;
+  elevated?: string;
+}
+
+export interface StyleHero {
+  gradient: string;
+  "text-color": string;
+}
+
+export interface StyleTokens {
+  name?: string;
+  colors: StyleColors;
+  fonts: StyleFonts;
+  borders: StyleBorders;
+  shadows: StyleShadows;
+  hero: StyleHero;
+}
+
+// ─── Spacing Tokens ────────────────────────────────────────────
+
+export interface SpacingTokens {
+  name?: string;
+  base: string;
+  "page-margin": string;
+  "section-gap": string;
+  "column-gap": string;
+  "card-padding": string;
+  "block-padding": string;
+}
+
+// ─── Defaults (match current hardcoded values) ─────────────────
+
+export const DEFAULT_STYLE: StyleTokens = {
+  colors: {
+    primary: "#3b82f6",
+    "primary-light": "#60a5fa",
+    "primary-dark": "#2563eb",
+    secondary: "#475569",
+    accent: "#d97706",
+    background: "#ffffff",
+    surface: "#f9fafb",
+    text: "#1a1a1a",
+    "text-muted": "#666666",
+    border: "#e5e5e5",
+    link: "#3b82f6",
+    success: "#16a34a",
+    warning: "#d97706",
+    error: "#dc2626",
+  },
+  fonts: {
+    body: "system-ui, -apple-system, sans-serif",
+    heading: "system-ui, -apple-system, sans-serif",
+    mono: "ui-monospace, monospace",
+  },
+  borders: { radius: "0.5rem", width: "1px" },
+  shadows: { card: "none", elevated: "0 4px 12px rgba(0,0,0,0.1)" },
+  hero: {
+    gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    "text-color": "#ffffff",
+  },
+};
+
+export const DEFAULT_SPACING: SpacingTokens = {
+  base: "1rem",
+  "page-margin": "2cm",
+  "section-gap": "2rem",
+  "column-gap": "1.5rem",
+  "card-padding": "1.5rem",
+  "block-padding": "1rem",
+};
+
+// ─── Syntax (code highlighting) ────────────────────────────────
 
 export interface ThemeColors {
   // Code block background and default text
@@ -35,10 +143,29 @@ export interface ThemeColors {
   deletionBg?: string;
 }
 
+/**
+ * Legacy theme (syntax-only) — kept for backward compat with existing theme files.
+ */
+export interface LegacyTheme {
+  name: string;
+  source?: string;
+  colors: ThemeColors;
+}
+
+/**
+ * Composed theme — references or inlines style, spacing, and syntax modules.
+ * String values are resolved by name (built-in or filesystem).
+ * Object values are used inline.
+ * Missing keys fall back to defaults.
+ */
 export interface Theme {
   name: string;
-  source?: string;  // Where it was imported from
-  colors: ThemeColors;
+  source?: string;
+  style?: StyleTokens | string;
+  spacing?: SpacingTokens | string;
+  syntax?: ThemeColors | string;
+  /** @deprecated Use `syntax` instead. Kept for backward compat. */
+  colors?: ThemeColors;
 }
 
 /**
@@ -103,11 +230,9 @@ export function paletteToThemeColors(palette: TerminalPalette): ThemeColors {
 }
 
 /**
- * Built-in default theme (GitHub Dark style)
+ * Default syntax highlighting colors (GitHub Dark style)
  */
-export const DEFAULT_THEME: Theme = {
-  name: "default",
-  colors: {
+export const DEFAULT_SYNTAX: ThemeColors = {
     background: "#0d1117",
     foreground: "#c9d1d9",
 
@@ -132,5 +257,13 @@ export const DEFAULT_THEME: Theme = {
     deletion: "#ffa198",
     additionBg: "#033a16",
     deletionBg: "#490202",
-  },
+};
+
+/**
+ * Built-in default theme (legacy compat + default syntax)
+ */
+export const DEFAULT_THEME: Theme = {
+  name: "default",
+  colors: DEFAULT_SYNTAX,
+  syntax: DEFAULT_SYNTAX,
 };

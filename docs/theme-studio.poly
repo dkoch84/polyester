@@ -1,0 +1,348 @@
+/page A4 --margin 0 --max-width none
+
+/style {
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  .poly-grid {
+    align-items: stretch;
+  }
+  .poly-grid > .poly-region:first-child {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0.5rem 0.75rem !important;
+  }
+  .poly-grid > .poly-region:first-child .poly-code-block {
+    margin: 0;
+  }
+  .poly-grid > .poly-region:first-child .poly-code-block pre {
+    background: transparent !important;
+    margin: 0;
+    padding: 0;
+  }
+  .poly-grid > .poly-region:first-child .poly-code-block code {
+    color: #ebdbb2;
+  }
+
+  @media (max-width: 900px) {
+    .poly-grid {
+      grid-template-columns: 1fr !important;
+    }
+    .poly-grid > .poly-region:first-child {
+      display: none !important;
+    }
+  }
+}
+
+/grid "420px 1fr" {
+
+  /region --bg #282828 --padding 1.5rem {
+    /code polyester {
+      /hero --bg gradient {
+        /vcenter --height 60vh {
+          /text "Theme Studio" --bold
+          --size 3rem --color white
+
+          /text "Design themes visually"
+          --size 1.5rem --color white --italic
+        }
+      }
+    }
+  }
+
+  /hero --bg gradient {
+    /vcenter --height 60vh {
+      /text "Theme Studio" --bold --size 3rem --color white --tracking wide
+      /text "Design themes visually" --size 1.5rem --color white --italic
+
+      /region --padding 1rem {
+        A visual theme editor built into VS Code. Tweak colors, fonts, and spacing with live preview.
+      }
+
+      /region --padding 1rem {
+        /button primary "Back to Home" --href "index.html"
+      }
+    }
+  }
+
+}
+
+/grid "420px 1fr" {
+
+  /region --bg #282828 --padding 1.5rem {
+    /code text {
+      Polyester: Open Theme Studio
+
+      Ctrl+Shift+T  (Linux/Windows)
+      Cmd+Shift+T   (Mac)
+
+      Condition: .poly file must be open
+    }
+  }
+
+  /region --padding 3rem {
+
+    ## What It Is
+
+    Theme Studio is a webview panel inside VS Code that gives you direct control over Polyester's design tokens. Instead of editing JSON by hand, you see color pickers, font dropdowns, and spacing sliders—with changes reflected instantly in a live preview.
+
+    /frame --bg #f0f9ff --border "1px solid #0ea5e9" --padding 1.5rem --radius 8px {
+      Open it with `Ctrl+Shift+T` (or `Cmd+Shift+T` on Mac), or run **Polyester: Open Theme Studio** from the command palette. Requires a `.poly` file to be open.
+    }
+
+  }
+
+}
+
+/grid "420px 1fr" {
+
+  /region --bg #282828 --padding 1.5rem {
+    /code text {
+      +--[ Controls ]--------+--[ Preview ]---------+
+      |                      |                       |
+      | Style: [Corporate v] |   /hero --bg gradient |
+      |                      |     Title Text        |
+      | Primary   [#1e40af]  |                       |
+      | Secondary [#64748b]  |   ## Heading          |
+      | Accent    [#f59e0b]  |                       |
+      | Background[#ffffff]  |   Body text with      |
+      | Surface   [#f8fafc]  |   **bold** and links  |
+      | Text      [#1e293b]  |                       |
+      |                      |   /card --icon star   |
+      | Body Font [Inter  v] |     Card content      |
+      | Heading   [Inter  v] |                       |
+      | Mono      [JetBra v] |   /code typescript    |
+      |                      |     const x = 42;     |
+      | Radius  [===o======] |                       |
+      | Spacing: [Default v] |   /table --header     |
+      |                      |     Col A | Col B     |
+      +----------------------+-----------------------+
+    }
+  }
+
+  /region --padding 3rem {
+
+    ## Features
+
+    /columns 2 --gap 2rem {
+
+      /region {
+        ### Color Pickers
+
+        14 color tokens with native color picker inputs:
+
+        /list {
+          Primary, Primary Light, Primary Dark
+          Secondary, Accent
+          Background, Surface
+          Text, Text Muted, Border
+          Link
+          Success, Warning, Error
+        }
+      }
+
+      /region {
+        ### Typography
+
+        Font family dropdowns for three slots:
+
+        /list {
+          **Body** — System, Inter, Nunito, Georgia, Lora
+          **Heading** — Same options
+          **Mono** — System mono, JetBrains Mono, Fira Code, Source Code Pro
+        }
+      }
+
+    }
+
+    /columns 2 --gap 2rem {
+
+      /region {
+        ### Border Controls
+
+        /list {
+          **Radius** — Slider from 0 to 2rem
+          **Width** — Dropdown: 1px, 2px, 3px
+          **Shadow** — None, Subtle, Medium, Strong
+        }
+      }
+
+      /region {
+        ### Spacing Controls
+
+        Select a spacing preset (Compact, Default, Spacious) or fine-tune individual tokens:
+
+        /list {
+          Base spacing (0.5-2rem)
+          Column gap (0.5-3rem)
+          Card padding (0.5-3rem)
+          Block padding (0.5-2rem)
+        }
+      }
+
+    }
+
+  }
+
+}
+
+/grid "420px 1fr" {
+
+  /region --bg #282828 --padding 1.5rem {
+    /code text {
+      Preview source:
+
+      [ Reference ] [ My Document ]
+
+      "Reference" shows a built-in component
+      showcase (theme-demo.poly) that exercises
+      every visual token.
+
+      "My Document" shows the .poly file you
+      have open in the editor. Changes are
+      reflected when you save.
+    }
+  }
+
+  /region --bg #f8fafc --padding 3rem {
+
+    ## Live Preview
+
+    The right side of Theme Studio renders a live document that updates as you change tokens. No recompilation needed—CSS variables are swapped in real time.
+
+    /columns 2 --gap 2rem {
+
+      /card --icon star {
+        ### Reference Document
+
+        A built-in showcase that exercises every visual token—hero, cards, tables, code blocks, buttons. Always available as a baseline.
+      }
+
+      /card --icon bolt {
+        ### Your Document
+
+        Toggle to preview your own `.poly` file. The active editor file is compiled and displayed. Re-renders when you save.
+      }
+
+    }
+
+  }
+
+}
+
+/grid "420px 1fr" {
+
+  /region --bg #282828 --padding 1.5rem {
+    /code json --title "~/.config/polyester/styles/acme.json" {
+      {
+        "colors": {
+          "primary": "#e11d48",
+          "primary-light": "#fda4af",
+          "background": "#fafafa",
+          "text": "#1c1917"
+        },
+        "fonts": {
+          "body": "Lora, serif",
+          "heading": "Lora, serif"
+        },
+        "borders": {
+          "radius": "0.75rem"
+        }
+      }
+    }
+  }
+
+  /region --padding 3rem {
+
+    ## Export
+
+    When you've dialed in a look, export it for reuse.
+
+    /columns 2 --gap 2rem {
+
+      /card --icon star {
+        ### Save as JSON
+
+        Click **Export** and name your style. Saves a `StyleTokens` JSON file to `~/.config/polyester/styles/<name>.json`. Use it in any document:
+
+        /code bash {
+          poly build doc.poly --style acme
+        }
+      }
+
+      /card --icon bolt {
+        ### Copy CSS
+
+        Click **Copy CSS** to get a `:root` block with all `--poly-*` variables. Paste it into a `/style` block or external stylesheet.
+
+        /code css {
+          :root {
+            --poly-color-primary: #e11d48;
+            --poly-font-body: Lora, serif;
+          }
+        }
+      }
+
+    }
+
+  }
+
+}
+
+/grid "420px 1fr" {
+
+  /region --bg #282828 --padding 1.5rem {
+    /code text {
+      1. Open a .poly file in VS Code
+      2. Press Ctrl+Shift+T
+      3. Pick a style preset as starting point
+      4. Tweak colors, fonts, spacing
+      5. Preview against your document
+      6. Export as JSON or copy CSS
+    }
+  }
+
+  /region --bg #f0fdf4 --padding 3rem {
+
+    ## Getting Started
+
+    /list --ordered {
+      Open a `.poly` file in VS Code
+      Press `Ctrl+Shift+T` (or `Cmd+Shift+T` on Mac)
+      Pick a style preset as a starting point
+      Tweak colors, fonts, and spacing with the controls
+      Toggle to "My Document" to see how your file looks
+      Export as a reusable JSON style or copy the CSS
+    }
+
+    /frame --bg #ecfdf5 --border "1px solid #22c55e" --padding 1.5rem --radius 8px {
+      The Theme Studio requires the Polyester VS Code extension. Install it from the Extensions marketplace or build from source in `editors/vscode/`.
+    }
+
+  }
+
+}
+
+/grid "420px 1fr" {
+
+  /region --bg #282828 --padding 1.5rem {
+  }
+
+  /region --bg #282828 --padding 3rem {
+    /center {
+      /text "Polyester Theme Studio" --bold --size 1.5rem --color white --tracking wide
+
+      /region --padding 1rem {
+        /inline --gap 1rem {
+          /button secondary "Home" --href "index.html"
+          /button secondary "Design Tokens" --href "design-system.html"
+          /button secondary "MCP Server" --href "mcp.html"
+        }
+      }
+    }
+  }
+
+}

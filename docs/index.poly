@@ -505,20 +505,23 @@
     /code polyester {
       /region --bg #fef3c7 --padding 3rem {
 
-        ## Theming
+        ## Design System
+
+        /page A4 --style playful --spacing compact
 
         /columns 4 --gap 1rem {
-          /frame --bg #282828 --padding 1rem {
-            /text "Gruvbox" --color #ebdbb2
+          /frame --bg #1e40af --padding 1rem {
+            /text "Corporate" --color white
           }
-          /frame --bg #2e3440 --padding 1rem {
-            /text "Nord" --color #eceff4
+          /frame --bg #18181b --padding 1rem {
+            /text "Minimal" --color white
           }
-        }
-
-        /code bash {
-          poly theme import ~/.Xresources
-          poly build doc.poly --theme my-theme
+          /frame --bg #8b5cf6 --padding 1rem {
+            /text "Playful" --color white
+          }
+          /frame --bg #0f172a --padding 1rem {
+            /text "Dark" --color #60a5fa
+          }
         }
 
       }
@@ -527,33 +530,91 @@
 
   /region --bg #fef3c7 --padding 3rem {
 
-    ## Theming
+    ## Design System
 
-    Import colorschemes from your terminal. Your documents match your aesthetic.
+    Three composable modules—**style**, **spacing**, and **syntax**—that mix independently.
 
     /columns 4 --gap 1rem {
-      /frame --bg #282828 --padding 1rem --radius 8px {
-        /text "Gruvbox" --color #ebdbb2 --size 0.9rem
+      /frame --bg #1e40af --padding 1rem --radius 8px {
+        /text "Corporate" --color white --size 0.9rem
       }
-      /frame --bg #2e3440 --padding 1rem --radius 8px {
-        /text "Nord" --color #eceff4 --size 0.9rem
+      /frame --bg #18181b --padding 1rem --radius 8px {
+        /text "Minimal" --color white --size 0.9rem
       }
-      /frame --bg #1d1f21 --padding 1rem --radius 8px {
-        /text "Tomorrow" --color #c5c8c6 --size 0.9rem
+      /frame --bg #8b5cf6 --padding 1rem --radius 8px {
+        /text "Playful" --color white --size 0.9rem
       }
-      /frame --bg #002b36 --padding 1rem --radius 8px {
-        /text "Solarized" --color #839496 --size 0.9rem
+      /frame --bg #0f172a --padding 1rem --radius 8px {
+        /text "Dark" --color #60a5fa --size 0.9rem
       }
     }
 
     /code bash {
-      # Import from your terminal config
-      poly theme import ~/.Xresources --name my-theme
-      poly theme import ~/.config/kitty/kitty.conf --name kitty
-      poly theme import ~/.cache/wal/colors.json --name pywal
+      # Apply style + spacing presets
+      poly build doc.poly --style corporate --spacing compact
 
-      # Build with your theme
+      # Import terminal colorschemes
+      poly theme import ~/.Xresources --name my-theme
       poly build doc.poly --theme my-theme
+    }
+
+    /region --padding 0.5rem {
+      /text "Learn more:" --size 0.85rem --color #64748b
+
+      /inline --gap 1rem {
+        /button secondary "Design Tokens" --href "design-system.html"
+        /button secondary "Theme Studio" --href "theme-studio.html"
+      }
+    }
+
+  }
+
+}
+
+/grid "420px 1fr" {
+
+  /region --bg #282828 --padding 1.5rem {
+    /code polyester {
+      /region --padding 3rem {
+
+        ## Pagination
+
+        /page --pageless
+
+        Content flows continuously...
+
+        /pagebreak
+
+        New section starts here.
+
+      }
+    }
+  }
+
+  /region --padding 3rem {
+
+    ## Pagination
+
+    Control how PDFs are paginated. Use `--pageless` for continuous scrolling, or `/pagebreak` for explicit control.
+
+    /columns 2 --gap 2rem {
+
+      /frame --bg #f0f9ff --padding 1.5rem --radius 8px {
+        /text "Continuous" --bold --size 0.9rem
+        /code polyester {
+          /page --pageless
+        }
+        One long page. Tables and figures stay intact.
+      }
+
+      /frame --bg #f0fdf4 --padding 1.5rem --radius 8px {
+        /text "Explicit Breaks" --bold --size 0.9rem
+        /code polyester {
+          /pagebreak
+        }
+        Force a new page at any point.
+      }
+
     }
 
   }
@@ -600,6 +661,7 @@
         - Syntax highlighting
         - Autocomplete for commands & flags
         - Hover documentation
+        - **Theme Studio** (`Ctrl+Shift+T`)
         - Build commands (Ctrl+Alt+H, Ctrl+Alt+P)
         - Error diagnostics
       }
@@ -616,6 +678,14 @@
 
     }
 
+    /region --padding 0.5rem {
+      /text "AI integration:" --size 0.85rem --color #64748b
+
+      /inline --gap 1rem {
+        /button secondary "MCP Server" --href "mcp.html"
+      }
+    }
+
   }
 
 }
@@ -628,10 +698,11 @@
 
       poly build document.poly
       poly build document.poly --format pdf
-      poly build document.poly --theme gruvbox
+      poly build document.poly --style corporate --spacing spacious
 
       poly help
       poly help columns
+      poly style list
     }
   }
 
@@ -644,11 +715,11 @@
 
       poly build document.poly
       poly build document.poly --format pdf
-      poly build document.poly --theme gruvbox
+      poly build document.poly --style corporate --spacing spacious
 
       poly help
       poly help columns
-      poly help code
+      poly style list
     }
 
   }
@@ -670,6 +741,7 @@
             columns
             grid
             region
+            pagebreak
           }
         }
 
@@ -680,6 +752,8 @@
             code
             table
             image
+            icon
+            tag
           }
         }
 
@@ -691,7 +765,7 @@
 
     ## Component Reference
 
-    /text "21 built-in components across 4 categories" --color #64748b
+    /text "27 built-in components across 4 categories" --color #64748b
 
     /columns 4 --gap 1rem {
 
@@ -706,6 +780,9 @@
           center
           vcenter
           frame
+          inline
+          divider
+          pagebreak
         }
       }
 
@@ -719,6 +796,9 @@
           list
           checkbox
           image
+          icon
+          tag
+          progress
         }
       }
 

@@ -5,6 +5,7 @@
  */
 
 import { getIcon } from "./icons.js";
+import type { PageSettings } from "./compiler.js";
 
 export interface ComponentContext {
   /** Parsed arguments (positional as _0, _1, etc; flags by name) */
@@ -19,6 +20,8 @@ export interface ComponentContext {
   addClass: (cls: string) => void;
   /** Add custom CSS */
   addStyle: (css: string) => void;
+  /** Set page settings (for PDF generation) */
+  setPageSettings: (settings: Partial<PageSettings>) => void;
 }
 
 export interface ComponentResult {
@@ -55,12 +58,28 @@ function hasFlag(args: Record<string, string | boolean>, name: string): boolean 
 /**
  * /page - Document setup
  * Usage: /page A4 --margin 2cm --title "My Document"
+ * Usage: /page --pageless (for continuous/scrolling PDF)
  */
 const page: Component = (ctx) => {
   const size = getPositional(ctx.args, 0, "A4");
   const margin = getArg(ctx.args, "margin", "2cm");
   const orientation = hasFlag(ctx.args, "landscape") ? "landscape" : "portrait";
   const maxWidth = getArg(ctx.args, "max-width", "");
+  const pageless = hasFlag(ctx.args, "pageless");
+  const theme = getArg(ctx.args, "theme", "");
+  const style = getArg(ctx.args, "style", "");
+  const spacing = getArg(ctx.args, "spacing", "");
+
+  // Store page settings for PDF generation and theme resolution
+  ctx.setPageSettings({
+    size,
+    margin,
+    orientation,
+    pageless,
+    ...(theme && { theme }),
+    ...(style && { style }),
+    ...(spacing && { spacing }),
+  });
 
   let extraStyles = "";
   if (maxWidth) {
@@ -71,7 +90,18 @@ const page: Component = (ctx) => {
     }`;
   }
 
-  ctx.addStyle(`
+  if (pageless) {
+    // For pageless mode, don't set @page rules - let content flow naturally
+    ctx.addStyle(`
+    @media print {
+      .poly-document {
+        max-width: none;
+        padding: 0;
+      }
+    }${extraStyles}
+  `);
+  } else {
+    ctx.addStyle(`
     @page {
       size: ${size} ${orientation};
       margin: ${margin};
@@ -83,6 +113,7 @@ const page: Component = (ctx) => {
       }
     }${extraStyles}
   `);
+  }
 
   // /page doesn't produce direct HTML, just sets up styles
   return { html: "" };
@@ -243,7 +274,7 @@ const hero: Component = (ctx) => {
   let style = "";
   if (bg) {
     if (bg.includes("gradient")) {
-      style += `background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; `;
+      style += `background: var(--poly-hero-gradient, linear-gradient(135deg, #667eea 0%, #764ba2 100%)); color: var(--poly-hero-text, white); `;
     } else {
       style += `background: ${bg}; `;
     }
@@ -302,21 +333,23 @@ const button: Component = (ctx) => {
     .poly-button {
       display: inline-block;
       padding: 0.75rem 1.5rem;
-      border-radius: 0.375rem;
+      border-radius: var(--poly-radius, 0.375rem);
       font-weight: 500;
       text-decoration: none;
       cursor: pointer;
-      border: 1px solid #e5e5e5;
-      background: white;
+      border: var(--poly-border-width, 1px) solid var(--poly-color-border, #e5e5e5);
+      background: var(--poly-color-bg, white);
+      color: var(--poly-color-text, inherit);
     }
     .poly-button-primary {
-      background: #3b82f6;
+      background: var(--poly-color-primary, #3b82f6);
       color: white;
-      border-color: #3b82f6;
+      border-color: var(--poly-color-primary, #3b82f6);
     }
     .poly-button-secondary {
-      background: #f3f4f6;
-      color: #374151;
+      background: var(--poly-color-surface, #f3f4f6);
+      color: var(--poly-color-text, #374151);
+      border-color: var(--poly-color-border, #e5e5e5);
     }
   `);
 
@@ -401,7 +434,7 @@ const code: Component = (ctx) => {
       margin: 1rem 0;
     }
     .poly-code-title {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.85em;
       padding: 0.5rem 1rem;
       background: #2d2d2d;
@@ -415,14 +448,14 @@ const code: Component = (ctx) => {
     }
     .poly-code-block pre {
       margin: 0;
-      padding: 1rem;
+      padding: var(--poly-spacing-block-padding, 1rem);
       background: #1e1e1e;
       color: #e6e6e6;
       border-radius: 6px;
       overflow-x: auto;
     }
     .poly-code-block code {
-      font-family: ui-monospace, monospace;
+      font-family: var(--poly-font-mono, ui-monospace, monospace);
       font-size: 0.9em;
       color: #e6e6e6;
     }
@@ -621,14 +654,15 @@ const table: Component = (ctx) => {
     }
     .poly-table thead th {
       font-weight: 600;
-      border-bottom: 2px solid #e5e5e5;
+      background: var(--poly-color-surface, transparent);
+      border-bottom: 2px solid var(--poly-color-border, #e5e5e5);
     }
     .poly-table.bordered th,
     .poly-table.bordered td {
-      border: 1px solid #e5e5e5;
+      border: var(--poly-border-width, 1px) solid var(--poly-color-border, #e5e5e5);
     }
     .poly-table.striped tbody tr:nth-child(odd) {
-      background: #f9f9f9;
+      background: var(--poly-color-surface, #f9f9f9);
     }
     .poly-table.dark {
       color: #e6e6e6;
@@ -818,7 +852,7 @@ const image: Component = (ctx) => {
     .poly-figure figcaption {
       margin-top: 0.5rem;
       font-size: 0.9em;
-      color: #666;
+      color: var(--poly-color-text-muted, #666);
       font-style: italic;
     }
   `);
@@ -848,22 +882,22 @@ const fold: Component = (ctx) => {
   ctx.addStyle(`
     .poly-fold {
       margin: 1rem 0;
-      border: 1px solid #e5e5e5;
-      border-radius: 4px;
+      border: var(--poly-border-width, 1px) solid var(--poly-color-border, #e5e5e5);
+      border-radius: var(--poly-radius, 4px);
     }
     .poly-fold summary {
-      padding: 0.75rem 1rem;
+      padding: var(--poly-spacing-block-padding, 0.75rem 1rem);
       cursor: pointer;
       font-weight: 500;
-      background: #f9f9f9;
-      border-radius: 4px;
+      background: var(--poly-color-surface, #f9f9f9);
+      border-radius: var(--poly-radius, 4px);
     }
     .poly-fold[open] summary {
-      border-bottom: 1px solid #e5e5e5;
-      border-radius: 4px 4px 0 0;
+      border-bottom: var(--poly-border-width, 1px) solid var(--poly-color-border, #e5e5e5);
+      border-radius: var(--poly-radius, 4px) var(--poly-radius, 4px) 0 0;
     }
     .poly-fold .poly-fold-content {
-      padding: 1rem;
+      padding: var(--poly-spacing-block-padding, 1rem);
     }
   `);
 
@@ -995,13 +1029,13 @@ const tag: Component = (ctx) => {
       white-space: nowrap;
     }
     .poly-tag.filled {
-      background: #e5e7eb;
-      color: #374151;
+      background: var(--poly-color-surface, #e5e7eb);
+      color: var(--poly-color-text, #374151);
     }
     .poly-tag.outline {
       background: transparent;
-      border: 1px solid #d1d5db;
-      color: #374151;
+      border: var(--poly-border-width, 1px) solid var(--poly-color-border, #d1d5db);
+      color: var(--poly-color-text, #374151);
     }
   `);
 
@@ -1037,8 +1071,8 @@ const progress: Component = (ctx) => {
   if (displayStyle === "bar") {
     // Bar style
     const percentage = Math.min(100, Math.max(0, (value / max) * 100));
-    const fillColor = color || "#3b82f6";
-    const bgColor = emptyColor || "#e5e7eb";
+    const fillColor = color || "var(--poly-color-primary, #3b82f6)";
+    const bgColor = emptyColor || "var(--poly-color-surface, #e5e7eb)";
 
     ctx.addStyle(`
       .poly-progress-bar {
@@ -1047,13 +1081,13 @@ const progress: Component = (ctx) => {
         max-width: 200px;
         height: 8px;
         background: ${bgColor};
-        border-radius: 4px;
+        border-radius: var(--poly-radius, 4px);
         overflow: hidden;
         vertical-align: middle;
       }
       .poly-progress-bar-fill {
         height: 100%;
-        border-radius: 4px;
+        border-radius: var(--poly-radius, 4px);
         transition: width 0.3s ease;
       }
     `);
@@ -1063,8 +1097,8 @@ const progress: Component = (ctx) => {
     };
   } else {
     // Circles style (default)
-    const fillColor = color || "#3b82f6";
-    const bgColor = emptyColor || "#e5e7eb";
+    const fillColor = color || "var(--poly-color-primary, #3b82f6)";
+    const bgColor = emptyColor || "var(--poly-color-surface, #e5e7eb)";
     const fullCount = Math.floor(value);
     const hasHalf = value - fullCount >= 0.5;
     const emptyCount = Math.ceil(max) - fullCount - (hasHalf ? 1 : 0);
@@ -1102,14 +1136,55 @@ const progress: Component = (ctx) => {
  */
 const divider: Component = (ctx) => {
   const lineStyle = getArg(ctx.args, "style", "") || getArg(ctx.args, "s", "solid");
-  const color = getArg(ctx.args, "color", "") || getArg(ctx.args, "c", "#e5e7eb");
-  const margin = getArg(ctx.args, "margin", "") || getArg(ctx.args, "m", "1rem");
-  const width = getArg(ctx.args, "width", "") || getArg(ctx.args, "w", "1px");
+  const color = getArg(ctx.args, "color", "") || getArg(ctx.args, "c", "");
+  const margin = getArg(ctx.args, "margin", "") || getArg(ctx.args, "m", "");
+  const width = getArg(ctx.args, "width", "") || getArg(ctx.args, "w", "");
 
-  const style = `border: none; border-top: ${width} ${lineStyle} ${color}; margin: ${margin} 0;`;
+  const resolvedColor = color || "var(--poly-color-border, #e5e7eb)";
+  const resolvedMargin = margin || "var(--poly-spacing-section-gap, 1rem)";
+  const resolvedWidth = width || "var(--poly-border-width, 1px)";
+  const style = `border: none; border-top: ${resolvedWidth} ${lineStyle} ${resolvedColor}; margin: ${resolvedMargin} 0;`;
 
   return {
     html: `<hr class="poly-divider" style="${style}">`,
+  };
+};
+
+/**
+ * /pagebreak - Force a page break (for PDF output)
+ * Usage: /pagebreak
+ */
+const pagebreak: Component = (ctx) => {
+  ctx.addStyle(`
+    .poly-pagebreak {
+      page-break-after: always;
+      break-after: page;
+      height: 0;
+      margin: 0;
+      padding: 0;
+    }
+    @media screen {
+      .poly-pagebreak {
+        border-top: 1px dashed #ccc;
+        margin: 1rem 0;
+        position: relative;
+      }
+      .poly-pagebreak::after {
+        content: "page break";
+        position: absolute;
+        top: -0.6em;
+        left: 50%;
+        transform: translateX(-50%);
+        background: white;
+        padding: 0 0.5em;
+        font-size: 0.75rem;
+        color: #999;
+      }
+    }
+  `);
+
+  return {
+    html: `<div class="poly-pagebreak"></div>`,
   };
 };
 
@@ -1141,4 +1216,5 @@ export const components: Record<string, Component> = {
   tag,
   progress,
   divider,
+  pagebreak,
 };

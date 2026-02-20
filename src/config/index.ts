@@ -12,8 +12,12 @@ const CONFIG_DIR = join(homedir(), ".config", "polyester");
 const CONFIG_FILE = join(CONFIG_DIR, "config.toml");
 
 export interface PolyesterConfig {
-  /** Default theme for syntax highlighting */
+  /** Default composed theme */
   defaultTheme: string;
+  /** Default style module */
+  defaultStyle?: string;
+  /** Default spacing module */
+  defaultSpacing?: string;
 }
 
 const DEFAULT_CONFIG: PolyesterConfig = {
@@ -53,6 +57,8 @@ export function loadConfig(): PolyesterConfig {
 
     return {
       defaultTheme: data.default_theme || DEFAULT_CONFIG.defaultTheme,
+      defaultStyle: data.default_style || undefined,
+      defaultSpacing: data.default_spacing || undefined,
     };
   } catch (err) {
     console.warn(`Warning: Could not read config file: ${(err as Error).message}`);

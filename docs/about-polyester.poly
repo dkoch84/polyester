@@ -67,11 +67,11 @@ The difference: Polyester targets *documents*, not applications. No state, no ho
 
 ## Components
 
-Polyester includes **25+ built-in components** across four categories:
+Polyester includes **27 built-in components** across four categories:
 
 ### Layout Components
 
-- `page` - Document setup (size, margins, orientation)
+- `page` - Document setup (size, margins, orientation, pagination)
 - `columns` - Multi-column layouts with configurable gap
 - `grid` - CSS grid layouts with template definitions
 - `region` - Styled container with background and padding
@@ -81,6 +81,7 @@ Polyester includes **25+ built-in components** across four categories:
 - `frame` - Bordered box with radius options
 - `inline` - Horizontal arrangement with gap control
 - `divider` - Visual separator lines
+- `pagebreak` - Force page breaks in PDF output
 
 ### Content Components
 
@@ -160,6 +161,7 @@ Full IDE integration with:
 - Syntax highlighting with custom TextMate grammar
 - LSP integration (completions, hover docs, diagnostics)
 - **Live Preview** - See rendered output in a side panel
+- **Theme Studio** - Visual theme editor with live preview (`Ctrl+Shift+T`)
 - **Component Browser** - Sidebar with all components by category
 - **Search Components** - Quick picker to find and insert components
 - Build to HTML (`Ctrl+Alt+H`) and PDF (`Ctrl+Alt+P`)
@@ -194,11 +196,50 @@ require("polyester").setup({
 poly build document.poly                    # HTML (default)
 poly build document.poly --format pdf       # PDF
 poly build document.poly --format svg       # SVG
+poly build document.poly --style corporate  # Apply a style preset
+poly build document.poly --spacing compact  # Apply spacing preset
 }
 
-## Theming
+## Design System
 
-Import colorschemes from your terminal configuration:
+Polyester's theme system is built on three composable modules—**style**, **spacing**, and **syntax**—that can be mixed independently.
+
+### Style Presets
+
+Control colors, fonts, borders, and shadows. Built-in presets:
+
+/table --header --bordered {
+  Preset | Character
+  `default` | Clean blue on white, system fonts
+  `corporate` | Deep blue, Inter font, tight borders
+  `minimal` | Near-black on white, no ornament
+  `playful` | Purple accent, warm background, Nunito font
+  `dark` | Blue on slate, dark surfaces
+}
+
+### Spacing Presets
+
+Control density—margins, gaps, and padding. Built-in presets: `compact`, `default`, `spacious`.
+
+### Composing Themes
+
+Mix any style with any spacing. Set them via `/page` flags or CLI flags:
+
+/code polyester {
+/page A4 --style corporate --spacing compact
+}
+
+/code bash {
+poly build doc.poly --style playful --spacing spacious
+poly style list       # List available style presets
+poly spacing list     # List available spacing presets
+}
+
+Presets resolve to CSS custom properties (`--poly-color-primary`, `--poly-spacing-base`, etc.) that flow through every component.
+
+### Terminal Theme Import
+
+Import colorschemes from your terminal configuration as syntax themes:
 
 /code bash {
 poly theme import ~/.Xresources --name xresources
@@ -208,3 +249,39 @@ poly build doc.poly --theme kitty
 }
 
 Supported formats: Xresources, kitty, alacritty, pywal, base16.
+
+## Theme Studio
+
+The VS Code extension includes a visual theme editor. Open it with `Ctrl+Shift+T` (or *Polyester: Open Theme Studio* from the command palette).
+
+- Color pickers for all 14 design tokens
+- Font selectors for body, heading, and mono
+- Spacing sliders with real-time preview
+- Switch between style presets to use as a starting point
+- Preview against a reference document or your own `.poly` file
+- Export as a reusable JSON style module or copy CSS variables
+
+## AI-Native Authoring
+
+Polyester ships an MCP server (`poly-mcp`) so AI assistants can author `.poly` documents natively.
+
+/table --header --bordered {
+  Tool | Purpose
+  `list_components` | Browse all components, filter by category
+  `get_component_help` | Detailed docs for a component
+  `validate_document` | Parse and check for errors
+  `compile_document` | Compile to standalone HTML
+}
+
+Works with Claude Code, Cursor, Windsurf, and any MCP-compatible editor. Add to `.mcp.json`:
+
+/code json {
+{
+  "mcpServers": {
+    "polyester": {
+      "command": "node",
+      "args": ["dist/mcp/server.js"]
+    }
+  }
+}
+}

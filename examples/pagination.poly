@@ -1,0 +1,120 @@
+/page --pageless
+
+# Pagination Control in Polyester
+
+Polyester gives you control over how your document is paginated when generating PDFs.
+
+---
+
+## Pageless Mode
+
+This document uses `/page --pageless` which creates a **continuous, scrolling PDF** instead of breaking content into fixed A4 pages.
+
+This is useful when:
+- You want to prevent tables or figures from being split across pages
+- The document is primarily meant for screen viewing
+- You want precise control over where page breaks occur
+
+/frame --bg "#f0f9ff" --border "1px solid #0ea5e9" {
+  /code polyester {
+    /page --pageless
+
+    Your content flows continuously...
+  }
+}
+
+---
+
+## Explicit Page Breaks
+
+Even in pageless mode, you can insert explicit page breaks using `/pagebreak`:
+
+/frame --bg "#f0fdf4" --border "1px solid #22c55e" {
+  /code polyester {
+    # Section 1
+    Content for section one...
+
+    /pagebreak
+
+    # Section 2
+    This starts on a new page.
+  }
+}
+
+---
+
+## Example: Keeping Tables Together
+
+One common use case is ensuring tables don't get split across pages:
+
+/table --header --striped --bordered {
+  Feature | Description
+  `/page --pageless` | Creates a continuous PDF without automatic page breaks
+  `/pagebreak` | Forces a page break at that location
+  Default behavior | A4 pages with automatic breaks
+}
+
+Without `--pageless`, a long table might be split awkwardly between pages. With pageless mode, the table stays intact and you control exactly where breaks occur.
+
+/pagebreak
+
+# Page 2: After Explicit Break
+
+This content appears on a new page because we used `/pagebreak` above.
+
+## Usage Examples
+
+### Standard Paginated Document (Default)
+
+/frame {
+  /code polyester {
+    /page A4 --margin 2cm
+
+    Content is automatically split into A4 pages.
+  }
+}
+
+### Continuous Document
+
+/frame {
+  /code polyester {
+    /page --pageless
+
+    Content flows as one long page.
+    Use /pagebreak for manual control.
+  }
+}
+
+### Landscape Paginated
+
+/frame {
+  /code polyester {
+    /page letter --landscape --margin 1in
+
+    Wide content on landscape letter pages.
+  }
+}
+
+---
+
+## When to Use Each Mode
+
+/columns 2 {
+  /card --title "Use Pageless When:" {
+    /list {
+      Tables shouldn't split
+      Screen-first viewing
+      You want manual break control
+      Creating scrollable reports
+    }
+  }
+
+  /card --title "Use Default When:" {
+    /list {
+      Printing on paper
+      Standard document flow is fine
+      Following page size conventions
+      Headers/footers matter
+    }
+  }
+}

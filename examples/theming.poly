@@ -1,0 +1,134 @@
+/page A4 --style corporate --spacing default
+
+/hero --bg gradient {
+  /text "Design System Demo" --bold --size 2.5rem --color white
+  /text "Corporate style + default spacing" --color white --italic
+}
+
+## Style Presets
+
+Apply a style preset to change the entire visual identity of your document. This document uses `--style corporate`.
+
+/columns 2 --gap 2rem {
+
+  /card --icon star {
+    ### Corporate
+
+    Deep blue primary, Inter font, tight 0.25rem border radius. Professional and restrained.
+
+    /code polyester {
+      /page A4 --style corporate
+    }
+  }
+
+  /card --icon bolt {
+    ### Playful
+
+    Purple accent on warm background, Nunito font, generous 1rem border radius.
+
+    /code polyester {
+      /page A4 --style playful
+    }
+  }
+
+}
+
+## Spacing Comparison
+
+The spacing preset controls density. Compare `compact` vs `spacious`:
+
+/columns 2 --gap 2rem {
+
+  /frame --border "2px solid #e2e8f0" --padding 1.5rem --radius 8px {
+    /text "Compact" --bold --size 1.1rem
+
+    /table --header --bordered {
+      Token | Value
+      base | 0.75rem
+      page-margin | 1.5cm
+      section-gap | 1rem
+      column-gap | 1rem
+    }
+
+    Dense documents, data tables, dashboards.
+  }
+
+  /frame --border "2px solid #e2e8f0" --padding 1.5rem --radius 8px {
+    /text "Spacious" --bold --size 1.1rem
+
+    /table --header --bordered {
+      Token | Value
+      base | 1.25rem
+      page-margin | 3cm
+      section-gap | 3rem
+      column-gap | 2rem
+    }
+
+    Presentations, reports, marketing.
+  }
+
+}
+
+## Composing via CLI
+
+Mix any style with any spacing from the command line:
+
+/code bash {
+  # Corporate style, compact spacing
+  poly build report.poly --style corporate --spacing compact
+
+  # Playful style, spacious layout
+  poly build invite.poly --style playful --spacing spacious
+
+  # Dark mode, default spacing
+  poly build slides.poly --style dark --spacing default
+
+  # List available presets
+  poly style list
+  poly spacing list
+}
+
+## Inline CSS Overrides
+
+Override individual tokens with `/style` for one-off adjustments:
+
+/style {
+  .custom-accent {
+    --poly-color-primary: #e11d48;
+    --poly-radius: 1rem;
+  }
+}
+
+/region --bg #fef2f2 --padding 2rem {
+  This region demonstrates that you can combine preset styles with inline CSS variable overrides for full control.
+}
+
+## All Five Style Presets
+
+/columns 5 --gap 0.75rem {
+  /frame --bg #3b82f6 --padding 1.5rem --radius 8px {
+    /center {
+      /text "Default" --color white --bold --size 0.85rem
+    }
+  }
+  /frame --bg #1e40af --padding 1.5rem --radius 4px {
+    /center {
+      /text "Corporate" --color white --bold --size 0.85rem
+    }
+  }
+  /frame --bg #18181b --padding 1.5rem --radius 4px {
+    /center {
+      /text "Minimal" --color white --bold --size 0.85rem
+    }
+  }
+  /frame --bg #8b5cf6 --padding 1.5rem --radius 16px {
+    /center {
+      /text "Playful" --color white --bold --size 0.85rem
+    }
+  }
+  /frame --bg #0f172a --padding 1.5rem --radius 8px {
+    /center {
+      /text "Dark" --color #60a5fa --bold --size 0.85rem
+    }
+  }
+}

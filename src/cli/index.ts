@@ -18,7 +18,18 @@ import { resolve, basename, dirname, extname } from "node:path";
 import { parse } from "../parser/parser.js";
 import { compileToHtml } from "../backends/html/compiler.js";
 import { compileToSvg } from "../backends/svg/compiler.js";
-import { loadTheme, listThemes, saveTheme, themeToCSS } from "../themes/loader.js";
+import {
+  loadTheme,
+  listThemes,
+  saveTheme,
+  themeToCSS,
+  resolveModules,
+  styleToCSS,
+  spacingToCSS,
+  syntaxToCSS,
+  listStyles,
+  listSpacingPresets,
+} from "../themes/loader.js";
 import { importTheme, ImporterFormat } from "../themes/importers/index.js";
 import { loadConfig } from "../config/index.js";
 import {
@@ -35,6 +46,8 @@ interface CliArgs {
   output?: string;
   format?: string;
   theme?: string;
+  style?: string;
+  spacing?: string;
   name?: string;
   watch?: boolean;
   help?: boolean;
@@ -60,6 +73,10 @@ function parseArgs(args: string[]): CliArgs {
       result.format = args[++i];
     } else if (arg === "-t" || arg === "--theme") {
       result.theme = args[++i];
+    } else if (arg === "--style") {
+      result.style = args[++i];
+    } else if (arg === "--spacing") {
+      result.spacing = args[++i];
     } else if (arg === "-n" || arg === "--name") {
       result.name = args[++i];
     } else if (arg === "-w" || arg === "--watch") {
@@ -67,7 +84,7 @@ function parseArgs(args: string[]): CliArgs {
     } else if (!arg.startsWith("-")) {
       if (!result.command) {
         result.command = arg;
-      } else if (!result.subcommand && result.command === "theme") {
+      } else if (!result.subcommand && (result.command === "theme" || result.command === "style" || result.command === "spacing")) {
         result.subcommand = arg;
       } else if (!result.input) {
         result.input = arg;
@@ -90,19 +107,25 @@ Usage:
   poly help [component]
   poly theme import <file> --name <name> [--format <format>]
   poly theme list
+  poly style list
+  poly spacing list
 
 Commands:
   build           Compile a .poly file to HTML or PDF
   watch           Watch file and recompile on changes
   help            List all components or show help for a specific component
-  theme import    Import a colorscheme as a theme
+  theme import    Import a colorscheme as a syntax theme
   theme list      List available themes
+  style list      List available style modules
+  spacing list    List available spacing presets
 
 Options:
   -o, --output <file>   Output file path
   -f, --format <fmt>    Output format: html (default), pdf, svg
                         For theme import: xresources, pywal, base16, kitty, alacritty
-  -t, --theme <name>    Theme for syntax highlighting (default: default)
+  -t, --theme <name>    Composed theme (style + spacing + syntax)
+  --style <name>        Style module (colors, fonts, borders, shadows)
+  --spacing <name>      Spacing module (compact, default, spacious)
   -n, --name <name>     Name for imported theme
   -w, --watch           Watch for changes
   -h, --help            Show this help message
@@ -110,12 +133,14 @@ Options:
 Examples:
   poly build document.poly
   poly build document.poly -o out.html --theme gruvbox
+  poly build document.poly --style corporate --spacing compact
   poly build document.poly --format pdf -o out.pdf
   poly watch document.poly
   poly help
   poly help columns
   poly theme import ~/.Xresources --name gruvbox
   poly theme list
+  poly style list
 `);
 }
 
@@ -157,48 +182,86 @@ function printComponentHelp(componentName?: string, asJson?: boolean): void {
   }
 }
 
-function buildHtml(inputPath: string, outputPath: string, themeName?: string): void {
+function buildHtml(
+  inputPath: string,
+  outputPath: string,
+  opts?: { theme?: string; style?: string; spacing?: string },
+): void {
   const absoluteInput = resolve(inputPath);
   const source = readFileSync(absoluteInput, "utf-8");
 
-  // Load config and theme
+  // Load config
   const config = loadConfig();
-  const theme = loadTheme(themeName || config.defaultTheme);
-  const themeCSS = themeToCSS(theme);
 
-  // Parse
+  // Parse first to check for /page settings
   const ast = parse(source);
 
-  // Compile
-  const { html } = compileToHtml(ast, {
-    standalone: true,
-    title: basename(inputPath, ".poly"),
-    customCss: themeCSS,
+  // Initial compile to extract pageSettings (which may contain --theme/--style/--spacing)
+  const initialResult = compileToHtml(ast, { standalone: false });
+  const ps = initialResult.pageSettings;
+
+  // Resolve modules: CLI flags → /page flags → config defaults
+  const resolved = resolveModules({
+    theme: opts?.theme || ps.theme || config.defaultTheme,
+    style: opts?.style || ps.style,
+    spacing: opts?.spacing || ps.spacing,
   });
 
-  // Output
+  // Generate module CSS
+  const styleCss = styleToCSS(resolved.style);
+  const spacingCss = spacingToCSS(resolved.spacing);
+  const syntaxCss = syntaxToCSS(resolved.syntax, resolved.name);
+
+  // Re-compile with full CSS
+  const { html } = compileToHtml(ast, {
+    standalone: true,
+    title: basename(inputPath, ".poly"),
+    styleCss,
+    spacingCss,
+    syntaxCss,
+  });
+
   const absoluteOutput = resolve(outputPath);
   writeFileSync(absoluteOutput, html);
-  console.log(`✓ Compiled ${inputPath} → ${outputPath} (theme: ${theme.name})`);
+  console.log(`✓ Compiled ${inputPath} → ${outputPath}`);
 }
 
-async function buildPdf(inputPath: string, outputPath: string, themeName?: string): Promise<void> {
+async function buildPdf(
+  inputPath: string,
+  outputPath: string,
+  opts?: { theme?: string; style?: string; spacing?: string },
+): Promise<void> {
   const absoluteInput = resolve(inputPath);
   const source = readFileSync(absoluteInput, "utf-8");
 
-  // Load config and theme
+  // Load config
   const config = loadConfig();
-  const theme = loadTheme(themeName || config.defaultTheme);
-  const themeCSS = themeToCSS(theme);
 
   // Parse
   const ast = parse(source);
 
-  // Compile to HTML first
-  const { html } = compileToHtml(ast, {
+  // Initial compile to extract pageSettings
+  const initialResult = compileToHtml(ast, { standalone: false });
+  const ps = initialResult.pageSettings;
+
+  // Resolve modules
+  const resolved = resolveModules({
+    theme: opts?.theme || ps.theme || config.defaultTheme,
+    style: opts?.style || ps.style,
+    spacing: opts?.spacing || ps.spacing,
+  });
+
+  const styleCss = styleToCSS(resolved.style);
+  const spacingCss = spacingToCSS(resolved.spacing);
+  const syntaxCss = syntaxToCSS(resolved.syntax, resolved.name);
+
+  // Compile to HTML
+  const { html, pageSettings } = compileToHtml(ast, {
     standalone: true,
     title: basename(inputPath, ".poly"),
-    customCss: themeCSS,
+    styleCss,
+    spacingCss,
+    syntaxCss,
   });
 
   // Use Puppeteer to render HTML to PDF
@@ -212,16 +275,44 @@ async function buildPdf(inputPath: string, outputPath: string, themeName?: strin
   await page.setContent(html, { waitUntil: "networkidle0" });
 
   const absoluteOutput = resolve(outputPath);
-  await page.pdf({
-    path: absoluteOutput,
-    format: "A4",
-    margin: { top: "1.5cm", right: "1.5cm", bottom: "1.5cm", left: "1.5cm" },
-    printBackground: true,
-    preferCSSPageSize: true,
-  });
+
+  if (pageSettings.pageless) {
+    // Pageless mode: calculate full content height and render as single continuous page
+    const contentHeight = await page.evaluate(() => {
+      const body = document.body;
+      const html = document.documentElement;
+      return Math.max(
+        body.scrollHeight,
+        body.offsetHeight,
+        html.clientHeight,
+        html.scrollHeight,
+        html.offsetHeight
+      );
+    });
+
+    // Use a standard width (A4 width) but dynamic height
+    const pageWidth = 794; // A4 width in pixels at 96 DPI
+    const margin = pageSettings.margin || "1.5cm";
+
+    await page.pdf({
+      path: absoluteOutput,
+      width: pageWidth,
+      height: contentHeight + 100, // Add some padding
+      margin: { top: margin, right: margin, bottom: margin, left: margin },
+      printBackground: true,
+    });
+  } else {
+    await page.pdf({
+      path: absoluteOutput,
+      format: "A4",
+      margin: { top: "1.5cm", right: "1.5cm", bottom: "1.5cm", left: "1.5cm" },
+      printBackground: true,
+      preferCSSPageSize: true,
+    });
+  }
 
   await browser.close();
-  console.log(`✓ Compiled ${inputPath} → ${outputPath} (theme: ${theme.name})`);
+  console.log(`✓ Compiled ${inputPath} → ${outputPath}`);
 }
 
 function buildSvg(inputPath: string, outputPath: string, options?: { width?: number }): void {
@@ -242,10 +333,17 @@ function buildSvg(inputPath: string, outputPath: string, options?: { width?: num
   console.log(`✓ Compiled ${inputPath} → ${outputPath}`);
 }
 
-async function build(inputPath: string, outputPath?: string, themeName?: string, format?: string): Promise<void> {
+interface BuildOpts {
+  theme?: string;
+  style?: string;
+  spacing?: string;
+  format?: string;
+}
+
+async function build(inputPath: string, outputPath?: string, opts?: BuildOpts): Promise<void> {
   // Determine format from output extension or explicit format
-  let outputFormat = format || "html";
-  if (!format && outputPath) {
+  let outputFormat = opts?.format || "html";
+  if (!opts?.format && outputPath) {
     const ext = extname(outputPath).toLowerCase();
     if (ext === ".pdf") outputFormat = "pdf";
     else if (ext === ".svg") outputFormat = "svg";
@@ -258,25 +356,27 @@ async function build(inputPath: string, outputPath?: string, themeName?: string,
 
   const finalOutput = outputPath || inputPath.replace(/\.poly$/, defaultExt);
 
+  const moduleOpts = { theme: opts?.theme, style: opts?.style, spacing: opts?.spacing };
+
   if (outputFormat === "pdf") {
-    await buildPdf(inputPath, finalOutput, themeName);
+    await buildPdf(inputPath, finalOutput, moduleOpts);
   } else if (outputFormat === "svg") {
     buildSvg(inputPath, finalOutput);
   } else {
-    buildHtml(inputPath, finalOutput, themeName);
+    buildHtml(inputPath, finalOutput, moduleOpts);
   }
 }
 
-async function watchFile(inputPath: string, themeName?: string, format?: string): Promise<void> {
+async function watchFile(inputPath: string, opts?: BuildOpts): Promise<void> {
   const absoluteInput = resolve(inputPath);
-  const outputFormat = format || "html";
+  const outputFormat = opts?.format || "html";
   const outputPath = inputPath.replace(/\.poly$/, outputFormat === "pdf" ? ".pdf" : ".html");
 
   console.log(`Watching ${inputPath} (output: ${outputFormat})...`);
 
   // Initial build
   try {
-    await build(inputPath, outputPath, themeName, outputFormat);
+    await build(inputPath, outputPath, opts);
   } catch (err) {
     console.error(`Error: ${(err as Error).message}`);
   }
@@ -285,7 +385,7 @@ async function watchFile(inputPath: string, themeName?: string, format?: string)
   watch(absoluteInput, async (eventType) => {
     if (eventType === "change") {
       try {
-        await build(inputPath, outputPath, themeName, outputFormat);
+        await build(inputPath, outputPath, opts);
       } catch (err) {
         console.error(`Error: ${(err as Error).message}`);
       }
@@ -331,7 +431,12 @@ async function main(): Promise<void> {
         printHelp();
         process.exit(1);
       }
-      await build(args.input, args.output, args.theme, args.format);
+      await build(args.input, args.output, {
+        theme: args.theme,
+        style: args.style,
+        spacing: args.spacing,
+        format: args.format,
+      });
       break;
 
     case "watch":
@@ -340,7 +445,12 @@ async function main(): Promise<void> {
         printHelp();
         process.exit(1);
       }
-      await watchFile(args.input, args.theme, args.format);
+      await watchFile(args.input, {
+        theme: args.theme,
+        style: args.style,
+        spacing: args.spacing,
+        format: args.format,
+      });
       break;
 
     case "help":
@@ -370,6 +480,36 @@ async function main(): Promise<void> {
         default:
           console.error("Error: Unknown theme subcommand");
           console.error("Available: import, list");
+          process.exit(1);
+      }
+      break;
+
+    case "style":
+      switch (args.subcommand) {
+        case "list":
+          console.log("Available styles:");
+          for (const name of listStyles()) {
+            console.log(`  ${name}`);
+          }
+          break;
+        default:
+          console.error("Error: Unknown style subcommand");
+          console.error("Available: list");
+          process.exit(1);
+      }
+      break;
+
+    case "spacing":
+      switch (args.subcommand) {
+        case "list":
+          console.log("Available spacing presets:");
+          for (const name of listSpacingPresets()) {
+            console.log(`  ${name}`);
+          }
+          break;
+        default:
+          console.error("Error: Unknown spacing subcommand");
+          console.error("Available: list");
           process.exit(1);
       }
       break;

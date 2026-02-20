@@ -1,0 +1,97 @@
+/page A4 --pageless
+
+/hero --bg gradient {
+  # Theme Studio
+  See your design tokens in action. Every element on this page
+  responds to your changes in real time.
+}
+
+## Colors
+
+### Primary Color
+Used by buttons, links, active states, and accent elements.
+
+/inline --gap 0.5rem --wrap {
+  /button primary "Primary Button"
+  /button secondary "Secondary"
+}
+
+/progress 65 --max 100 --style bar
+
+/inline --gap 0.5rem {
+  /tag "Active"
+  /tag "Draft" --variant outline
+}
+
+### Surface & Background
+Cards, regions, and table headers use the surface color. Borders use the border color.
+
+/card {
+  This card uses `--poly-color-surface` for its background
+  and `--poly-color-border` for its outline.
+}
+
+/table --header --striped --bordered {
+  Component | Token Used
+  Card background | surface
+  Table header | surface
+  Striped rows | surface
+  All borders | border
+}
+
+### Text Colors
+
+/text "Primary text uses --poly-color-text" --size 1.1rem
+
+/text "Muted text uses --poly-color-text-muted" --color muted
+
+/quote {
+  Blockquotes use the primary color for the left border
+  and muted text color for attribution.
+}
+
+## Typography
+
+### Font Families
+
+/text "Body text uses --poly-font-body" --size 1rem
+
+/text "Headings use --poly-font-heading" --size 1.5rem --bold
+
+/code javascript --title "Mono font" {
+  // Code blocks use --poly-font-mono
+  const greeting = "Hello, Polyester!";
+  console.log(greeting);
+}
+
+## Borders & Shapes
+
+/frame --border "2px solid" --radius 8px {
+  Border radius controlled by `--poly-radius`.
+  Border color by `--poly-color-border`.
+}
+
+## Shadows
+
+/card --icon sparkles {
+  Card shadow controlled by `--poly-shadow-card`.
+}
+
+## Spacing
+
+/columns 3 {
+  /card { Column gap uses `--poly-spacing-column-gap` }
+  /card { Controlled by the spacing module }
+  /card { Independent from visual style }
+}
+
+/fold "Collapsible Section" {
+  Block padding inside components uses `--poly-spacing-block-padding`.
+  This fold's border and background also respond to design tokens.
+}
+
+/divider
+
+/region --bg surface {
+  Regions default to `--poly-spacing-block-padding` for their inner spacing.
+}

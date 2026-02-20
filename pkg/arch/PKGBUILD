@@ -1,0 +1,40 @@
+# Maintainer: Daniel <daniel@localhost>
+pkgname=polyester
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="Document authoring language combining Markdown simplicity with programming power"
+arch=('any')
+url="https://github.com/dkoch84/polyester"
+license=('MIT')
+depends=('nodejs>=20')
+makedepends=('npm')
+options=('!debug' '!strip')
+
+_polydir="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+
+build() {
+    cd "$_polydir"
+    npm ci --ignore-scripts
+    npm run build
+}
+
+package() {
+    cd "$_polydir"
+
+    # Install to /usr/lib/polyester
+    local instdir="$pkgdir/usr/lib/polyester"
+    install -dm755 "$instdir"
+
+    cp -r dist "$instdir/"
+    cp package.json package-lock.json "$instdir/"
+
+    # Install production dependencies only
+    cd "$instdir"
+    npm ci --omit=dev --ignore-scripts
+
+    # Create bin links
+    install -dm755 "$pkgdir/usr/bin"
+    ln -s /usr/lib/polyester/dist/cli/index.js "$pkgdir/usr/bin/poly"
+    ln -s /usr/lib/polyester/dist/lsp/server.js "$pkgdir/usr/bin/poly-lsp"
+    ln -s /usr/lib/polyester/dist/mcp/server.js "$pkgdir/usr/bin/poly-mcp"
+}

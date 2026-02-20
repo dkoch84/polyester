@@ -12,7 +12,10 @@
       "Bash(bash:*)",
       "Bash(npm test:*)",
       "Bash(code --install-extension:*)",
-      "Bash(npx @vscode/vsce package:*)"
+      "Bash(npx @vscode/vsce package:*)",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "Bash(env -u VIRTUAL_ENV PATH=\"/usr/bin:/bin:$PATH\" makepkg:*)"
     ]
   }
 }

@@ -37,17 +37,35 @@ export interface CompileOptions {
   customCss?: string;
   /** Document title (for standalone mode) */
   title?: string;
+  /** CSS for style tokens (design system colors, fonts, etc.) */
+  styleCss?: string;
+  /** CSS for spacing tokens */
+  spacingCss?: string;
+  /** CSS for syntax highlighting */
+  syntaxCss?: string;
+}
+
+export interface PageSettings {
+  pageless?: boolean;
+  size?: string;
+  orientation?: string;
+  margin?: string;
+  theme?: string;
+  style?: string;
+  spacing?: string;
 }
 
 export interface CompileResult {
   html: string;
   css: string;
+  pageSettings: PageSettings;
 }
 
 export class HtmlCompiler {
   private options: CompileOptions;
   private cssClasses: Set<string> = new Set();
   private customStyles: string[] = [];
+  private pageSettings: PageSettings = {};
 
   constructor(options: CompileOptions = {}) {
     this.options = {
@@ -60,6 +78,7 @@ export class HtmlCompiler {
     // Reset state
     this.cssClasses = new Set();
     this.customStyles = [];
+    this.pageSettings = {};
 
     // Compile document body
     const bodyHtml = this.compileChildren(doc.children);
@@ -75,7 +94,7 @@ export class HtmlCompiler {
       html = bodyHtml;
     }
 
-    return { html, css };
+    return { html, css, pageSettings: this.pageSettings };
   }
 
   private compileChildren(children: (Command | Content)[]): string {
@@ -164,6 +183,9 @@ export class HtmlCompiler {
       renderMarkdown: (text: string) => this.renderMarkdown(text),
       addClass: (cls: string) => this.cssClasses.add(cls),
       addStyle: (css: string) => this.customStyles.push(css),
+      setPageSettings: (settings) => {
+        this.pageSettings = { ...this.pageSettings, ...settings };
+      },
     };
 
     // Execute component
@@ -221,12 +243,25 @@ export class HtmlCompiler {
   }
 
   private generateCss(): string {
+    // CSS cascade order:
+    // 1. Spacing tokens   (:root { --poly-spacing-*: ...; })
+    // 2. Style tokens     (:root { --poly-color-*, --poly-font-*, etc. })
+    // 3. Base CSS         (uses var(--poly-*) with fallbacks)
+    // 4. Component CSS    (uses var(--poly-*) with fallbacks)
+    // 5. Syntax theme CSS (.hljs-* rules)
+    // 6. User /style CSS  (full override power)
+
+    const spacingCss = this.options.spacingCss || "";
+    const styleCss = this.options.styleCss || "";
+    const syntaxCss = this.options.syntaxCss || "";
+
     const baseCss = `
 /* Polyester Base Styles */
 .poly-document {
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: var(--poly-font-body, system-ui, -apple-system, sans-serif);
   line-height: 1.6;
-  color: #1a1a1a;
+  color: var(--poly-color-text, #1a1a1a);
+  background: var(--poly-color-bg, #ffffff);
   max-width: 800px;
   margin: 0 auto;
   padding: 2rem;
@@ -241,7 +276,7 @@ export class HtmlCompiler {
 }
 
 .poly-content {
-  margin-bottom: 1rem;
+  margin-bottom: var(--poly-spacing-base, 1rem);
 }
 
 .poly-content p {
@@ -249,6 +284,7 @@ export class HtmlCompiler {
 }
 
 .poly-content h1, .poly-content h2, .poly-content h3 {
+  font-family: var(--poly-font-heading, system-ui, -apple-system, sans-serif);
   margin: 1.5em 0 0.5em 0;
   line-height: 1.3;
 }
@@ -260,16 +296,16 @@ export class HtmlCompiler {
 /* Component styles */
 .poly-columns {
   display: grid;
-  gap: 1.5rem;
+  gap: var(--poly-spacing-column-gap, 1.5rem);
 }
 
 .poly-grid {
   display: grid;
-  gap: 1rem;
+  gap: var(--poly-spacing-column-gap, 1rem);
 }
 
 .poly-region {
-  padding: 1rem;
+  padding: var(--poly-spacing-block-padding, 1rem);
 }
 
 .poly-sidebar {
@@ -277,7 +313,7 @@ export class HtmlCompiler {
 }
 
 .poly-quote {
-  border-left: 4px solid #e5e5e5;
+  border-left: 4px solid var(--poly-color-primary, #e5e5e5);
   padding-left: 1rem;
   margin: 1rem 0;
   font-style: italic;
@@ -288,7 +324,7 @@ export class HtmlCompiler {
   font-size: 1.5rem;
   text-align: center;
   padding: 2rem;
-  color: #666;
+  color: var(--poly-color-text-muted, #666);
 }
 
 .poly-hero {
@@ -297,9 +333,10 @@ export class HtmlCompiler {
 }
 
 .poly-card {
-  border: 1px solid #e5e5e5;
-  border-radius: 0.5rem;
-  padding: 1.5rem;
+  border: var(--poly-border-width, 1px) solid var(--poly-color-border, #e5e5e5);
+  border-radius: var(--poly-radius, 0.5rem);
+  padding: var(--poly-spacing-card-padding, 1.5rem);
+  box-shadow: var(--poly-shadow-card, none);
 }
 
 .poly-text {
@@ -317,17 +354,18 @@ export class HtmlCompiler {
 }
 
 .poly-content code {
-  background: #f3f4f6;
+  background: var(--poly-color-surface, #f3f4f6);
   padding: 0.125em 0.25em;
-  border-radius: 0.25em;
+  border-radius: var(--poly-radius, 0.25em);
+  font-family: var(--poly-font-mono, ui-monospace, monospace);
   font-size: 0.9em;
 }
 
 .poly-content pre {
   background: #0d1117;
   color: #c9d1d9;
-  padding: 1rem;
-  border-radius: 0.5rem;
+  padding: var(--poly-spacing-block-padding, 1rem);
+  border-radius: var(--poly-radius, 0.5rem);
   overflow-x: auto;
   margin: 1em 0;
 }
@@ -338,7 +376,7 @@ export class HtmlCompiler {
   color: inherit;
 }
 
-/* Syntax highlighting (GitHub Dark theme) */
+/* Syntax highlighting (GitHub Dark theme — overridden by syntax CSS) */
 .hljs-comment,
 .hljs-quote { color: #8b949e; }
 
@@ -389,25 +427,25 @@ export class HtmlCompiler {
 }
 
 .poly-content th, .poly-content td {
-  border: 1px solid #e5e7eb;
+  border: var(--poly-border-width, 1px) solid var(--poly-color-border, #e5e7eb);
   padding: 0.5rem 0.75rem;
   text-align: left;
 }
 
 .poly-content th {
-  background: #f9fafb;
+  background: var(--poly-color-surface, #f9fafb);
   font-weight: 600;
 }
 
 .poly-content blockquote {
-  border-left: 4px solid #e5e5e5;
+  border-left: 4px solid var(--poly-color-primary, #e5e5e5);
   padding-left: 1rem;
   margin: 1em 0;
-  color: #666;
+  color: var(--poly-color-text-muted, #666);
 }
 
 .poly-content a {
-  color: #3b82f6;
+  color: var(--poly-color-link, #3b82f6);
   text-decoration: underline;
 }
 
@@ -418,15 +456,23 @@ export class HtmlCompiler {
 
 .poly-content hr {
   border: none;
-  border-top: 1px solid #e5e7eb;
-  margin: 2em 0;
+  border-top: var(--poly-border-width, 1px) solid var(--poly-color-border, #e5e7eb);
+  margin: var(--poly-spacing-section-gap, 2em) 0;
 }
 `;
 
     // Add custom styles from components
-    const customCss = this.customStyles.join("\n");
+    const componentCss = this.customStyles.join("\n");
 
-    return baseCss + "\n" + customCss + "\n" + (this.options.customCss || "");
+    // Cascade: spacing → style → base → components → syntax → user
+    return [
+      spacingCss,
+      styleCss,
+      baseCss,
+      componentCss,
+      syntaxCss,
+      this.options.customCss || "",
+    ].filter(Boolean).join("\n");
   }
 
   private wrapStandalone(body: string, css: string): string {

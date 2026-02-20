@@ -1,0 +1,454 @@
+/page A4 --margin 0 --max-width none
+
+/style {
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  .poly-grid {
+    align-items: stretch;
+  }
+  .poly-grid > .poly-region:first-child {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0.5rem 0.75rem !important;
+  }
+  .poly-grid > .poly-region:first-child .poly-code-block {
+    margin: 0;
+  }
+  .poly-grid > .poly-region:first-child .poly-code-block pre {
+    background: transparent !important;
+    margin: 0;
+    padding: 0;
+  }
+  .poly-grid > .poly-region:first-child .poly-code-block code {
+    color: #ebdbb2;
+  }
+
+  @media (max-width: 900px) {
+    .poly-grid {
+      grid-template-columns: 1fr !important;
+    }
+    .poly-grid > .poly-region:first-child {
+      display: none !important;
+    }
+  }
+}
+
+/grid "420px 1fr" {
+
+  /region --bg #282828 --padding 1.5rem {
+    /code polyester {
+      /hero --bg gradient {
+        /vcenter --height 60vh {
+          /text "Design Tokens" --bold
+          --size 3rem --color white
+
+          /text "that compose" --size 1.5rem
+          --color white --italic
+        }
+      }
+    }
+  }
+
+  /hero --bg gradient {
+    /vcenter --height 60vh {
+      /text "Design Tokens" --bold --size 3rem --color white --tracking wide
+      /text "that compose" --size 1.5rem --color white --italic
+
+      /region --padding 1rem {
+        Mix style, spacing, and syntax modules independently. Every combination works.
+      }
+
+      /region --padding 1rem {
+        /button primary "Back to Home" --href "index.html"
+      }
+    }
+  }
+
+}
+
+/grid "420px 1fr" {
+
+  /region --bg #282828 --padding 1.5rem {
+    /code polyester {
+      ## Three Modules
+
+      /columns 3 --gap 1rem {
+        /card --icon paintbrush {
+          ### Style
+          Colors, fonts, borders, shadows
+        }
+        /card --icon ruler {
+          ### Spacing
+          Margins, gaps, padding
+        }
+        /card --icon code {
+          ### Syntax
+          Code block highlighting
+        }
+      }
+    }
+  }
+
+  /region --padding 3rem {
+
+    ## Three Composable Modules
+
+    Polyester's design system splits theming into three independent modules. Each can be set separately via `/page` flags or CLI flags.
+
+    /columns 3 --gap 2rem {
+      /card --icon star {
+        ### Style
+
+        Colors, fonts, borders, and shadows. Controls the visual identity of your document.
+
+        /code polyester {
+          /page A4 --style corporate
+        }
+      }
+
+      /card --icon bolt {
+        ### Spacing
+
+        Margins, gaps, and padding density. Controls how tight or airy the layout feels.
+
+        /code polyester {
+          /page A4 --spacing compact
+        }
+      }
+
+      /card --icon shield {
+        ### Syntax
+
+        Code block highlighting colors. Imported from terminal themes or set manually.
+
+        /code bash {
+          poly theme import ~/.Xresources
+        }
+      }
+    }
+
+  }
+
+}
+
+/grid "420px 1fr" {
+
+  /region --bg #282828 --padding 1.5rem {
+    /code json --title "corporate style" {
+      {
+        "colors": {
+          "primary": "#1e40af",
+          "background": "#ffffff",
+          "text": "#1e293b"
+        },
+        "fonts": {
+          "body": "Inter, sans-serif",
+          "heading": "Inter, sans-serif",
+          "mono": "JetBrains Mono, monospace"
+        },
+        "borders": {
+          "radius": "0.25rem"
+        }
+      }
+    }
+  }
+
+  /region --bg white --padding 3rem {
+
+    ## Style Presets
+
+    Five built-in style presets. Each defines colors, fonts, borders, shadows, and hero gradient.
+
+    /table --header --bordered {
+      Preset | Primary | Background | Font | Character
+      `default` | `#3b82f6` | white | system-ui | Clean and neutral
+      `corporate` | `#1e40af` | white | Inter | Professional, tight borders
+      `minimal` | `#18181b` | white | system-ui | Near-black, no ornament
+      `playful` | `#8b5cf6` | `#fffbeb` | Nunito | Warm, rounded, vibrant
+      `dark` | `#60a5fa` | `#0f172a` | system-ui | Dark surfaces, blue accents
+    }
+
+    /region --padding 1rem {
+      /text "Visual preview:" --bold --size 0.9rem
+
+      /columns 5 --gap 0.75rem {
+        /frame --bg #3b82f6 --padding 1rem --radius 8px {
+          /text "default" --color white --size 0.8rem
+        }
+        /frame --bg #1e40af --padding 1rem --radius 4px {
+          /text "corporate" --color white --size 0.8rem
+        }
+        /frame --bg #18181b --padding 1rem --radius 4px {
+          /text "minimal" --color white --size 0.8rem
+        }
+        /frame --bg #8b5cf6 --padding 1rem --radius 16px {
+          /text "playful" --color white --size 0.8rem
+        }
+        /frame --bg #0f172a --padding 1rem --radius 8px {
+          /text "dark" --color #60a5fa --size 0.8rem
+        }
+      }
+    }
+
+  }
+
+}
+
+/grid "420px 1fr" {
+
+  /region --bg #282828 --padding 1.5rem {
+    /code polyester {
+      ## Spacing Presets
+
+      /table --header {
+        Token | Compact | Default | Spacious
+        base | 0.75rem | 1rem | 1.25rem
+        page-margin | 1.5cm | 2cm | 3cm
+        section-gap | 1rem | 2rem | 3rem
+        column-gap | 1rem | 1.5rem | 2rem
+        card-padding | 1rem | 1.5rem | 2rem
+        block-padding | 0.75rem | 1rem | 1.5rem
+      }
+    }
+  }
+
+  /region --bg #f8fafc --padding 3rem {
+
+    ## Spacing Presets
+
+    Three built-in density levels. Each controls six spacing tokens.
+
+    /table --header --striped --bordered {
+      Token | Compact | Default | Spacious
+      `base` | 0.75rem | 1rem | 1.25rem
+      `page-margin` | 1.5cm | 2cm | 3cm
+      `section-gap` | 1rem | 2rem | 3rem
+      `column-gap` | 1rem | 1.5rem | 2rem
+      `card-padding` | 1rem | 1.5rem | 2rem
+      `block-padding` | 0.75rem | 1rem | 1.5rem
+    }
+
+    Use `compact` for dense data documents, `spacious` for presentations and reports.
+
+  }
+
+}
+
+/grid "420px 1fr" {
+
+  /region --bg #282828 --padding 1.5rem {
+    /code polyester {
+      /page A4 --style playful --spacing compact
+
+      ## Composing Themes
+
+      Mix any style with any spacing:
+
+      /code bash {
+        poly build doc.poly
+          --style corporate
+          --spacing spacious
+      }
+    }
+  }
+
+  /region --padding 3rem {
+
+    ## Composing Themes
+
+    Any style preset works with any spacing preset. Set them on `/page` or via CLI flags.
+
+    /code polyester {
+      /page A4 --style playful --spacing compact
+    }
+
+    /code bash {
+      poly build doc.poly --style corporate --spacing spacious
+    }
+
+    ### Priority
+
+    CLI flags override `/page` flags, which override config defaults:
+
+    /code text {
+      CLI --style / --spacing
+        > /page --style / --spacing
+        > ~/.config/polyester/config.toml
+        > built-in defaults
+    }
+
+    ### Custom Modules
+
+    Save a JSON file to `~/.config/polyester/styles/` or `~/.config/polyester/spacing/` and reference it by name:
+
+    /code json --title "~/.config/polyester/styles/acme.json" {
+      {
+        "colors": {
+          "primary": "#e11d48",
+          "background": "#fafafa",
+          "text": "#1c1917"
+        },
+        "fonts": {
+          "body": "Lora, serif"
+        }
+      }
+    }
+
+    /code bash {
+      poly build report.poly --style acme
+    }
+
+  }
+
+}
+
+/grid "420px 1fr" {
+
+  /region --bg #282828 --padding 1.5rem {
+    /code css {
+      :root {
+        --poly-color-primary: #3b82f6;
+        --poly-color-bg: #ffffff;
+        --poly-color-text: #1e293b;
+        --poly-font-body: system-ui;
+        --poly-radius: 0.5rem;
+        --poly-spacing-base: 1rem;
+        --poly-spacing-column-gap: 1.5rem;
+      }
+    }
+  }
+
+  /region --bg #1e293b --padding 3rem {
+
+    /text "CSS Variable Architecture" --bold --size 1.5rem --color white
+
+    /region --padding 1rem {
+      /text "Every token maps to a --poly-* CSS custom property." --color #94a3b8
+    }
+
+    /columns 2 --gap 2rem {
+
+      /frame --bg #334155 --padding 1.5rem --radius 8px {
+        /text "Style Variables" --bold --color white --size 0.9rem
+
+        /code text {
+          --poly-color-primary
+          --poly-color-primary-light
+          --poly-color-primary-dark
+          --poly-color-secondary
+          --poly-color-accent
+          --poly-color-bg
+          --poly-color-surface
+          --poly-color-text
+          --poly-color-text-muted
+          --poly-color-border
+          --poly-color-link
+          --poly-font-body
+          --poly-font-heading
+          --poly-font-mono
+          --poly-radius
+          --poly-border-width
+          --poly-shadow-card
+          --poly-hero-gradient
+        }
+      }
+
+      /frame --bg #334155 --padding 1.5rem --radius 8px {
+        /text "Spacing Variables" --bold --color white --size 0.9rem
+
+        /code text {
+          --poly-spacing-base
+          --poly-spacing-page-margin
+          --poly-spacing-section-gap
+          --poly-spacing-column-gap
+          --poly-spacing-card-padding
+          --poly-spacing-block-padding
+        }
+
+        /region --padding 1rem {
+          /text "Override any variable with /style:" --color #94a3b8 --size 0.85rem
+        }
+
+        /code polyester {
+          /style {
+            :root {
+              --poly-color-primary: #e11d48;
+            }
+          }
+        }
+      }
+
+    }
+
+  }
+
+}
+
+/grid "420px 1fr" {
+
+  /region --bg #282828 --padding 1.5rem {
+    /code bash {
+      # List presets
+      poly style list
+      poly spacing list
+
+      # Build with presets
+      poly build doc.poly --style corporate
+      poly build doc.poly --spacing compact
+
+      # Combine freely
+      poly build doc.poly \
+        --style playful \
+        --spacing spacious \
+        --format pdf
+    }
+  }
+
+  /region --bg #f0fdf4 --padding 3rem {
+
+    ## CLI Usage
+
+    /code bash {
+      # List available presets
+      poly style list
+      poly spacing list
+
+      # Apply presets
+      poly build doc.poly --style corporate --spacing compact
+
+      # Compose with format
+      poly build doc.poly --style playful --spacing spacious --format pdf
+
+      # Import terminal colorscheme as syntax theme
+      poly theme import ~/.config/kitty/kitty.conf --name kitty
+      poly theme list
+    }
+
+  }
+
+}
+
+/grid "420px 1fr" {
+
+  /region --bg #282828 --padding 1.5rem {
+  }
+
+  /region --bg #282828 --padding 3rem {
+    /center {
+      /text "Polyester Design System" --bold --size 1.5rem --color white --tracking wide
+
+      /region --padding 1rem {
+        /inline --gap 1rem {
+          /button secondary "Home" --href "index.html"
+          /button secondary "Theme Studio" --href "theme-studio.html"
+          /button secondary "MCP Server" --href "mcp.html"
+        }
+      }
+    }
+  }
+
+}

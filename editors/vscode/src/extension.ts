@@ -23,6 +23,7 @@ import { showComponentDocs, showReferenceDocs, showCategoryDocs, disposePanel } 
 import { ReferenceSection, CategorySection } from "./glossary";
 import { showComponentSearch, showDocsForCurrentWord } from "./docsQuickPick";
 import { openLivePreview, disposePreview } from "./livePreview";
+import { openThemeEditor, disposeThemeEditor } from "./themeEditor";
 
 let client: LanguageClient | undefined;
 let docsTreeProvider: DocsTreeProvider | undefined;
@@ -216,6 +217,11 @@ export function activate(context: vscode.ExtensionContext) {
       openLivePreview(context);
     }),
 
+    // Theme editor
+    vscode.commands.registerCommand("polyester.openThemeEditor", () => {
+      openThemeEditor(context);
+    }),
+
     // Tree view
     treeView,
 
@@ -230,6 +236,7 @@ export function activate(context: vscode.ExtensionContext) {
 export function deactivate(): Thenable<void> | undefined {
   disposePanel();
   disposePreview();
+  disposeThemeEditor();
   if (!client) {
     return undefined;
   }
