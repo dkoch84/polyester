@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 5524.400000000004" width="800" height="5524.400000000004">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 7348.400000000011" width="800" height="7348.400000000011">
   <defs>
     <linearGradient id="polyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#667eea"/>
@@ -6,300 +6,397 @@
     </linearGradient>
   </defs>
   <rect width="100%" height="100%" fill="#ffffff"/>
-<rect x="0" y="40" width="800" height="296" fill="url(#polyGradient)"/>
+<rect x="0" y="40" width="800" height="222" fill="url(#polyGradient)"/>
 <text x="400" y="148" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="48" fill="#ffffff" font-weight="600" text-anchor="middle">Polyester</text>
 <text x="400" y="192" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" fill="#ffffff" font-weight="normal" font-style="italic" text-anchor="middle">A document authoring language for humans</text>
-<a href="https://dkoch84.github.io/polyester/" target="_blank"><rect x="311" y="217" width="178" height="44" rx="8" fill="#8b5cf6" stroke="none" stroke-width="0"/>
-  <text x="400" y="244" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" fill="#ffffff" text-anchor="middle" font-weight="600">Documentation</text></a>
-<text x="40" y="381.6" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Polyester is a document authoring language that occupies an interesting niche in the</text>
-<text x="40" y="407.20000000000005" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">markup landscape. It combines the readability of Markdown with the structured power of</text>
-<text x="40" y="432.80000000000007" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">LaTeX, sitting alongside Typst as a modern alternative for document creation.</text>
-<text x="40" y="488.80000000000007" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="600" fill="#1a1a1a">Core Philosophy</text>
-<text x="40" y="534.4000000000001" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Polyester uses a /command syntax that's intuitive and readable. Unlike LaTeX's backslash</text>
-<text x="40" y="560.0000000000001" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">escapes or Typst's hash-based functions, Polyester commands feel more like CLI</text>
-<text x="40" y="585.6000000000001" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">invocations—familiar territory for developers.</text>
-<text x="40" y="641.6000000000001" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="600" fill="#1a1a1a">Key Characteristics</text>
-<text x="40" y="697.6000000000001" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Hybrid Content Model</text>
-<circle cx="50" cy="743.6000000000001" r="3" fill="#1a1a1a"/>
-<text x="65" y="749.2000000000002" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Commands start with / at the beginning of a line</text>
-<circle cx="50" cy="769.2000000000002" r="3" fill="#1a1a1a"/>
-<text x="65" y="774.8000000000002" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Plain Markdown flows naturally between commands</text>
-<circle cx="50" cy="794.8000000000002" r="3" fill="#1a1a1a"/>
-<text x="65" y="800.4000000000002" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">No need to wrap everything in special syntax</text>
-<text x="40" y="852.4000000000002" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Flexible Arguments</text>
-<rect x="40" y="888.4000000000002" width="720" height="52" rx="8" fill="#1e1e1e"/>
-<text x="56" y="918.4000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/command</text><text x="123.2" y="918.4000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> positional </text><text x="224" y="918.4000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#a5d6ff">"quoted arg"</text><text x="324.8" y="918.4000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> </text><text x="333.2" y="918.4000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--flag</text><text x="383.6" y="918.4000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> value </text><text x="442.40000000000003" y="918.4000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#d2a8ff">{</text><text x="450.8" y="918.4000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> block content </text><text x="576.8" y="918.4000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#d2a8ff">}</text>
-<text x="40" y="986.0000000000002" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Positional args, quoted strings, flags, and blocks all coexist cleanly.</text>
-<text x="40" y="1030.0000000000002" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Pipe Transforms</text>
-<rect x="40" y="1066.0000000000002" width="720" height="52" rx="8" fill="#1e1e1e"/>
-<text x="56" y="1096.0000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/text</text><text x="98" y="1096.0000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> </text><text x="106.4" y="1096.0000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#a5d6ff">"hello"</text><text x="165.20000000000002" y="1096.0000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> </text><text x="173.60000000000002" y="1096.0000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#ffa657">|</text><text x="182.00000000000003" y="1096.0000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> bold </text><text x="232.40000000000003" y="1096.0000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#ffa657">|</text><text x="240.80000000000004" y="1096.0000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> color red</text>
-<text x="40" y="1163.6000000000001" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">This functional chaining is unique—neither Markdown, LaTeX, nor Typst have this pattern</text>
-<text x="40" y="1189.2" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">built-in.</text>
-<text x="40" y="1233.2" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Block Nesting</text>
-<text x="40" y="1276.8" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Curly braces contain nested content, enabling structured layouts without escaping into a</text>
-<text x="40" y="1302.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">different mode.</text>
-<text x="40" y="1358.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="600" fill="#1a1a1a">Compared to Neighbors</text>
-<rect x="40" y="1396.3999999999999" width="720" height="324" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" rx="4"/>
-<rect x="40" y="1396.3999999999999" width="720" height="36" fill="#f9fafb" rx="4"/>
-<text x="52" y="1419.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="600">Feature</text>
-<line x1="160" y1="1396.3999999999999" x2="160" y2="1432.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="172" y="1419.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="600">Markdown</text>
-<line x1="280" y1="1396.3999999999999" x2="280" y2="1432.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="292" y="1419.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="600">LaTeX</text>
-<line x1="400" y1="1396.3999999999999" x2="400" y2="1432.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="412" y="1419.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="600">Typst</text>
-<line x1="520" y1="1396.3999999999999" x2="520" y2="1432.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="532" y="1419.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="600">React</text>
-<line x1="640" y1="1396.3999999999999" x2="640" y2="1432.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="652" y="1419.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="600">Polyester</text>
-<line x1="40" y1="1432.3999999999999" x2="760" y2="1432.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="52" y="1455.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Learning curve</text>
-<line x1="160" y1="1432.3999999999999" x2="160" y2="1468.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="172" y="1455.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Low</text>
-<line x1="280" y1="1432.3999999999999" x2="280" y2="1468.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="292" y="1455.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">High</text>
-<line x1="400" y1="1432.3999999999999" x2="400" y2="1468.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="412" y="1455.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Medium</text>
-<line x1="520" y1="1432.3999999999999" x2="520" y2="1468.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="532" y="1455.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Medium</text>
-<line x1="640" y1="1432.3999999999999" x2="640" y2="1468.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="652" y="1455.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Low</text>
-<line x1="40" y1="1468.3999999999999" x2="760" y2="1468.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="52" y="1491.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Layout control</text>
-<line x1="160" y1="1468.3999999999999" x2="160" y2="1504.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="172" y="1491.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Minimal</text>
-<line x1="280" y1="1468.3999999999999" x2="280" y2="1504.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="292" y="1491.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Full</text>
-<line x1="400" y1="1468.3999999999999" x2="400" y2="1504.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="412" y="1491.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Full</text>
-<line x1="520" y1="1468.3999999999999" x2="520" y2="1504.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="532" y="1491.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Full</text>
-<line x1="640" y1="1468.3999999999999" x2="640" y2="1504.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="652" y="1491.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Full</text>
-<line x1="40" y1="1504.3999999999999" x2="760" y2="1504.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="52" y="1527.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Syntax style</text>
-<line x1="160" y1="1504.3999999999999" x2="160" y2="1540.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="172" y="1527.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Implicit</text>
-<line x1="280" y1="1504.3999999999999" x2="280" y2="1540.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="292" y="1527.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">`\command{}`</text>
-<line x1="400" y1="1504.3999999999999" x2="400" y2="1540.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="412" y="1527.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">`#command()`</text>
-<line x1="520" y1="1504.3999999999999" x2="520" y2="1540.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="532" y="1527.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">`&lt;Component /&gt;`</text>
-<line x1="640" y1="1504.3999999999999" x2="640" y2="1540.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="652" y="1527.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">`/command {}`</text>
-<line x1="40" y1="1540.3999999999999" x2="760" y2="1540.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="52" y="1563.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Props/flags</text>
-<line x1="160" y1="1540.3999999999999" x2="160" y2="1576.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="172" y="1563.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">No</text>
-<line x1="280" y1="1540.3999999999999" x2="280" y2="1576.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="292" y="1563.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Yes</text>
-<line x1="400" y1="1540.3999999999999" x2="400" y2="1576.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="412" y="1563.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Yes</text>
-<line x1="520" y1="1540.3999999999999" x2="520" y2="1576.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="532" y="1563.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Yes</text>
-<line x1="640" y1="1540.3999999999999" x2="640" y2="1576.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="652" y="1563.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Yes</text>
-<line x1="40" y1="1576.3999999999999" x2="760" y2="1576.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="52" y="1599.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Children/blocks</text>
-<line x1="160" y1="1576.3999999999999" x2="160" y2="1612.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="172" y="1599.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">No</text>
-<line x1="280" y1="1576.3999999999999" x2="280" y2="1612.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="292" y="1599.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Yes</text>
-<line x1="400" y1="1576.3999999999999" x2="400" y2="1612.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="412" y="1599.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Yes</text>
-<line x1="520" y1="1576.3999999999999" x2="520" y2="1612.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="532" y="1599.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Yes</text>
-<line x1="640" y1="1576.3999999999999" x2="640" y2="1612.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="652" y="1599.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Yes</text>
-<line x1="40" y1="1612.3999999999999" x2="760" y2="1612.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="52" y="1635.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Pipes/transforms</text>
-<line x1="160" y1="1612.3999999999999" x2="160" y2="1648.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="172" y="1635.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">No</text>
-<line x1="280" y1="1612.3999999999999" x2="280" y2="1648.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="292" y="1635.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">No</text>
-<line x1="400" y1="1612.3999999999999" x2="400" y2="1648.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="412" y="1635.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Limited</text>
-<line x1="520" y1="1612.3999999999999" x2="520" y2="1648.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="532" y="1635.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Chains</text>
-<line x1="640" y1="1612.3999999999999" x2="640" y2="1648.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="652" y="1635.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Yes</text>
-<line x1="40" y1="1648.3999999999999" x2="760" y2="1648.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="52" y="1671.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">CSS-like styling</text>
-<line x1="160" y1="1648.3999999999999" x2="160" y2="1684.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="172" y="1671.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">No</text>
-<line x1="280" y1="1648.3999999999999" x2="280" y2="1684.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="292" y="1671.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">No</text>
-<line x1="400" y1="1648.3999999999999" x2="400" y2="1684.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="412" y="1671.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Partial</text>
-<line x1="520" y1="1648.3999999999999" x2="520" y2="1684.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="532" y="1671.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Yes</text>
-<line x1="640" y1="1648.3999999999999" x2="640" y2="1684.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="652" y="1671.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Yes</text>
-<line x1="40" y1="1684.3999999999999" x2="760" y2="1684.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="52" y="1707.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Output</text>
-<line x1="160" y1="1684.3999999999999" x2="160" y2="1720.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="172" y="1707.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">HTML</text>
-<line x1="280" y1="1684.3999999999999" x2="280" y2="1720.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="292" y="1707.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">PDF</text>
-<line x1="400" y1="1684.3999999999999" x2="400" y2="1720.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="412" y="1707.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">PDF/HTML</text>
-<line x1="520" y1="1684.3999999999999" x2="520" y2="1720.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="532" y="1707.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">DOM</text>
-<line x1="640" y1="1684.3999999999999" x2="640" y2="1720.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
-<text x="652" y="1707.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">HTML/PDF/SVG</text>
-<line x1="40" y1="1432.3999999999999" x2="760" y2="1432.3999999999999" stroke="#e5e7eb" stroke-width="2"/>
-<text x="40" y="1776.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">The React Connection</text>
-<text x="40" y="1819.9999999999998" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Polyester borrows heavily from React's mental model:</text>
-<circle cx="50" cy="1855.9999999999998" r="3" fill="#1a1a1a"/>
-<text x="65" y="1861.5999999999997" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Components - Reusable building blocks with defined interfaces</text>
-<circle cx="50" cy="1881.5999999999997" r="3" fill="#1a1a1a"/>
-<text x="65" y="1887.1999999999996" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Props as flags - /button primary "Label" --href "/path" mirrors &lt;Button variant="primary" href="/path"&gt;Label&lt;/Button&gt;</text>
-<circle cx="50" cy="1907.1999999999996" r="3" fill="#1a1a1a"/>
-<text x="65" y="1912.7999999999995" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Children as blocks - { content } is like {children} in JSX</text>
-<circle cx="50" cy="1932.7999999999995" r="3" fill="#1a1a1a"/>
-<text x="65" y="1938.3999999999994" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Composition - Nest components freely to build complex layouts</text>
-<text x="40" y="1979.9999999999993" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">The difference: Polyester targets documents, not applications. No state, no hooks, no</text>
-<text x="40" y="2005.5999999999992" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">reactivity—just declarative markup that compiles to static output.</text>
-<text x="40" y="2061.5999999999995" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="600" fill="#1a1a1a">Components</text>
-<text x="40" y="2107.1999999999994" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Polyester includes 25+ built-in components across four categories:</text>
-<text x="40" y="2151.1999999999994" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Layout Components</text>
-<circle cx="50" cy="2197.1999999999994" r="3" fill="#1a1a1a"/>
-<text x="65" y="2202.7999999999993" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">page - Document setup (size, margins, orientation)</text>
-<circle cx="50" cy="2222.7999999999993" r="3" fill="#1a1a1a"/>
-<text x="65" y="2228.399999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">columns - Multi-column layouts with configurable gap</text>
-<circle cx="50" cy="2248.399999999999" r="3" fill="#1a1a1a"/>
-<text x="65" y="2253.999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">grid - CSS grid layouts with template definitions</text>
-<circle cx="50" cy="2273.999999999999" r="3" fill="#1a1a1a"/>
-<text x="65" y="2279.599999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">region - Styled container with background and padding</text>
-<circle cx="50" cy="2299.599999999999" r="3" fill="#1a1a1a"/>
-<text x="65" y="2305.199999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">sidebar - Two-panel layout with fixed sidebar</text>
-<circle cx="50" cy="2325.199999999999" r="3" fill="#1a1a1a"/>
-<text x="65" y="2330.799999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">center - Horizontal centering</text>
-<circle cx="50" cy="2350.799999999999" r="3" fill="#1a1a1a"/>
-<text x="65" y="2356.3999999999987" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">vcenter - Vertical and horizontal centering</text>
-<circle cx="50" cy="2376.3999999999987" r="3" fill="#1a1a1a"/>
-<text x="65" y="2381.9999999999986" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">frame - Bordered box with radius options</text>
-<circle cx="50" cy="2401.9999999999986" r="3" fill="#1a1a1a"/>
-<text x="65" y="2407.5999999999985" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">inline - Horizontal arrangement with gap control</text>
-<circle cx="50" cy="2427.5999999999985" r="3" fill="#1a1a1a"/>
-<text x="65" y="2433.1999999999985" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">divider - Visual separator lines</text>
-<text x="40" y="2485.1999999999985" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Content Components</text>
-<circle cx="50" cy="2531.1999999999985" r="3" fill="#1a1a1a"/>
-<text x="65" y="2536.7999999999984" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">text - Styled text with size, color, weight options</text>
-<circle cx="50" cy="2556.7999999999984" r="3" fill="#1a1a1a"/>
-<text x="65" y="2562.3999999999983" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">quote - Block quotes and pull quotes</text>
-<circle cx="50" cy="2582.3999999999983" r="3" fill="#1a1a1a"/>
-<text x="65" y="2587.999999999998" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">code - Syntax-highlighted code blocks</text>
-<circle cx="50" cy="2607.999999999998" r="3" fill="#1a1a1a"/>
-<text x="65" y="2613.599999999998" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">table - Tables with header, striped, bordered options</text>
-<circle cx="50" cy="2633.599999999998" r="3" fill="#1a1a1a"/>
-<text x="65" y="2639.199999999998" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">list - Ordered/unordered lists with custom markers</text>
-<circle cx="50" cy="2659.199999999998" r="3" fill="#1a1a1a"/>
-<text x="65" y="2664.799999999998" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">checkbox - Task items with checked state</text>
-<circle cx="50" cy="2684.799999999998" r="3" fill="#1a1a1a"/>
-<text x="65" y="2690.399999999998" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">image - Images with width, caption, and alt text</text>
-<circle cx="50" cy="2710.399999999998" r="3" fill="#1a1a1a"/>
-<text x="65" y="2715.9999999999977" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">icon - Lucide icons with size and color</text>
-<circle cx="50" cy="2735.9999999999977" r="3" fill="#1a1a1a"/>
-<text x="65" y="2741.5999999999976" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">tag - Badges and labels with variants</text>
-<circle cx="50" cy="2761.5999999999976" r="3" fill="#1a1a1a"/>
-<text x="65" y="2767.1999999999975" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">progress - Progress bars and circle indicators</text>
-<text x="40" y="2819.1999999999975" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Style Components</text>
-<circle cx="50" cy="2865.1999999999975" r="3" fill="#1a1a1a"/>
-<text x="65" y="2870.7999999999975" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">hero - Hero sections with gradient backgrounds</text>
-<circle cx="50" cy="2890.7999999999975" r="3" fill="#1a1a1a"/>
-<text x="65" y="2896.3999999999974" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">card - Cards with optional icon and shadow</text>
-<circle cx="50" cy="2916.3999999999974" r="3" fill="#1a1a1a"/>
-<text x="65" y="2921.9999999999973" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">button - Clickable buttons with variants</text>
-<circle cx="50" cy="2941.9999999999973" r="3" fill="#1a1a1a"/>
-<text x="65" y="2947.599999999997" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">shape - SVG shapes (circle, rect, etc.)</text>
-<circle cx="50" cy="2967.599999999997" r="3" fill="#1a1a1a"/>
-<text x="65" y="2973.199999999997" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">style - Raw CSS injection</text>
-<text x="40" y="3025.199999999997" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Interactive Components</text>
-<circle cx="50" cy="3071.199999999997" r="3" fill="#1a1a1a"/>
-<text x="65" y="3076.799999999997" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">fold - Collapsible sections with toggle</text>
-<text x="40" y="3140.799999999997" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="600" fill="#1a1a1a">New in Recent Updates</text>
-<text x="40" y="3196.799999999997" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Inline Layout</text>
-<rect x="40" y="3232.799999999997" width="720" height="112" rx="8" fill="#1e1e1e"/>
-<text x="56" y="3262.799999999997" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/inline</text><text x="114.80000000000001" y="3262.799999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> </text><text x="123.20000000000002" y="3262.799999999997" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--gap</text><text x="165.20000000000002" y="3262.799999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> 1rem </text><text x="215.60000000000002" y="3262.799999999997" font-family="ui-monospace, monospace" font-size="14" fill="#d2a8ff">{</text>
-<text x="56" y="3282.799999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">  </text><text x="72.8" y="3282.799999999997" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/icon</text><text x="114.8" y="3282.799999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> mail</text>
-<text x="56" y="3302.799999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">  </text><text x="72.8" y="3302.799999999997" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/text</text><text x="114.8" y="3302.799999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> </text><text x="123.2" y="3302.799999999997" font-family="ui-monospace, monospace" font-size="14" fill="#a5d6ff">"email@example.com"</text>
-<text x="56" y="3322.799999999997" font-family="ui-monospace, monospace" font-size="14" fill="#d2a8ff">}</text>
-<text x="40" y="3390.399999999997" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Arrange elements horizontally with flexible gap and alignment options.</text>
-<text x="40" y="3434.399999999997" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Tags and Badges</text>
-<rect x="40" y="3470.399999999997" width="720" height="132" rx="8" fill="#1e1e1e"/>
-<text x="56" y="3500.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/inline</text><text x="114.80000000000001" y="3500.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> </text><text x="123.20000000000002" y="3500.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--gap</text><text x="165.20000000000002" y="3500.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> 0.5rem </text><text x="232.40000000000003" y="3500.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#d2a8ff">{</text>
-<text x="56" y="3520.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">  </text><text x="72.8" y="3520.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/tag</text><text x="106.4" y="3520.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> </text><text x="114.80000000000001" y="3520.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#a5d6ff">"Docker"</text>
-<text x="56" y="3540.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">  </text><text x="72.8" y="3540.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/tag</text><text x="106.4" y="3540.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> </text><text x="114.80000000000001" y="3540.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#a5d6ff">"Kubernetes"</text><text x="215.60000000000002" y="3540.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> </text><text x="224.00000000000003" y="3540.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--color</text><text x="282.8" y="3540.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> blue</text>
-<text x="56" y="3560.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">  </text><text x="72.8" y="3560.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/tag</text><text x="106.4" y="3560.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> </text><text x="114.80000000000001" y="3560.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#a5d6ff">"AWS"</text><text x="156.8" y="3560.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> </text><text x="165.20000000000002" y="3560.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--variant</text><text x="240.8" y="3560.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> outline</text>
-<text x="56" y="3580.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#d2a8ff">}</text>
-<text x="40" y="3658.399999999997" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Progress Indicators</text>
-<rect x="40" y="3694.399999999997" width="720" height="72" rx="8" fill="#1e1e1e"/>
-<text x="56" y="3724.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/progress</text><text x="131.60000000000002" y="3724.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> 4 </text><text x="156.8" y="3724.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--max</text><text x="198.8" y="3724.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> 5 </text><text x="224" y="3724.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--style</text><text x="282.8" y="3724.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> circles</text>
-<text x="56" y="3744.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/progress</text><text x="131.60000000000002" y="3744.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> 80 </text><text x="165.20000000000002" y="3744.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--max</text><text x="207.20000000000002" y="3744.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> 100 </text><text x="249.20000000000002" y="3744.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--style</text><text x="308" y="3744.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> bar </text><text x="350" y="3744.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--color</text><text x="408.8" y="3744.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> green</text>
-<text x="40" y="3822.399999999997" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Lucide Icons</text>
-<rect x="40" y="3858.399999999997" width="720" height="92" rx="8" fill="#1e1e1e"/>
-<text x="56" y="3888.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/icon</text><text x="98" y="3888.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> github </text><text x="165.2" y="3888.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--size</text><text x="215.6" y="3888.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> 1.5rem</text>
-<text x="56" y="3908.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/icon</text><text x="98" y="3908.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> mail </text><text x="148.4" y="3908.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--color</text><text x="207.20000000000002" y="3908.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> blue</text>
-<text x="56" y="3928.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/icon</text><text x="98" y="3928.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> phone</text>
-<text x="40" y="4006.399999999997" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Dividers</text>
-<rect x="40" y="4042.399999999997" width="720" height="52" rx="8" fill="#1e1e1e"/>
-<text x="56" y="4072.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/divider</text><text x="123.2" y="4072.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> </text><text x="131.6" y="4072.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--style</text><text x="190.4" y="4072.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> dashed </text><text x="257.6" y="4072.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--color</text><text x="316.40000000000003" y="4072.399999999997" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> gray</text>
-<text x="40" y="4162.399999999997" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="600" fill="#1a1a1a">Editor Support</text>
-<text x="40" y="4218.399999999997" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">VSCode Extension</text>
-<text x="40" y="4261.999999999997" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Full IDE integration with:</text>
-<circle cx="50" cy="4297.999999999997" r="3" fill="#1a1a1a"/>
-<text x="65" y="4303.599999999998" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Syntax highlighting with custom TextMate grammar</text>
-<circle cx="50" cy="4323.599999999998" r="3" fill="#1a1a1a"/>
-<text x="65" y="4329.199999999998" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">LSP integration (completions, hover docs, diagnostics)</text>
-<circle cx="50" cy="4349.199999999998" r="3" fill="#1a1a1a"/>
-<text x="65" y="4354.799999999998" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Live Preview - See rendered output in a side panel</text>
-<circle cx="50" cy="4374.799999999998" r="3" fill="#1a1a1a"/>
-<text x="65" y="4380.399999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Component Browser - Sidebar with all components by category</text>
-<circle cx="50" cy="4400.399999999999" r="3" fill="#1a1a1a"/>
-<text x="65" y="4405.999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Search Components - Quick picker to find and insert components</text>
-<circle cx="50" cy="4425.999999999999" r="3" fill="#1a1a1a"/>
-<text x="65" y="4431.599999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Build to HTML (Ctrl+Alt+H) and PDF (Ctrl+Alt+P)</text>
-<circle cx="50" cy="4451.599999999999" r="3" fill="#1a1a1a"/>
-<text x="65" y="4457.2" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Docs at cursor (Ctrl+Shift+/)</text>
-<text x="40" y="4509.2" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Neovim Plugin</text>
-<text x="40" y="4552.8" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Native Vim experience with:</text>
-<circle cx="50" cy="4588.8" r="3" fill="#1a1a1a"/>
-<text x="65" y="4594.400000000001" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Syntax highlighting</text>
-<circle cx="50" cy="4614.400000000001" r="3" fill="#1a1a1a"/>
-<text x="65" y="4620.000000000001" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">LSP integration via nvim-lspconfig</text>
-<circle cx="50" cy="4640.000000000001" r="3" fill="#1a1a1a"/>
-<text x="65" y="4645.600000000001" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">:PolyBuild [html|pdf] command</text>
-<circle cx="50" cy="4665.600000000001" r="3" fill="#1a1a1a"/>
-<text x="65" y="4671.200000000002" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">:PolyPreview - Build and open in viewer</text>
-<circle cx="50" cy="4691.200000000002" r="3" fill="#1a1a1a"/>
-<text x="65" y="4696.800000000002" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Auto-build on save (optional)</text>
-<circle cx="50" cy="4716.800000000002" r="3" fill="#1a1a1a"/>
-<text x="65" y="4722.400000000002" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">PDF viewer integration (zathura, mupdf, evince)</text>
-<rect x="40" y="4748.400000000002" width="720" height="132" rx="8" fill="#1e1e1e"/>
-<text x="56" y="4778.400000000002" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">require("polyester").setup({</text>
-<text x="56" y="4798.400000000002" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">  default_format = "pdf",</text>
-<text x="56" y="4818.400000000002" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">  pdf_viewer = "zathura",</text>
-<text x="56" y="4838.400000000002" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">  auto_build = true,</text>
-<text x="56" y="4858.400000000002" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">})</text>
-<text x="40" y="4948.400000000002" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="600" fill="#1a1a1a">Output Formats</text>
-<circle cx="50" cy="4996.400000000002" r="3" fill="#1a1a1a"/>
-<text x="65" y="5002.000000000003" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">HTML - Standalone documents with embedded CSS</text>
-<circle cx="50" cy="5022.000000000003" r="3" fill="#1a1a1a"/>
-<text x="65" y="5027.600000000003" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">PDF - Via Puppeteer/Chrome rendering</text>
-<circle cx="50" cy="5047.600000000003" r="3" fill="#1a1a1a"/>
-<text x="65" y="5053.2000000000035" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">SVG - For embedding in READMEs and documentation</text>
-<rect x="40" y="5079.2000000000035" width="720" height="92" rx="8" fill="#1e1e1e"/>
-<text x="56" y="5109.2000000000035" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">poly build document.poly                    # HTML (default)</text>
-<text x="56" y="5129.2000000000035" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">poly build document.poly --format pdf       # PDF</text>
-<text x="56" y="5149.2000000000035" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">poly build document.poly --format svg       # SVG</text>
-<text x="40" y="5239.2000000000035" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="600" fill="#1a1a1a">Theming</text>
-<text x="40" y="5284.800000000004" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Import colorschemes from your terminal configuration:</text>
-<rect x="40" y="5310.800000000004" width="720" height="112" rx="8" fill="#1e1e1e"/>
-<text x="56" y="5340.800000000004" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">poly theme import ~/.Xresources --name xresources</text>
-<text x="56" y="5360.800000000004" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">poly theme import ~/.config/kitty/kitty.conf --name kitty</text>
-<text x="56" y="5380.800000000004" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">poly theme import ~/.cache/wal/colors.json --name pywal</text>
-<text x="56" y="5400.800000000004" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">poly build doc.poly --theme kitty</text>
-<text x="40" y="5468.400000000004" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Supported formats: Xresources, kitty, alacritty, pywal, base16.</text>
+<text x="40" y="307.6" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Polyester is a document authoring language that occupies an interesting niche in the</text>
+<text x="40" y="333.20000000000005" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">markup landscape. It combines the readability of Markdown with the structured power of</text>
+<text x="40" y="358.80000000000007" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">LaTeX, sitting alongside Typst as a modern alternative for document creation.</text>
+<text x="40" y="414.80000000000007" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="600" fill="#1a1a1a">Core Philosophy</text>
+<text x="40" y="460.4000000000001" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Polyester uses a /command syntax that's intuitive and readable. Unlike LaTeX's backslash</text>
+<text x="40" y="486.0000000000001" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">escapes or Typst's hash-based functions, Polyester commands feel more like CLI</text>
+<text x="40" y="511.60000000000014" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">invocations—familiar territory for developers.</text>
+<text x="40" y="567.6000000000001" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="600" fill="#1a1a1a">Key Characteristics</text>
+<text x="40" y="623.6000000000001" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Hybrid Content Model</text>
+<circle cx="50" cy="669.6000000000001" r="3" fill="#1a1a1a"/>
+<text x="65" y="675.2000000000002" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Commands start with / at the beginning of a line</text>
+<circle cx="50" cy="695.2000000000002" r="3" fill="#1a1a1a"/>
+<text x="65" y="700.8000000000002" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Plain Markdown flows naturally between commands</text>
+<circle cx="50" cy="720.8000000000002" r="3" fill="#1a1a1a"/>
+<text x="65" y="726.4000000000002" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">No need to wrap everything in special syntax</text>
+<text x="40" y="778.4000000000002" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Flexible Arguments</text>
+<rect x="40" y="814.4000000000002" width="720" height="52" rx="8" fill="#1e1e1e"/>
+<text x="56" y="844.4000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/command</text><text x="123.2" y="844.4000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> positional </text><text x="224" y="844.4000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#a5d6ff">"quoted arg"</text><text x="324.8" y="844.4000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> </text><text x="333.2" y="844.4000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--flag</text><text x="383.6" y="844.4000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> value </text><text x="442.40000000000003" y="844.4000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#d2a8ff">{</text><text x="450.8" y="844.4000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> block content </text><text x="576.8" y="844.4000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#d2a8ff">}</text>
+<text x="40" y="912.0000000000002" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Positional args, quoted strings, flags, and blocks all coexist cleanly.</text>
+<text x="40" y="956.0000000000002" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Pipe Transforms</text>
+<rect x="40" y="992.0000000000002" width="720" height="52" rx="8" fill="#1e1e1e"/>
+<text x="56" y="1022.0000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/text</text><text x="98" y="1022.0000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> </text><text x="106.4" y="1022.0000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#a5d6ff">"hello"</text><text x="165.20000000000002" y="1022.0000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> </text><text x="173.60000000000002" y="1022.0000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#ffa657">|</text><text x="182.00000000000003" y="1022.0000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> bold </text><text x="232.40000000000003" y="1022.0000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#ffa657">|</text><text x="240.80000000000004" y="1022.0000000000002" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> color red</text>
+<text x="40" y="1089.6000000000001" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">This functional chaining is unique—neither Markdown, LaTeX, nor Typst have this pattern</text>
+<text x="40" y="1115.2" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">built-in.</text>
+<text x="40" y="1159.2" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Block Nesting</text>
+<text x="40" y="1202.8" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Curly braces contain nested content, enabling structured layouts without escaping into a</text>
+<text x="40" y="1228.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">different mode.</text>
+<text x="40" y="1284.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="600" fill="#1a1a1a">Compared to Neighbors</text>
+<rect x="40" y="1322.3999999999999" width="720" height="324" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" rx="4"/>
+<rect x="40" y="1322.3999999999999" width="720" height="36" fill="#f9fafb" rx="4"/>
+<text x="52" y="1345.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="600">Feature</text>
+<line x1="160" y1="1322.3999999999999" x2="160" y2="1358.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="172" y="1345.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="600">Markdown</text>
+<line x1="280" y1="1322.3999999999999" x2="280" y2="1358.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="292" y="1345.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="600">LaTeX</text>
+<line x1="400" y1="1322.3999999999999" x2="400" y2="1358.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="412" y="1345.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="600">Typst</text>
+<line x1="520" y1="1322.3999999999999" x2="520" y2="1358.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="532" y="1345.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="600">React</text>
+<line x1="640" y1="1322.3999999999999" x2="640" y2="1358.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="652" y="1345.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="600">Polyester</text>
+<line x1="40" y1="1358.3999999999999" x2="760" y2="1358.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="52" y="1381.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Learning curve</text>
+<line x1="160" y1="1358.3999999999999" x2="160" y2="1394.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="172" y="1381.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Low</text>
+<line x1="280" y1="1358.3999999999999" x2="280" y2="1394.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="292" y="1381.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">High</text>
+<line x1="400" y1="1358.3999999999999" x2="400" y2="1394.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="412" y="1381.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Medium</text>
+<line x1="520" y1="1358.3999999999999" x2="520" y2="1394.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="532" y="1381.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Medium</text>
+<line x1="640" y1="1358.3999999999999" x2="640" y2="1394.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="652" y="1381.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Low</text>
+<line x1="40" y1="1394.3999999999999" x2="760" y2="1394.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="52" y="1417.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Layout control</text>
+<line x1="160" y1="1394.3999999999999" x2="160" y2="1430.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="172" y="1417.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Minimal</text>
+<line x1="280" y1="1394.3999999999999" x2="280" y2="1430.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="292" y="1417.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Full</text>
+<line x1="400" y1="1394.3999999999999" x2="400" y2="1430.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="412" y="1417.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Full</text>
+<line x1="520" y1="1394.3999999999999" x2="520" y2="1430.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="532" y="1417.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Full</text>
+<line x1="640" y1="1394.3999999999999" x2="640" y2="1430.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="652" y="1417.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Full</text>
+<line x1="40" y1="1430.3999999999999" x2="760" y2="1430.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="52" y="1453.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Syntax style</text>
+<line x1="160" y1="1430.3999999999999" x2="160" y2="1466.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="172" y="1453.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Implicit</text>
+<line x1="280" y1="1430.3999999999999" x2="280" y2="1466.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="292" y="1453.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">`\command{}`</text>
+<line x1="400" y1="1430.3999999999999" x2="400" y2="1466.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="412" y="1453.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">`#command()`</text>
+<line x1="520" y1="1430.3999999999999" x2="520" y2="1466.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="532" y="1453.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">`&lt;Component /&gt;`</text>
+<line x1="640" y1="1430.3999999999999" x2="640" y2="1466.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="652" y="1453.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">`/command {}`</text>
+<line x1="40" y1="1466.3999999999999" x2="760" y2="1466.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="52" y="1489.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Props/flags</text>
+<line x1="160" y1="1466.3999999999999" x2="160" y2="1502.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="172" y="1489.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">No</text>
+<line x1="280" y1="1466.3999999999999" x2="280" y2="1502.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="292" y="1489.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Yes</text>
+<line x1="400" y1="1466.3999999999999" x2="400" y2="1502.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="412" y="1489.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Yes</text>
+<line x1="520" y1="1466.3999999999999" x2="520" y2="1502.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="532" y="1489.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Yes</text>
+<line x1="640" y1="1466.3999999999999" x2="640" y2="1502.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="652" y="1489.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Yes</text>
+<line x1="40" y1="1502.3999999999999" x2="760" y2="1502.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="52" y="1525.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Children/blocks</text>
+<line x1="160" y1="1502.3999999999999" x2="160" y2="1538.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="172" y="1525.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">No</text>
+<line x1="280" y1="1502.3999999999999" x2="280" y2="1538.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="292" y="1525.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Yes</text>
+<line x1="400" y1="1502.3999999999999" x2="400" y2="1538.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="412" y="1525.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Yes</text>
+<line x1="520" y1="1502.3999999999999" x2="520" y2="1538.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="532" y="1525.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Yes</text>
+<line x1="640" y1="1502.3999999999999" x2="640" y2="1538.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="652" y="1525.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Yes</text>
+<line x1="40" y1="1538.3999999999999" x2="760" y2="1538.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="52" y="1561.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Pipes/transforms</text>
+<line x1="160" y1="1538.3999999999999" x2="160" y2="1574.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="172" y="1561.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">No</text>
+<line x1="280" y1="1538.3999999999999" x2="280" y2="1574.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="292" y="1561.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">No</text>
+<line x1="400" y1="1538.3999999999999" x2="400" y2="1574.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="412" y="1561.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Limited</text>
+<line x1="520" y1="1538.3999999999999" x2="520" y2="1574.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="532" y="1561.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Chains</text>
+<line x1="640" y1="1538.3999999999999" x2="640" y2="1574.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="652" y="1561.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Yes</text>
+<line x1="40" y1="1574.3999999999999" x2="760" y2="1574.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="52" y="1597.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">CSS-like styling</text>
+<line x1="160" y1="1574.3999999999999" x2="160" y2="1610.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="172" y="1597.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">No</text>
+<line x1="280" y1="1574.3999999999999" x2="280" y2="1610.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="292" y="1597.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">No</text>
+<line x1="400" y1="1574.3999999999999" x2="400" y2="1610.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="412" y="1597.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Partial</text>
+<line x1="520" y1="1574.3999999999999" x2="520" y2="1610.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="532" y="1597.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Yes</text>
+<line x1="640" y1="1574.3999999999999" x2="640" y2="1610.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="652" y="1597.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Yes</text>
+<line x1="40" y1="1610.3999999999999" x2="760" y2="1610.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="52" y="1633.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Output</text>
+<line x1="160" y1="1610.3999999999999" x2="160" y2="1646.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="172" y="1633.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">HTML</text>
+<line x1="280" y1="1610.3999999999999" x2="280" y2="1646.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="292" y="1633.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">PDF</text>
+<line x1="400" y1="1610.3999999999999" x2="400" y2="1646.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="412" y="1633.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">PDF/HTML</text>
+<line x1="520" y1="1610.3999999999999" x2="520" y2="1646.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="532" y="1633.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">DOM</text>
+<line x1="640" y1="1610.3999999999999" x2="640" y2="1646.3999999999999" stroke="#e5e7eb" stroke-width="1"/>
+<text x="652" y="1633.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">HTML/PDF/SVG</text>
+<line x1="40" y1="1358.3999999999999" x2="760" y2="1358.3999999999999" stroke="#e5e7eb" stroke-width="2"/>
+<text x="40" y="1702.3999999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">The React Connection</text>
+<text x="40" y="1745.9999999999998" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Polyester borrows heavily from React's mental model:</text>
+<circle cx="50" cy="1781.9999999999998" r="3" fill="#1a1a1a"/>
+<text x="65" y="1787.5999999999997" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Components - Reusable building blocks with defined interfaces</text>
+<circle cx="50" cy="1807.5999999999997" r="3" fill="#1a1a1a"/>
+<text x="65" y="1813.1999999999996" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Props as flags - /button primary "Label" --href "/path" mirrors &lt;Button variant="primary" href="/path"&gt;Label&lt;/Button&gt;</text>
+<circle cx="50" cy="1833.1999999999996" r="3" fill="#1a1a1a"/>
+<text x="65" y="1838.7999999999995" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Children as blocks - { content } is like {children} in JSX</text>
+<circle cx="50" cy="1858.7999999999995" r="3" fill="#1a1a1a"/>
+<text x="65" y="1864.3999999999994" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Composition - Nest components freely to build complex layouts</text>
+<text x="40" y="1905.9999999999993" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">The difference: Polyester targets documents, not applications. No state, no hooks, no</text>
+<text x="40" y="1931.5999999999992" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">reactivity—just declarative markup that compiles to static output.</text>
+<text x="40" y="1987.5999999999992" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="600" fill="#1a1a1a">Components</text>
+<text x="40" y="2033.1999999999991" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Polyester includes 27 built-in components across four categories:</text>
+<text x="40" y="2077.199999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Layout Components</text>
+<circle cx="50" cy="2123.199999999999" r="3" fill="#1a1a1a"/>
+<text x="65" y="2128.799999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">page - Document setup (size, margins, orientation, pagination)</text>
+<circle cx="50" cy="2148.799999999999" r="3" fill="#1a1a1a"/>
+<text x="65" y="2154.3999999999987" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">columns - Multi-column layouts with configurable gap</text>
+<circle cx="50" cy="2174.3999999999987" r="3" fill="#1a1a1a"/>
+<text x="65" y="2179.9999999999986" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">grid - CSS grid layouts with template definitions</text>
+<circle cx="50" cy="2199.9999999999986" r="3" fill="#1a1a1a"/>
+<text x="65" y="2205.5999999999985" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">region - Styled container with background and padding</text>
+<circle cx="50" cy="2225.5999999999985" r="3" fill="#1a1a1a"/>
+<text x="65" y="2231.1999999999985" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">sidebar - Two-panel layout with fixed sidebar</text>
+<circle cx="50" cy="2251.1999999999985" r="3" fill="#1a1a1a"/>
+<text x="65" y="2256.7999999999984" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">center - Horizontal centering</text>
+<circle cx="50" cy="2276.7999999999984" r="3" fill="#1a1a1a"/>
+<text x="65" y="2282.3999999999983" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">vcenter - Vertical and horizontal centering</text>
+<circle cx="50" cy="2302.3999999999983" r="3" fill="#1a1a1a"/>
+<text x="65" y="2307.999999999998" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">frame - Bordered box with radius options</text>
+<circle cx="50" cy="2327.999999999998" r="3" fill="#1a1a1a"/>
+<text x="65" y="2333.599999999998" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">inline - Horizontal arrangement with gap control</text>
+<circle cx="50" cy="2353.599999999998" r="3" fill="#1a1a1a"/>
+<text x="65" y="2359.199999999998" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">divider - Visual separator lines</text>
+<circle cx="50" cy="2379.199999999998" r="3" fill="#1a1a1a"/>
+<text x="65" y="2384.799999999998" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">pagebreak - Force page breaks in PDF output</text>
+<text x="40" y="2436.799999999998" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Content Components</text>
+<circle cx="50" cy="2482.799999999998" r="3" fill="#1a1a1a"/>
+<text x="65" y="2488.399999999998" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">text - Styled text with size, color, weight options</text>
+<circle cx="50" cy="2508.399999999998" r="3" fill="#1a1a1a"/>
+<text x="65" y="2513.9999999999977" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">quote - Block quotes and pull quotes</text>
+<circle cx="50" cy="2533.9999999999977" r="3" fill="#1a1a1a"/>
+<text x="65" y="2539.5999999999976" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">code - Syntax-highlighted code blocks</text>
+<circle cx="50" cy="2559.5999999999976" r="3" fill="#1a1a1a"/>
+<text x="65" y="2565.1999999999975" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">table - Tables with header, striped, bordered options</text>
+<circle cx="50" cy="2585.1999999999975" r="3" fill="#1a1a1a"/>
+<text x="65" y="2590.7999999999975" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">list - Ordered/unordered lists with custom markers</text>
+<circle cx="50" cy="2610.7999999999975" r="3" fill="#1a1a1a"/>
+<text x="65" y="2616.3999999999974" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">checkbox - Task items with checked state</text>
+<circle cx="50" cy="2636.3999999999974" r="3" fill="#1a1a1a"/>
+<text x="65" y="2641.9999999999973" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">image - Images with width, caption, and alt text</text>
+<circle cx="50" cy="2661.9999999999973" r="3" fill="#1a1a1a"/>
+<text x="65" y="2667.599999999997" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">icon - Lucide icons with size and color</text>
+<circle cx="50" cy="2687.599999999997" r="3" fill="#1a1a1a"/>
+<text x="65" y="2693.199999999997" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">tag - Badges and labels with variants</text>
+<circle cx="50" cy="2713.199999999997" r="3" fill="#1a1a1a"/>
+<text x="65" y="2718.799999999997" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">progress - Progress bars and circle indicators</text>
+<text x="40" y="2770.799999999997" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Style Components</text>
+<circle cx="50" cy="2816.799999999997" r="3" fill="#1a1a1a"/>
+<text x="65" y="2822.399999999997" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">hero - Hero sections with gradient backgrounds</text>
+<circle cx="50" cy="2842.399999999997" r="3" fill="#1a1a1a"/>
+<text x="65" y="2847.999999999997" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">card - Cards with optional icon and shadow</text>
+<circle cx="50" cy="2867.999999999997" r="3" fill="#1a1a1a"/>
+<text x="65" y="2873.5999999999967" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">button - Clickable buttons with variants</text>
+<circle cx="50" cy="2893.5999999999967" r="3" fill="#1a1a1a"/>
+<text x="65" y="2899.1999999999966" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">shape - SVG shapes (circle, rect, etc.)</text>
+<circle cx="50" cy="2919.1999999999966" r="3" fill="#1a1a1a"/>
+<text x="65" y="2924.7999999999965" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">style - Raw CSS injection</text>
+<text x="40" y="2976.7999999999965" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Interactive Components</text>
+<circle cx="50" cy="3022.7999999999965" r="3" fill="#1a1a1a"/>
+<text x="65" y="3028.3999999999965" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">fold - Collapsible sections with toggle</text>
+<text x="40" y="3092.3999999999965" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="600" fill="#1a1a1a">New in Recent Updates</text>
+<text x="40" y="3148.3999999999965" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Inline Layout</text>
+<rect x="40" y="3184.3999999999965" width="720" height="112" rx="8" fill="#1e1e1e"/>
+<text x="56" y="3214.3999999999965" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/inline</text><text x="114.80000000000001" y="3214.3999999999965" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> </text><text x="123.20000000000002" y="3214.3999999999965" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--gap</text><text x="165.20000000000002" y="3214.3999999999965" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> 1rem </text><text x="215.60000000000002" y="3214.3999999999965" font-family="ui-monospace, monospace" font-size="14" fill="#d2a8ff">{</text>
+<text x="56" y="3234.3999999999965" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">  </text><text x="72.8" y="3234.3999999999965" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/icon</text><text x="114.8" y="3234.3999999999965" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> mail</text>
+<text x="56" y="3254.3999999999965" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">  </text><text x="72.8" y="3254.3999999999965" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/text</text><text x="114.8" y="3254.3999999999965" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> </text><text x="123.2" y="3254.3999999999965" font-family="ui-monospace, monospace" font-size="14" fill="#a5d6ff">"email@example.com"</text>
+<text x="56" y="3274.3999999999965" font-family="ui-monospace, monospace" font-size="14" fill="#d2a8ff">}</text>
+<text x="40" y="3341.9999999999964" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Arrange elements horizontally with flexible gap and alignment options.</text>
+<text x="40" y="3385.9999999999964" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Tags and Badges</text>
+<rect x="40" y="3421.9999999999964" width="720" height="132" rx="8" fill="#1e1e1e"/>
+<text x="56" y="3451.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/inline</text><text x="114.80000000000001" y="3451.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> </text><text x="123.20000000000002" y="3451.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--gap</text><text x="165.20000000000002" y="3451.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> 0.5rem </text><text x="232.40000000000003" y="3451.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#d2a8ff">{</text>
+<text x="56" y="3471.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">  </text><text x="72.8" y="3471.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/tag</text><text x="106.4" y="3471.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> </text><text x="114.80000000000001" y="3471.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#a5d6ff">"Docker"</text>
+<text x="56" y="3491.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">  </text><text x="72.8" y="3491.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/tag</text><text x="106.4" y="3491.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> </text><text x="114.80000000000001" y="3491.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#a5d6ff">"Kubernetes"</text><text x="215.60000000000002" y="3491.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> </text><text x="224.00000000000003" y="3491.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--color</text><text x="282.8" y="3491.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> blue</text>
+<text x="56" y="3511.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">  </text><text x="72.8" y="3511.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/tag</text><text x="106.4" y="3511.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> </text><text x="114.80000000000001" y="3511.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#a5d6ff">"AWS"</text><text x="156.8" y="3511.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> </text><text x="165.20000000000002" y="3511.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--variant</text><text x="240.8" y="3511.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> outline</text>
+<text x="56" y="3531.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#d2a8ff">}</text>
+<text x="40" y="3609.9999999999964" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Progress Indicators</text>
+<rect x="40" y="3645.9999999999964" width="720" height="72" rx="8" fill="#1e1e1e"/>
+<text x="56" y="3675.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/progress</text><text x="131.60000000000002" y="3675.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> 4 </text><text x="156.8" y="3675.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--max</text><text x="198.8" y="3675.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> 5 </text><text x="224" y="3675.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--style</text><text x="282.8" y="3675.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> circles</text>
+<text x="56" y="3695.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/progress</text><text x="131.60000000000002" y="3695.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> 80 </text><text x="165.20000000000002" y="3695.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--max</text><text x="207.20000000000002" y="3695.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> 100 </text><text x="249.20000000000002" y="3695.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--style</text><text x="308" y="3695.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> bar </text><text x="350" y="3695.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--color</text><text x="408.8" y="3695.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> green</text>
+<text x="40" y="3773.9999999999964" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Lucide Icons</text>
+<rect x="40" y="3809.9999999999964" width="720" height="92" rx="8" fill="#1e1e1e"/>
+<text x="56" y="3839.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/icon</text><text x="98" y="3839.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> github </text><text x="165.2" y="3839.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--size</text><text x="215.6" y="3839.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> 1.5rem</text>
+<text x="56" y="3859.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/icon</text><text x="98" y="3859.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> mail </text><text x="148.4" y="3859.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--color</text><text x="207.20000000000002" y="3859.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> blue</text>
+<text x="56" y="3879.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/icon</text><text x="98" y="3879.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> phone</text>
+<text x="40" y="3957.9999999999964" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Dividers</text>
+<rect x="40" y="3993.9999999999964" width="720" height="52" rx="8" fill="#1e1e1e"/>
+<text x="56" y="4023.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/divider</text><text x="123.2" y="4023.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> </text><text x="131.6" y="4023.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--style</text><text x="190.4" y="4023.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> dashed </text><text x="257.6" y="4023.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--color</text><text x="316.40000000000003" y="4023.9999999999964" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> gray</text>
+<text x="40" y="4113.999999999996" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="600" fill="#1a1a1a">Editor Support</text>
+<text x="40" y="4169.999999999996" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">VSCode Extension</text>
+<text x="40" y="4213.599999999997" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Full IDE integration with:</text>
+<circle cx="50" cy="4249.599999999997" r="3" fill="#1a1a1a"/>
+<text x="65" y="4255.199999999997" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Syntax highlighting with custom TextMate grammar</text>
+<circle cx="50" cy="4275.199999999997" r="3" fill="#1a1a1a"/>
+<text x="65" y="4280.799999999997" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">LSP integration (completions, hover docs, diagnostics)</text>
+<circle cx="50" cy="4300.799999999997" r="3" fill="#1a1a1a"/>
+<text x="65" y="4306.399999999998" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Live Preview - See rendered output in a side panel</text>
+<circle cx="50" cy="4326.399999999998" r="3" fill="#1a1a1a"/>
+<text x="65" y="4331.999999999998" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Theme Studio - Visual theme editor with live preview (Ctrl+Shift+T)</text>
+<circle cx="50" cy="4351.999999999998" r="3" fill="#1a1a1a"/>
+<text x="65" y="4357.5999999999985" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Component Browser - Sidebar with all components by category</text>
+<circle cx="50" cy="4377.5999999999985" r="3" fill="#1a1a1a"/>
+<text x="65" y="4383.199999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Search Components - Quick picker to find and insert components</text>
+<circle cx="50" cy="4403.199999999999" r="3" fill="#1a1a1a"/>
+<text x="65" y="4408.799999999999" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Build to HTML (Ctrl+Alt+H) and PDF (Ctrl+Alt+P)</text>
+<circle cx="50" cy="4428.799999999999" r="3" fill="#1a1a1a"/>
+<text x="65" y="4434.4" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Docs at cursor (Ctrl+Shift+/)</text>
+<text x="40" y="4486.4" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Neovim Plugin</text>
+<text x="40" y="4530" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Native Vim experience with:</text>
+<circle cx="50" cy="4566" r="3" fill="#1a1a1a"/>
+<text x="65" y="4571.6" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Syntax highlighting</text>
+<circle cx="50" cy="4591.6" r="3" fill="#1a1a1a"/>
+<text x="65" y="4597.200000000001" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">LSP integration via nvim-lspconfig</text>
+<circle cx="50" cy="4617.200000000001" r="3" fill="#1a1a1a"/>
+<text x="65" y="4622.800000000001" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">:PolyBuild [html|pdf] command</text>
+<circle cx="50" cy="4642.800000000001" r="3" fill="#1a1a1a"/>
+<text x="65" y="4648.4000000000015" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">:PolyPreview - Build and open in viewer</text>
+<circle cx="50" cy="4668.4000000000015" r="3" fill="#1a1a1a"/>
+<text x="65" y="4674.000000000002" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Auto-build on save (optional)</text>
+<circle cx="50" cy="4694.000000000002" r="3" fill="#1a1a1a"/>
+<text x="65" y="4699.600000000002" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">PDF viewer integration (zathura, mupdf, evince)</text>
+<rect x="40" y="4725.600000000002" width="720" height="132" rx="8" fill="#1e1e1e"/>
+<text x="56" y="4755.600000000002" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">require("polyester").setup({</text>
+<text x="56" y="4775.600000000002" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">  default_format = "pdf",</text>
+<text x="56" y="4795.600000000002" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">  pdf_viewer = "zathura",</text>
+<text x="56" y="4815.600000000002" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">  auto_build = true,</text>
+<text x="56" y="4835.600000000002" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">})</text>
+<text x="40" y="4925.600000000002" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="600" fill="#1a1a1a">Output Formats</text>
+<circle cx="50" cy="4973.600000000002" r="3" fill="#1a1a1a"/>
+<text x="65" y="4979.200000000003" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">HTML - Standalone documents with embedded CSS</text>
+<circle cx="50" cy="4999.200000000003" r="3" fill="#1a1a1a"/>
+<text x="65" y="5004.800000000003" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">PDF - Via Puppeteer/Chrome rendering</text>
+<circle cx="50" cy="5024.800000000003" r="3" fill="#1a1a1a"/>
+<text x="65" y="5030.400000000003" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">SVG - For embedding in READMEs and documentation</text>
+<rect x="40" y="5056.400000000003" width="720" height="132" rx="8" fill="#1e1e1e"/>
+<text x="56" y="5086.400000000003" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">poly build document.poly                    # HTML (default)</text>
+<text x="56" y="5106.400000000003" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">poly build document.poly --format pdf       # PDF</text>
+<text x="56" y="5126.400000000003" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">poly build document.poly --format svg       # SVG</text>
+<text x="56" y="5146.400000000003" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">poly build document.poly --style corporate  # Apply a style preset</text>
+<text x="56" y="5166.400000000003" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">poly build document.poly --spacing compact  # Apply spacing preset</text>
+<text x="40" y="5256.400000000003" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="600" fill="#1a1a1a">Design System</text>
+<text x="40" y="5302.000000000004" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Polyester's theme system is built on three composable modules—style, spacing, and</text>
+<text x="40" y="5327.600000000004" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">syntax—that can be mixed independently.</text>
+<text x="40" y="5371.600000000004" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Style Presets</text>
+<text x="40" y="5415.200000000004" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Control colors, fonts, borders, and shadows. Built-in presets:</text>
+<rect x="40" y="5441.200000000004" width="720" height="216" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" rx="4"/>
+<rect x="40" y="5441.200000000004" width="720" height="36" fill="#f9fafb" rx="4"/>
+<text x="52" y="5464.200000000004" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="600">Preset</text>
+<line x1="400" y1="5441.200000000004" x2="400" y2="5477.200000000004" stroke="#e5e7eb" stroke-width="1"/>
+<text x="412" y="5464.200000000004" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="600">Character</text>
+<line x1="40" y1="5477.200000000004" x2="760" y2="5477.200000000004" stroke="#e5e7eb" stroke-width="1"/>
+<text x="52" y="5500.200000000004" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">`default`</text>
+<line x1="400" y1="5477.200000000004" x2="400" y2="5513.200000000004" stroke="#e5e7eb" stroke-width="1"/>
+<text x="412" y="5500.200000000004" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Clean blue on white, system fonts</text>
+<line x1="40" y1="5513.200000000004" x2="760" y2="5513.200000000004" stroke="#e5e7eb" stroke-width="1"/>
+<text x="52" y="5536.200000000004" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">`corporate`</text>
+<line x1="400" y1="5513.200000000004" x2="400" y2="5549.200000000004" stroke="#e5e7eb" stroke-width="1"/>
+<text x="412" y="5536.200000000004" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Deep blue, Inter font, tight borders</text>
+<line x1="40" y1="5549.200000000004" x2="760" y2="5549.200000000004" stroke="#e5e7eb" stroke-width="1"/>
+<text x="52" y="5572.200000000004" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">`minimal`</text>
+<line x1="400" y1="5549.200000000004" x2="400" y2="5585.200000000004" stroke="#e5e7eb" stroke-width="1"/>
+<text x="412" y="5572.200000000004" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Near-black on white, no ornament</text>
+<line x1="40" y1="5585.200000000004" x2="760" y2="5585.200000000004" stroke="#e5e7eb" stroke-width="1"/>
+<text x="52" y="5608.200000000004" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">`playful`</text>
+<line x1="400" y1="5585.200000000004" x2="400" y2="5621.200000000004" stroke="#e5e7eb" stroke-width="1"/>
+<text x="412" y="5608.200000000004" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Purple accent, warm background, Nunito font</text>
+<line x1="40" y1="5621.200000000004" x2="760" y2="5621.200000000004" stroke="#e5e7eb" stroke-width="1"/>
+<text x="52" y="5644.200000000004" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">`dark`</text>
+<line x1="400" y1="5621.200000000004" x2="400" y2="5657.200000000004" stroke="#e5e7eb" stroke-width="1"/>
+<text x="412" y="5644.200000000004" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Blue on slate, dark surfaces</text>
+<line x1="40" y1="5477.200000000004" x2="760" y2="5477.200000000004" stroke="#e5e7eb" stroke-width="2"/>
+<text x="40" y="5713.200000000004" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Spacing Presets</text>
+<text x="40" y="5756.800000000005" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Control density—margins, gaps, and padding. Built-in presets: compact, default, spacious.</text>
+<text x="40" y="5800.800000000005" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Composing Themes</text>
+<text x="40" y="5844.400000000005" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Mix any style with any spacing. Set them via /page flags or CLI flags:</text>
+<rect x="40" y="5870.400000000005" width="720" height="52" rx="8" fill="#1e1e1e"/>
+<text x="56" y="5900.400000000005" font-family="ui-monospace, monospace" font-size="14" fill="#ff7b72">/page</text><text x="98" y="5900.400000000005" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> A4 </text><text x="131.6" y="5900.400000000005" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--style</text><text x="190.4" y="5900.400000000005" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> corporate </text><text x="282.8" y="5900.400000000005" font-family="ui-monospace, monospace" font-size="14" fill="#79c0ff">--spacing</text><text x="358.40000000000003" y="5900.400000000005" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6"> compact</text>
+<rect x="40" y="5952.400000000005" width="720" height="92" rx="8" fill="#1e1e1e"/>
+<text x="56" y="5982.400000000005" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">poly build doc.poly --style playful --spacing spacious</text>
+<text x="56" y="6002.400000000005" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">poly style list       # List available style presets</text>
+<text x="56" y="6022.400000000005" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">poly spacing list     # List available spacing presets</text>
+<text x="40" y="6090.0000000000055" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Presets resolve to CSS custom properties (--poly-color-primary, --poly-spacing-base, etc.)</text>
+<text x="40" y="6115.600000000006" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">that flow through every component.</text>
+<text x="40" y="6159.600000000006" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">Terminal Theme Import</text>
+<text x="40" y="6203.200000000006" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Import colorschemes from your terminal configuration as syntax themes:</text>
+<rect x="40" y="6229.200000000006" width="720" height="112" rx="8" fill="#1e1e1e"/>
+<text x="56" y="6259.200000000006" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">poly theme import ~/.Xresources --name xresources</text>
+<text x="56" y="6279.200000000006" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">poly theme import ~/.config/kitty/kitty.conf --name kitty</text>
+<text x="56" y="6299.200000000006" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">poly theme import ~/.cache/wal/colors.json --name pywal</text>
+<text x="56" y="6319.200000000006" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">poly build doc.poly --theme kitty</text>
+<text x="40" y="6386.800000000007" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Supported formats: Xresources, kitty, alacritty, pywal, base16.</text>
+<text x="40" y="6442.800000000007" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="600" fill="#1a1a1a">Theme Studio</text>
+<text x="40" y="6488.400000000007" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">The VS Code extension includes a visual theme editor. Open it with Ctrl+Shift+T (or</text>
+<text x="40" y="6514.000000000007" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Polyester: Open Theme Studio from the command palette).</text>
+<circle cx="50" cy="6550.000000000007" r="3" fill="#1a1a1a"/>
+<text x="65" y="6555.600000000008" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Color pickers for all 14 design tokens</text>
+<circle cx="50" cy="6575.600000000008" r="3" fill="#1a1a1a"/>
+<text x="65" y="6581.200000000008" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Font selectors for body, heading, and mono</text>
+<circle cx="50" cy="6601.200000000008" r="3" fill="#1a1a1a"/>
+<text x="65" y="6606.800000000008" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Spacing sliders with real-time preview</text>
+<circle cx="50" cy="6626.800000000008" r="3" fill="#1a1a1a"/>
+<text x="65" y="6632.400000000009" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Switch between style presets to use as a starting point</text>
+<circle cx="50" cy="6652.400000000009" r="3" fill="#1a1a1a"/>
+<text x="65" y="6658.000000000009" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Preview against a reference document or your own .poly file</text>
+<circle cx="50" cy="6678.000000000009" r="3" fill="#1a1a1a"/>
+<text x="65" y="6683.6000000000095" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Export as a reusable JSON style module or copy CSS variables</text>
+<text x="40" y="6747.6000000000095" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="600" fill="#1a1a1a">AI-Native Authoring</text>
+<text x="40" y="6793.20000000001" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Polyester ships an MCP server (poly-mcp) so AI assistants can author .poly documents</text>
+<text x="40" y="6818.80000000001" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">natively.</text>
+<rect x="40" y="6844.80000000001" width="720" height="180" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" rx="4"/>
+<rect x="40" y="6844.80000000001" width="720" height="36" fill="#f9fafb" rx="4"/>
+<text x="52" y="6867.80000000001" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="600">Tool</text>
+<line x1="400" y1="6844.80000000001" x2="400" y2="6880.80000000001" stroke="#e5e7eb" stroke-width="1"/>
+<text x="412" y="6867.80000000001" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="600">Purpose</text>
+<line x1="40" y1="6880.80000000001" x2="760" y2="6880.80000000001" stroke="#e5e7eb" stroke-width="1"/>
+<text x="52" y="6903.80000000001" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">`list_components`</text>
+<line x1="400" y1="6880.80000000001" x2="400" y2="6916.80000000001" stroke="#e5e7eb" stroke-width="1"/>
+<text x="412" y="6903.80000000001" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Browse all components, filter by category</text>
+<line x1="40" y1="6916.80000000001" x2="760" y2="6916.80000000001" stroke="#e5e7eb" stroke-width="1"/>
+<text x="52" y="6939.80000000001" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">`get_component_help`</text>
+<line x1="400" y1="6916.80000000001" x2="400" y2="6952.80000000001" stroke="#e5e7eb" stroke-width="1"/>
+<text x="412" y="6939.80000000001" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Detailed docs for a component</text>
+<line x1="40" y1="6952.80000000001" x2="760" y2="6952.80000000001" stroke="#e5e7eb" stroke-width="1"/>
+<text x="52" y="6975.80000000001" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">`validate_document`</text>
+<line x1="400" y1="6952.80000000001" x2="400" y2="6988.80000000001" stroke="#e5e7eb" stroke-width="1"/>
+<text x="412" y="6975.80000000001" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Parse and check for errors</text>
+<line x1="40" y1="6988.80000000001" x2="760" y2="6988.80000000001" stroke="#e5e7eb" stroke-width="1"/>
+<text x="52" y="7011.80000000001" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">`compile_document`</text>
+<line x1="400" y1="6988.80000000001" x2="400" y2="7024.80000000001" stroke="#e5e7eb" stroke-width="1"/>
+<text x="412" y="7011.80000000001" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Compile to standalone HTML</text>
+<line x1="40" y1="6880.80000000001" x2="760" y2="6880.80000000001" stroke="#e5e7eb" stroke-width="2"/>
+<text x="40" y="7070.400000000011" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Works with Claude Code, Cursor, Windsurf, and any MCP-compatible editor. Add to .mcp.json:</text>
+<rect x="40" y="7096.400000000011" width="720" height="192" rx="8" fill="#1e1e1e"/>
+<text x="56" y="7126.400000000011" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">{</text>
+<text x="56" y="7146.400000000011" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">  "mcpServers": {</text>
+<text x="56" y="7166.400000000011" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">    "polyester": {</text>
+<text x="56" y="7186.400000000011" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">      "command": "node",</text>
+<text x="56" y="7206.400000000011" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">      "args": ["dist/mcp/server.js"]</text>
+<text x="56" y="7226.400000000011" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">    }</text>
+<text x="56" y="7246.400000000011" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">  }</text>
+<text x="56" y="7266.400000000011" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">}</text>
 </svg>

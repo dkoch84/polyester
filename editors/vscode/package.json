@@ -2,7 +2,7 @@
   "name": "polyester-vscode",
   "displayName": "Polyester",
   "description": "Language support for Polyester documents",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "publisher": "polyester",
   "engines": {
     "vscode": "^1.85.0"
@@ -189,5 +189,8 @@
   },
   "dependencies": {
     "vscode-languageclient": "^9.0.1"
+  },
+  "overrides": {
+    "minimatch": "^10.2.1"
   }
 }

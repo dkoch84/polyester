@@ -49,6 +49,9 @@ interface CliArgs {
   style?: string;
   spacing?: string;
   name?: string;
+  width?: number;
+  padding?: number;
+  background?: string;
   watch?: boolean;
   help?: boolean;
   json?: boolean;
@@ -79,6 +82,12 @@ function parseArgs(args: string[]): CliArgs {
       result.spacing = args[++i];
     } else if (arg === "-n" || arg === "--name") {
       result.name = args[++i];
+    } else if (arg === "--width") {
+      result.width = parseInt(args[++i], 10);
+    } else if (arg === "--padding") {
+      result.padding = parseInt(args[++i], 10);
+    } else if (arg === "--background") {
+      result.background = args[++i];
     } else if (arg === "-w" || arg === "--watch") {
       result.watch = true;
     } else if (!arg.startsWith("-")) {
@@ -315,7 +324,7 @@ async function buildPdf(
   console.log(`✓ Compiled ${inputPath} → ${outputPath}`);
 }
 
-function buildSvg(inputPath: string, outputPath: string, options?: { width?: number }): void {
+function buildSvg(inputPath: string, outputPath: string, options?: { width?: number; padding?: number; background?: string }): void {
   const absoluteInput = resolve(inputPath);
   const source = readFileSync(absoluteInput, "utf-8");
 
@@ -325,6 +334,8 @@ function buildSvg(inputPath: string, outputPath: string, options?: { width?: num
   // Compile to SVG
   const { svg } = compileToSvg(ast, {
     width: options?.width ?? 800,
+    ...(options?.padding !== undefined && { padding: options.padding }),
+    ...(options?.background !== undefined && { background: options.background }),
   });
 
   // Output
@@ -338,6 +349,9 @@ interface BuildOpts {
   style?: string;
   spacing?: string;
   format?: string;
+  width?: number;
+  padding?: number;
+  background?: string;
 }
 
 async function build(inputPath: string, outputPath?: string, opts?: BuildOpts): Promise<void> {
@@ -361,7 +375,7 @@ async function build(inputPath: string, outputPath?: string, opts?: BuildOpts): 
   if (outputFormat === "pdf") {
     await buildPdf(inputPath, finalOutput, moduleOpts);
   } else if (outputFormat === "svg") {
-    buildSvg(inputPath, finalOutput);
+    buildSvg(inputPath, finalOutput, { width: opts?.width, padding: opts?.padding, background: opts?.background });
   } else {
     buildHtml(inputPath, finalOutput, moduleOpts);
   }
@@ -436,6 +450,9 @@ async function main(): Promise<void> {
         style: args.style,
         spacing: args.spacing,
         format: args.format,
+        width: args.width,
+        padding: args.padding,
+        background: args.background,
       });
       break;
 

@@ -353,8 +353,17 @@ const button: Component = (ctx) => {
     }
   `);
 
+  const href = getArg(ctx.args, "href", "");
+  const classAttr = `class="${classes.join(" ")}"`;
+
+  if (href) {
+    return {
+      html: `<a ${classAttr} href="${href.replace(/"/g, "&quot;")}">${label}</a>`,
+    };
+  }
+
   return {
-    html: `<button class="${classes.join(" ")}">${label}</button>`,
+    html: `<button ${classAttr}>${label}</button>`,
   };
 };
 

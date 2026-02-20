@@ -70,10 +70,17 @@
     /code polyester {
       /hero --bg gradient {
         /vcenter --height 90vh {
-          /text "Polyester" --bold
-          --size 4rem --color white
+          /text "Polyester" --bold --size 4rem 
+            --color white --tracking wide
+
+          /region --padding 1rem {
+            A document language that feels like home.
+
+            Markdown simplicity meets programming power.
+          }
 
           /button primary "Get Started"
+          /button secondary "View on GitHub"
         }
       }
     }
@@ -90,8 +97,8 @@
       }
 
       /region --padding 2rem {
-        /button primary "Get Started"
-        /button secondary "View on GitHub"
+        /button primary "Get Started" --href "https://github.com/dkoch84/polyester/releases"
+        /button secondary "View on GitHub" --href "https://github.com/dkoch84/polyester"
       }
     }
   }

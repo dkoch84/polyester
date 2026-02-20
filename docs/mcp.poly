@@ -6,105 +6,191 @@
     padding: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   }
-  .poly-grid {
-    align-items: stretch;
-  }
-  .poly-grid > .poly-region:first-child {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 0.5rem 0.75rem !important;
-  }
-  .poly-grid > .poly-region:first-child .poly-code-block {
-    margin: 0;
-  }
-  .poly-grid > .poly-region:first-child .poly-code-block pre {
-    background: transparent !important;
-    margin: 0;
-    padding: 0;
-  }
-  .poly-grid > .poly-region:first-child .poly-code-block code {
-    color: #ebdbb2;
-  }
 
-  @media (max-width: 900px) {
-    .poly-grid {
-      grid-template-columns: 1fr !important;
+  @media (max-width: 768px) {
+    .poly-columns {
+      flex-direction: column !important;
     }
-    .poly-grid > .poly-region:first-child {
-      display: none !important;
+    .poly-columns > * {
+      flex: 1 1 100% !important;
+      max-width: 100% !important;
     }
   }
 }
 
-/grid "420px 1fr" {
+/hero --bg gradient {
+  /vcenter --height 60vh {
+    /text "MCP Server" --bold --size 3rem --color white --tracking wide
+    /text "AI meets document authoring" --size 1.5rem --color white --italic
 
-  /region --bg #282828 --padding 1.5rem {
-    /code polyester {
-      /hero --bg gradient {
-        /vcenter --height 60vh {
-          /text "MCP Server" --bold
-          --size 3rem --color white
+    /region --padding 1rem {
+      Polyester ships an MCP server so AI assistants can create, validate, and compile `.poly` documents.
+    }
 
-          /text "AI meets document authoring"
-          --size 1.5rem --color white --italic
+    /region --padding 1rem {
+      /button primary "Back to Home" --href "index.html"
+    }
+  }
+}
+
+/region --padding 3rem {
+
+  ## What It Is
+
+  The Polyester MCP server gives AI assistants direct access to the component system. Instead of guessing at syntax, an AI can look up components, validate its output, and compile documents—all through structured tool calls.
+
+  /columns 3 --gap 1.5rem {
+    /frame --bg #f0f9ff --padding 1.5rem --radius 8px {
+      /text "4" --bold --size 2rem --color #0ea5e9
+      /text "Tools" --size 0.9rem --color #64748b
+    }
+    /frame --bg #f0fdf4 --padding 1.5rem --radius 8px {
+      /text "2" --bold --size 2rem --color #22c55e
+      /text "Prompts" --size 0.9rem --color #64748b
+    }
+    /frame --bg #fef3c7 --padding 1.5rem --radius 8px {
+      /text "3" --bold --size 2rem --color #f59e0b
+      /text "Resources" --size 0.9rem --color #64748b
+    }
+  }
+
+}
+
+/region --padding 3rem {
+
+  ## Tools
+
+  /table --header --bordered {
+    Tool | Parameters | Returns
+    `list_components` | `category` (optional) | Component names and descriptions
+    `get_component_help` | `name` (required) | Full docs: args, flags, examples
+    `validate_document` | `source` (required) | Parse errors and warnings with line numbers
+    `compile_document` | `source` (required) | Standalone HTML string
+  }
+
+  /columns 2 --gap 2rem {
+
+    /frame --bg #f8fafc --padding 1.5rem --radius 8px {
+      ### list_components
+
+      Browse all 27 components, optionally filtered by category: `layout`, `content`, `style`, or `interactive`.
+    }
+
+    /frame --bg #f8fafc --padding 1.5rem --radius 8px {
+      ### get_component_help
+
+      Get the full spec for a component—arguments, flags with descriptions, and usage examples. Pass the name with or without the leading `/`.
+    }
+
+  }
+
+  /columns 2 --gap 2rem {
+
+    /frame --bg #f8fafc --padding 1.5rem --radius 8px {
+      ### validate_document
+
+      Parse a `.poly` source string and report any errors or unknown-command warnings with line numbers. Returns "Document is valid" when clean.
+    }
+
+    /frame --bg #f8fafc --padding 1.5rem --radius 8px {
+      ### compile_document
+
+      Compile a `.poly` source string to a complete standalone HTML document with embedded CSS and syntax highlighting.
+    }
+
+  }
+
+}
+
+/region --bg #f8fafc --padding 3rem {
+
+  ## Prompts
+
+  Pre-built prompt templates that guide the AI toward good Polyester output.
+
+  /columns 2 --gap 2rem {
+
+    /card --icon star {
+      ### create_document
+
+      Generates a starter document for a given type. The AI receives type-specific hints:
+
+      /list {
+        **report** — page setup, columns, tables, charts
+        **presentation** — pageless mode, hero slides, pagebreaks
+        **resume** — compact layout, inline icons, tags, progress bars
+        **article** — two-column prose, pull quotes, images
+        **documentation** — code blocks, fold sections, tables
+      }
+    }
+
+    /card --icon bolt {
+      ### convert_to_polyester
+
+      Converts HTML, Markdown, or LaTeX source into Polyester syntax. The AI receives mapping guidelines for translating constructs from the source format.
+    }
+
+  }
+
+}
+
+/region --padding 3rem {
+
+  ## Resources
+
+  The MCP server exposes read-only resources that AI clients can fetch for context.
+
+  /table --header --bordered {
+    URI | Type | Content
+    `polyester://syntax-guide` | text/markdown | Full language reference
+    `polyester://components` | application/json | Complete component registry
+    `polyester://examples/{name}` | text/plain | Example files from the examples directory
+  }
+
+}
+
+/region --bg #f0fdf4 --padding 3rem {
+
+  ## Setup
+
+  Add to your project's `.mcp.json` (or your editor's MCP config):
+
+  /code json --title ".mcp.json" {
+    {
+      "mcpServers": {
+        "polyester": {
+          "command": "node",
+          "args": ["dist/mcp/server.js"]
         }
       }
     }
   }
 
-  /hero --bg gradient {
-    /vcenter --height 60vh {
-      /text "MCP Server" --bold --size 3rem --color white --tracking wide
-      /text "AI meets document authoring" --size 1.5rem --color white --italic
-
-      /region --padding 1rem {
-        Polyester ships an MCP server so AI assistants can create, validate, and compile `.poly` documents.
-      }
-
-      /region --padding 1rem {
-        /button primary "Back to Home" --href "index.html"
-      }
-    }
-  }
+  The server uses stdio transport. Point the `args` path to your Polyester installation's `dist/mcp/server.js`.
 
 }
 
-/grid "420px 1fr" {
+/region --padding 3rem {
 
-  /region --bg #282828 --padding 1.5rem {
-    /code text {
-      Model Context Protocol (MCP)
+  ## Compatible With
 
-      A standard for AI assistants to use
-      external tools. Polyester exposes:
+  The MCP server works with any client that supports the Model Context Protocol:
 
-        4 tools
-        2 prompts
-        3 resources
+  /columns 2 --gap 2rem {
 
-      via stdio transport.
+    /region {
+      /list {
+        **Claude Code** — Full support via `.mcp.json`
+        **Cursor** — MCP tools in AI chat
+        **Windsurf** — MCP integration
+      }
     }
-  }
 
-  /region --padding 3rem {
-
-    ## What It Is
-
-    The Polyester MCP server gives AI assistants direct access to the component system. Instead of guessing at syntax, an AI can look up components, validate its output, and compile documents—all through structured tool calls.
-
-    /columns 3 --gap 1.5rem {
-      /frame --bg #f0f9ff --padding 1.5rem --radius 8px {
-        /text "4" --bold --size 2rem --color #0ea5e9
-        /text "Tools" --size 0.9rem --color #64748b
-      }
-      /frame --bg #f0fdf4 --padding 1.5rem --radius 8px {
-        /text "2" --bold --size 2rem --color #22c55e
-        /text "Prompts" --size 0.9rem --color #64748b
-      }
-      /frame --bg #fef3c7 --padding 1.5rem --radius 8px {
-        /text "3" --bold --size 2rem --color #f59e0b
-        /text "Resources" --size 0.9rem --color #64748b
+    /region {
+      /list {
+        **VS Code** — With MCP extension
+        **Zed** — MCP support
+        **Any MCP client** — stdio transport
       }
     }
 
@@ -112,259 +198,16 @@
 
 }
 
-/grid "420px 1fr" {
+/region --bg #282828 --padding 3rem {
+  /center {
+    /text "Polyester MCP Server" --bold --size 1.5rem --color white --tracking wide
 
-  /region --bg #282828 --padding 1.5rem {
-    /code typescript {
-      // list_components
-      { category?: "layout" | "content"
-        | "style" | "interactive" }
-
-      // get_component_help
-      { name: "columns" }
-
-      // validate_document
-      { source: "/page A4\n..." }
-
-      // compile_document
-      { source: "/page A4\n..." }
-    }
-  }
-
-  /region --padding 3rem {
-
-    ## Tools
-
-    /table --header --bordered {
-      Tool | Parameters | Returns
-      `list_components` | `category` (optional) | Component names and descriptions
-      `get_component_help` | `name` (required) | Full docs: args, flags, examples
-      `validate_document` | `source` (required) | Parse errors and warnings with line numbers
-      `compile_document` | `source` (required) | Standalone HTML string
-    }
-
-    /columns 2 --gap 2rem {
-
-      /frame --bg #f8fafc --padding 1.5rem --radius 8px {
-        ### list_components
-
-        Browse all 27 components, optionally filtered by category: `layout`, `content`, `style`, or `interactive`.
-      }
-
-      /frame --bg #f8fafc --padding 1.5rem --radius 8px {
-        ### get_component_help
-
-        Get the full spec for a component—arguments, flags with descriptions, and usage examples. Pass the name with or without the leading `/`.
-      }
-
-    }
-
-    /columns 2 --gap 2rem {
-
-      /frame --bg #f8fafc --padding 1.5rem --radius 8px {
-        ### validate_document
-
-        Parse a `.poly` source string and report any errors or unknown-command warnings with line numbers. Returns "Document is valid" when clean.
-      }
-
-      /frame --bg #f8fafc --padding 1.5rem --radius 8px {
-        ### compile_document
-
-        Compile a `.poly` source string to a complete standalone HTML document with embedded CSS and syntax highlighting.
-      }
-
-    }
-
-  }
-
-}
-
-/grid "420px 1fr" {
-
-  /region --bg #282828 --padding 1.5rem {
-    /code text {
-      Prompts:
-
-      create_document
-        type: report | presentation | resume
-              | article | documentation
-        description: "quarterly sales report"
-
-      convert_to_polyester
-        source: "<h1>Hello</h1>..."
-        source_format: html | markdown | latex
-    }
-  }
-
-  /region --bg #f8fafc --padding 3rem {
-
-    ## Prompts
-
-    Pre-built prompt templates that guide the AI toward good Polyester output.
-
-    /columns 2 --gap 2rem {
-
-      /card --icon star {
-        ### create_document
-
-        Generates a starter document for a given type. The AI receives type-specific hints:
-
-        /list {
-          **report** — page setup, columns, tables, charts
-          **presentation** — pageless mode, hero slides, pagebreaks
-          **resume** — compact layout, inline icons, tags, progress bars
-          **article** — two-column prose, pull quotes, images
-          **documentation** — code blocks, fold sections, tables
-        }
-      }
-
-      /card --icon bolt {
-        ### convert_to_polyester
-
-        Converts HTML, Markdown, or LaTeX source into Polyester syntax. The AI receives mapping guidelines for translating constructs from the source format.
-      }
-
-    }
-
-  }
-
-}
-
-/grid "420px 1fr" {
-
-  /region --bg #282828 --padding 1.5rem {
-    /code text {
-      Resources:
-
-      polyester://syntax-guide
-        Language reference (Markdown)
-
-      polyester://components
-        Full registry (JSON)
-
-      polyester://examples/{name}
-        Example .poly files
-    }
-  }
-
-  /region --padding 3rem {
-
-    ## Resources
-
-    The MCP server also exposes read-only resources that AI clients can fetch for context.
-
-    /table --header --bordered {
-      URI | Type | Content
-      `polyester://syntax-guide` | text/markdown | Full language reference
-      `polyester://components` | application/json | Complete component registry
-      `polyester://examples/{name}` | text/plain | Example files from the examples directory
-    }
-
-  }
-
-}
-
-/grid "420px 1fr" {
-
-  /region --bg #282828 --padding 1.5rem {
-    /code json --title ".mcp.json" {
-      {
-        "mcpServers": {
-          "polyester": {
-            "command": "node",
-            "args": [
-              "dist/mcp/server.js"
-            ]
-          }
-        }
+    /region --padding 1rem {
+      /inline --gap 1rem {
+        /button secondary "Home" --href "index.html"
+        /button secondary "Design Tokens" --href "design-system.html"
+        /button secondary "Theme Studio" --href "theme-studio.html"
       }
     }
   }
-
-  /region --bg #f0fdf4 --padding 3rem {
-
-    ## Setup
-
-    Add to your project's `.mcp.json` (or your editor's MCP config):
-
-    /code json --title ".mcp.json" {
-      {
-        "mcpServers": {
-          "polyester": {
-            "command": "node",
-            "args": ["dist/mcp/server.js"]
-          }
-        }
-      }
-    }
-
-    The server uses stdio transport. Point the `args` path to your Polyester installation's `dist/mcp/server.js`.
-
-  }
-
-}
-
-/grid "420px 1fr" {
-
-  /region --bg #282828 --padding 1.5rem {
-    /code text {
-      Compatible editors:
-
-      - Claude Code
-      - Cursor
-      - Windsurf
-      - VS Code (with MCP extension)
-      - Any MCP-compatible client
-    }
-  }
-
-  /region --padding 3rem {
-
-    ## Compatible With
-
-    The MCP server works with any client that supports the Model Context Protocol:
-
-    /columns 2 --gap 2rem {
-
-      /region {
-        /list {
-          **Claude Code** — Full support via `.mcp.json`
-          **Cursor** — MCP tools in AI chat
-          **Windsurf** — MCP integration
-        }
-      }
-
-      /region {
-        /list {
-          **VS Code** — With MCP extension
-          **Zed** — MCP support
-          **Any MCP client** — stdio transport
-        }
-      }
-
-    }
-
-  }
-
-}
-
-/grid "420px 1fr" {
-
-  /region --bg #282828 --padding 1.5rem {
-  }
-
-  /region --bg #282828 --padding 3rem {
-    /center {
-      /text "Polyester MCP Server" --bold --size 1.5rem --color white --tracking wide
-
-      /region --padding 1rem {
-        /inline --gap 1rem {
-          /button secondary "Home" --href "index.html"
-          /button secondary "Design Tokens" --href "design-system.html"
-          /button secondary "Theme Studio" --href "theme-studio.html"
-        }
-      }
-    }
-  }
-
 }

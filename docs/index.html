@@ -2151,17 +2151,24 @@ body {
 
 <div class="poly-grid" style="grid-template-columns: 420px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><pre><code class="language-polyester"><span class="poly-hl-command">/hero</span> <span class="poly-hl-flag">--bg</span> gradient <span class="poly-hl-brace">{</span>
   <span class="poly-hl-command">/vcenter</span> <span class="poly-hl-flag">--height</span> 90vh <span class="poly-hl-brace">{</span>
-    <span class="poly-hl-command">/text</span> <span class="poly-hl-string">&quot;Polyester&quot;</span> <span class="poly-hl-flag">--bold</span>
-    <span class="poly-hl-flag">--size</span> 4rem <span class="poly-hl-flag">--color</span> white
+    <span class="poly-hl-command">/text</span> <span class="poly-hl-string">&quot;Polyester&quot;</span> <span class="poly-hl-flag">--bold</span> <span class="poly-hl-flag">--size</span> 4rem 
+      <span class="poly-hl-flag">--color</span> white <span class="poly-hl-flag">--tracking</span> wide
+
+    <span class="poly-hl-command">/region</span> <span class="poly-hl-flag">--padding</span> 1rem <span class="poly-hl-brace">{</span>
+      A document language that feels like home.
+
+      Markdown simplicity meets programming power.
+    <span class="poly-hl-brace">}</span>
 
     <span class="poly-hl-command">/button</span> primary <span class="poly-hl-string">&quot;Get Started&quot;</span>
+    <span class="poly-hl-command">/button</span> secondary <span class="poly-hl-string">&quot;View on GitHub&quot;</span>
   <span class="poly-hl-brace">}</span>
 <span class="poly-hl-brace">}</span></code></pre></div></div>
 <section class="poly-hero" style="background: var(--poly-hero-gradient, linear-gradient(135deg, #667eea 0%, #764ba2 100%)); color: var(--poly-hero-text, white); "><div style="display: flex; align-items: center; justify-content: center; flex-direction: column; height: 90vh; min-height: 90vh;"><span class="poly-text" style="color: white; font-size: 4rem; font-weight: bold; letter-spacing: 0.1em; ">Polyester</span>
 <div class="poly-region" style="padding: 1rem; "><div class="poly-content"><p>A document language that feels like home.</p>
 <p>Markdown simplicity meets programming power.</p></div></div>
-<div class="poly-region" style="padding: 2rem; "><button class="poly-button poly-button-primary">Get Started</button>
-<button class="poly-button poly-button-secondary">View on GitHub</button></div></div></section></div>
+<div class="poly-region" style="padding: 2rem; "><a class="poly-button poly-button-primary" href="https://github.com/dkoch84/polyester/releases">Get Started</a>
+<a class="poly-button poly-button-secondary" href="https://github.com/dkoch84/polyester">View on GitHub</a></div></div></section></div>
 <div class="poly-grid" style="grid-template-columns: 420px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><pre><code class="language-polyester"><span class="poly-hl-command">/center</span> <span class="poly-hl-brace">{</span>
   <span class="poly-hl-command">/text</span> <span class="poly-hl-string">&quot;Title&quot;</span> <span class="poly-hl-flag">--size</span> 2rem <span class="poly-hl-flag">--bold</span>
 <span class="poly-hl-brace">}</span>
@@ -2342,11 +2349,11 @@ then renders to your target format.</p></div></div></details>
 <details class="poly-fold"><summary>Advanced configuration</summary><div class="poly-fold-content"><div class="poly-content"><p>Configuration options for power users.
 Theme customization, output formats, and more.</p></div></div></details></div>
 <div class="poly-region" style=""><div class="poly-content"><h3>Task Lists</h3></div>
-<div class="poly-checkbox checked"><input type="checkbox" id="cb-jebeft3" checked disabled><label for="cb-jebeft3">Write documentation</label></div>
-<div class="poly-checkbox checked"><input type="checkbox" id="cb-7mo3j4s" checked disabled><label for="cb-7mo3j4s">Add syntax highlighting</label></div>
-<div class="poly-checkbox checked"><input type="checkbox" id="cb-ae0eama" checked disabled><label for="cb-ae0eama">Create VSCode extension</label></div>
-<div class="poly-checkbox checked"><input type="checkbox" id="cb-gs593r3" checked disabled><label for="cb-gs593r3">Build Neovim plugin</label></div>
-<div class="poly-checkbox"><input type="checkbox" id="cb-5nj7q8b"  disabled><label for="cb-5nj7q8b">World domination</label></div>
+<div class="poly-checkbox checked"><input type="checkbox" id="cb-5dzirxb" checked disabled><label for="cb-5dzirxb">Write documentation</label></div>
+<div class="poly-checkbox checked"><input type="checkbox" id="cb-ut63dof" checked disabled><label for="cb-ut63dof">Add syntax highlighting</label></div>
+<div class="poly-checkbox checked"><input type="checkbox" id="cb-608086e" checked disabled><label for="cb-608086e">Create VSCode extension</label></div>
+<div class="poly-checkbox checked"><input type="checkbox" id="cb-p5e5ahk" checked disabled><label for="cb-p5e5ahk">Build Neovim plugin</label></div>
+<div class="poly-checkbox"><input type="checkbox" id="cb-s059b5y"  disabled><label for="cb-s059b5y">World domination</label></div>
 <div class="poly-region" style="padding: 1rem; "><div class="poly-content"><p>Progress: 4/5 complete</p></div></div></div></div></div></div>
 <div class="poly-grid" style="grid-template-columns: 420px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><pre><code class="language-polyester"><span class="poly-hl-command">/region</span> <span class="poly-hl-flag">--bg</span> #fef3c7 <span class="poly-hl-flag">--padding</span> 3rem <span class="poly-hl-brace">{</span>
 
@@ -2383,8 +2390,8 @@ poly build doc.poly --style corporate --spacing compact
 poly theme import ~/.Xresources --name my-theme
 poly build doc.poly --theme my-theme</code></pre></div>
 <div class="poly-region" style="padding: 0.5rem; "><span class="poly-text" style="color: #64748b; font-size: 0.85rem; ">Learn more:</span>
-<span class="poly-inline"><button class="poly-button poly-button-secondary">Design Tokens</button>
-<button class="poly-button poly-button-secondary">Theme Studio</button></span></div></div></div>
+<span class="poly-inline"><a class="poly-button poly-button-secondary" href="design-system.html">Design Tokens</a>
+<a class="poly-button poly-button-secondary" href="theme-studio.html">Theme Studio</a></span></div></div></div>
 <div class="poly-grid" style="grid-template-columns: 420px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><pre><code class="language-polyester"><span class="poly-hl-command">/region</span> <span class="poly-hl-flag">--padding</span> 3rem <span class="poly-hl-brace">{</span>
 
   ## Pagination
@@ -2445,7 +2452,7 @@ poly build doc.poly --theme my-theme</code></pre></div>
 <li>Zathura PDF preview</li>
 </ul></div></div></div>
 <div class="poly-region" style="padding: 0.5rem; "><span class="poly-text" style="color: #64748b; font-size: 0.85rem; ">AI integration:</span>
-<span class="poly-inline"><button class="poly-button poly-button-secondary">MCP Server</button></span></div></div></div>
+<span class="poly-inline"><a class="poly-button poly-button-secondary" href="mcp.html">MCP Server</a></span></div></div></div>
 <div class="poly-grid" style="grid-template-columns: 420px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><pre><code class="language-bash">npm install -g polyester
 
 poly build document.poly

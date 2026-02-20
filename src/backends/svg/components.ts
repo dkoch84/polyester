@@ -657,6 +657,68 @@ const frame: SvgComponent = (ctx) => {
   return { height: totalHeight };
 };
 
+/**
+ * /badge - Shields.io flat-style two-tone badge
+ * Usage: /badge "label" "value" --color "#8b5cf6"
+ */
+const badge: SvgComponent = (ctx) => {
+  const label = getPositional(ctx.args, 0, "");
+  const value = getPositional(ctx.args, 1, "");
+  const color = getArg(ctx.args, "color", "") || getArg(ctx.args, "c", "") || "#8b5cf6";
+
+  const fontSize = 11;
+  const paddingX = 8;
+  const charWidth = 6.6; // Approximate Verdana width at 11px
+  const height = 20;
+  const radius = 3;
+  const font = "Verdana,Geneva,DejaVu Sans,sans-serif";
+
+  const x = ctx.layout.x;
+  const y = ctx.layout.y;
+  const textY = Math.round(y + height / 2 + fontSize * 0.35);
+
+  const labelColor = "#555";
+
+  if (value) {
+    // Two-tone: label (left, gray) + value (right, colored)
+    const labelWidth = Math.round(label.length * charWidth + paddingX * 2);
+    const valueWidth = Math.round(value.length * charWidth + paddingX * 2);
+    const totalWidth = labelWidth + valueWidth;
+
+    const clipId = `badge-clip-${x}-${y}`;
+    ctx.addDef(clipId, `<clipPath id="${clipId}"><rect x="${x}" y="${y}" width="${totalWidth}" height="${height}" rx="${radius}"/></clipPath>`);
+
+    ctx.addElement(
+      `<g clip-path="url(#${clipId})">` +
+      `<rect x="${x}" y="${y}" width="${labelWidth}" height="${height}" fill="${labelColor}"/>` +
+      `<rect x="${x + labelWidth}" y="${y}" width="${valueWidth}" height="${height}" fill="${ctx.escapeAttr(color)}"/>` +
+      `</g>`
+    );
+
+    ctx.addElement(
+      `<text x="${x + labelWidth / 2}" y="${textY}" font-family="${font}" font-size="${fontSize}" fill="#fff" text-anchor="middle">${ctx.escapeText(label)}</text>`
+    );
+    ctx.addElement(
+      `<text x="${x + labelWidth + valueWidth / 2}" y="${textY}" font-family="${font}" font-size="${fontSize}" fill="#fff" text-anchor="middle">${ctx.escapeText(value)}</text>`
+    );
+
+    ctx.updateLayout({ y: y + height });
+    return { height };
+  }
+
+  // Single-section fallback
+  const pillWidth = Math.round(label.length * charWidth + paddingX * 2);
+  ctx.addElement(
+    `<rect x="${x}" y="${y}" width="${pillWidth}" height="${height}" rx="${radius}" fill="${ctx.escapeAttr(color)}"/>`
+  );
+  ctx.addElement(
+    `<text x="${x + pillWidth / 2}" y="${textY}" font-family="${font}" font-size="${fontSize}" fill="#fff" text-anchor="middle">${ctx.escapeText(label)}</text>`
+  );
+
+  ctx.updateLayout({ y: y + height });
+  return { height };
+};
+
 // Export all components
 export const components: Record<string, SvgComponent> = {
   page,
@@ -674,4 +736,5 @@ export const components: Record<string, SvgComponent> = {
   center,
   vcenter,
   frame,
+  badge,
 };

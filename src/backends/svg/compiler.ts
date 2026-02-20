@@ -29,6 +29,8 @@ export interface SvgCompileOptions {
   background?: string;
   /** Add clickable links */
   enableLinks?: boolean;
+  /** Padding around content in pixels (default 40) */
+  padding?: number;
 }
 
 export interface SvgCompileResult {
@@ -57,6 +59,7 @@ export class SvgCompiler {
   private defIds: Set<string> = new Set();
 
   constructor(options: SvgCompileOptions = {}) {
+    const padding = options.padding ?? 40;
     this.options = {
       width: options.width ?? 800,
       height: options.height ?? 0, // Will be calculated
@@ -64,13 +67,14 @@ export class SvgCompiler {
       fontFamily: options.fontFamily ?? "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
       background: options.background ?? "#ffffff",
       enableLinks: options.enableLinks ?? true,
+      padding,
     };
 
     this.layout = {
-      x: 40,
-      y: 40,
-      width: this.options.width - 80,
-      maxWidth: this.options.width - 80,
+      x: padding,
+      y: padding,
+      width: this.options.width - padding * 2,
+      maxWidth: this.options.width - padding * 2,
       fontSize: this.options.fontSize,
       fontFamily: this.options.fontFamily,
       color: "#1a1a1a",
@@ -84,7 +88,7 @@ export class SvgCompiler {
     this.defs = [];
     this.elements = [];
     this.defIds = new Set();
-    this.layout.y = 40;
+    this.layout.y = this.options.padding;
 
     // Add gradient definitions
     this.addGradientDef();
@@ -93,7 +97,7 @@ export class SvgCompiler {
     this.compileChildren(doc.children);
 
     // Calculate final height
-    const finalHeight = this.options.height || this.layout.y + 40;
+    const finalHeight = this.options.height || this.layout.y + this.options.padding;
 
     // Build SVG
     const svg = this.buildSvg(finalHeight);
@@ -423,10 +427,14 @@ export class SvgCompiler {
   private buildSvg(height: number): string {
     const width = this.options.width;
 
+    const bg = this.options.background;
+    const bgRect = (bg === "none" || bg === "transparent")
+      ? ""
+      : `\n  <rect width="100%" height="100%" fill="${bg}"/>`;
+
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">
   <defs>${this.defs.join("")}
-  </defs>
-  <rect width="100%" height="100%" fill="${this.options.background}"/>
+  </defs>${bgRect}
 ${this.elements.join("\n")}
 </svg>`;
   }

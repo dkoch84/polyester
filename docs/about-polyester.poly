@@ -3,7 +3,6 @@
 /hero --bg gradient {
   /text "Polyester" --bold --size 3rem
   /text "A document authoring language for humans" --size 1.25rem --italic
-  /button primary "Documentation" --href "https://dkoch84.github.io/polyester/"
 }
 
 Polyester is a document authoring language that occupies an interesting niche in the markup landscape. It combines the readability of **Markdown** with the structured power of **LaTeX**, sitting alongside **Typst** as a modern alternative for document creation.
