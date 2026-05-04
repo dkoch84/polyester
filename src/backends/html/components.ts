@@ -5,6 +5,7 @@
  */
 
 import { getIcon } from "./icons.js";
+import { resolveStyleRef, loadStyle } from "../../library/index.js";
 import type { PageSettings } from "./compiler.js";
 
 export interface ComponentContext {
@@ -22,6 +23,8 @@ export interface ComponentContext {
   addStyle: (css: string) => void;
   /** Set page settings (for PDF generation) */
   setPageSettings: (settings: Partial<PageSettings>) => void;
+  /** Directory of the source document — used by /import to resolve relative paths. */
+  sourceDir?: string;
 }
 
 export interface ComponentResult {
@@ -55,13 +58,108 @@ function hasFlag(args: Record<string, string | boolean>, name: string): boolean 
   return args[name] === true || (typeof args[name] === "string" && args[name] !== "");
 }
 
+// ======== Pattern Background Helpers ========
+
+interface PatternCSS {
+  backgroundImage: string;
+  backgroundSize: string;
+  maskImage?: string;
+}
+
+/**
+ * Generate CSS properties for a background pattern.
+ */
+function generatePatternCSS(opts: {
+  pattern: string;
+  size?: string;
+  color?: string;
+  fade?: string;
+}): PatternCSS {
+  const size = opts.size || "64px";
+  const color = opts.color || "rgba(0,0,0,0.1)";
+  const fade = opts.fade || "none";
+
+  let backgroundImage: string;
+  let backgroundSize: string;
+
+  switch (opts.pattern) {
+    case "dots":
+      backgroundImage = `radial-gradient(circle, ${color} 1px, transparent 1px)`;
+      backgroundSize = `${size} ${size}`;
+      break;
+    case "cross": {
+      const h = `linear-gradient(0deg, ${color} 40%, transparent 40%, transparent 60%, ${color} 60%)`;
+      const v = `linear-gradient(90deg, ${color} 40%, transparent 40%, transparent 60%, ${color} 60%)`;
+      backgroundImage = `${h}, ${v}`;
+      backgroundSize = `${size} ${size}, ${size} ${size}`;
+      break;
+    }
+    case "diagonal":
+      backgroundImage = `repeating-linear-gradient(45deg, transparent, transparent 10px, ${color} 10px, ${color} 11px)`;
+      backgroundSize = `${size} ${size}`;
+      break;
+    case "grid":
+    default:
+      backgroundImage = `linear-gradient(${color} 1px, transparent 1px), linear-gradient(90deg, ${color} 1px, transparent 1px)`;
+      backgroundSize = `${size} ${size}, ${size} ${size}`;
+      break;
+  }
+
+  let maskImage: string | undefined;
+  if (fade === "radial") {
+    maskImage = "radial-gradient(ellipse 70% 70% at 50% 50%, black 40%, transparent 100%)";
+  } else if (fade === "edges") {
+    maskImage = "radial-gradient(ellipse 80% 80% at 50% 50%, black 50%, transparent 100%)";
+  }
+
+  return { backgroundImage, backgroundSize, maskImage };
+}
+
+/**
+ * Convert pattern CSS into an inline style string, optionally composing with an existing background.
+ */
+function patternToInlineStyle(patternCss: PatternCSS, existingBg?: string): string {
+  let style = "";
+
+  if (existingBg) {
+    if (existingBg.includes("gradient") || existingBg.includes("url(")) {
+      // Compose: pattern layers first, base gradient last
+      style += `background-image: ${patternCss.backgroundImage}, ${existingBg}; `;
+      // Add "cover" for the base gradient layer
+      style += `background-size: ${patternCss.backgroundSize}, cover; `;
+    } else {
+      // Solid color — use background-color so it doesn't conflict
+      style += `background-color: ${existingBg}; `;
+      style += `background-image: ${patternCss.backgroundImage}; `;
+      style += `background-size: ${patternCss.backgroundSize}; `;
+    }
+  } else {
+    style += `background-image: ${patternCss.backgroundImage}; `;
+    style += `background-size: ${patternCss.backgroundSize}; `;
+  }
+
+  if (patternCss.maskImage) {
+    style += `-webkit-mask-image: ${patternCss.maskImage}; mask-image: ${patternCss.maskImage}; `;
+  }
+
+  return style;
+}
+
 /**
  * /page - Document setup
- * Usage: /page A4 --margin 2cm --title "My Document"
- * Usage: /page --pageless (for continuous/scrolling PDF)
+ * Usage: /page A4 --mode pdf --margin 2cm
+ * Usage: /page --mode web (continuous, no page boundaries)
+ * Usage: /page A4 --mode print (paginated with print considerations)
+ *
+ * --mode values:
+ *   web   — continuous flow, no page boundaries (default when no size given)
+ *   pdf   — paginated for digital PDF output (default when size given)
+ *   print — paginated for physical printing
+ *
+ * Legacy: --pageless is accepted as an alias for --mode web.
  */
 const page: Component = (ctx) => {
-  const size = getPositional(ctx.args, 0, "A4");
+  const size = getPositional(ctx.args, 0, "");
   const margin = getArg(ctx.args, "margin", "2cm");
   const orientation = hasFlag(ctx.args, "landscape") ? "landscape" : "portrait";
   const maxWidth = getArg(ctx.args, "max-width", "");
@@ -69,17 +167,39 @@ const page: Component = (ctx) => {
   const theme = getArg(ctx.args, "theme", "");
   const style = getArg(ctx.args, "style", "");
   const spacing = getArg(ctx.args, "spacing", "");
+  const font = getArg(ctx.args, "font", "");
+
+  // Resolve --mode (web | pdf | print) with legacy --pageless and size-based defaults.
+  const modeArg = String(getArg(ctx.args, "mode", "")).toLowerCase();
+  let mode: "web" | "pdf" | "print";
+  if (modeArg === "web" || modeArg === "pdf" || modeArg === "print") {
+    mode = modeArg;
+  } else if (pageless) {
+    mode = "web";
+  } else {
+    mode = size ? "pdf" : "web";
+  }
+  const isPaginated = mode !== "web";
 
   // Store page settings for PDF generation and theme resolution
   ctx.setPageSettings({
-    size,
+    ...(size && { size }),
     margin,
     orientation,
-    pageless,
+    pageless: !isPaginated,
+    mode,
     ...(theme && { theme }),
     ...(style && { style }),
     ...(spacing && { spacing }),
   });
+
+  if (font) {
+    ctx.addStyle(`
+    .poly-document {
+      --poly-font-body: ${font};
+      --poly-font-heading: ${font};
+    }`);
+  }
 
   let extraStyles = "";
   if (maxWidth) {
@@ -90,8 +210,8 @@ const page: Component = (ctx) => {
     }`;
   }
 
-  if (pageless) {
-    // For pageless mode, don't set @page rules - let content flow naturally
+  if (!isPaginated || !size) {
+    // No page size or pageless: don't set @page rules, let content flow naturally
     ctx.addStyle(`
     @media print {
       .poly-document {
@@ -149,8 +269,18 @@ const columns: Component = (ctx) => {
   const style = `grid-template-columns: ${gridTemplate}; gap: ${gap};`;
   const children = ctx.compileChildren();
 
+  // Split on <hr> tags to create separate column cells
+  // This lets users use --- in Markdown to separate column content
+  const segments = children.split(/<hr\s*\/?>/).map((s) => s.trim()).filter(Boolean);
+  let inner: string;
+  if (segments.length > 1) {
+    inner = segments.map((seg) => `<div class="poly-column-cell">${seg}</div>`).join("\n");
+  } else {
+    inner = children;
+  }
+
   return {
-    html: `<div class="poly-columns" style="${style}">${children}</div>`,
+    html: `<div class="poly-columns" style="${style}">${inner}</div>`,
   };
 };
 
@@ -178,6 +308,7 @@ const region: Component = (ctx) => {
   const bg = getArg(ctx.args, "bg", "");
   const padding = getArg(ctx.args, "padding", "") || getArg(ctx.args, "p", "");
   const margin = getArg(ctx.args, "margin", "") || getArg(ctx.args, "m", "");
+  const userClass = getArg(ctx.args, "class", "");
 
   let style = "";
   if (bg) style += `background: ${bg}; `;
@@ -185,9 +316,10 @@ const region: Component = (ctx) => {
   if (margin) style += `margin: ${margin}; `;
 
   const children = ctx.compileChildren();
+  const cls = `poly-region${userClass ? ` ${userClass}` : ""}`;
 
   return {
-    html: `<div class="poly-region" style="${style}">${children}</div>`,
+    html: `<div class="${cls}" style="${style}">${children}</div>`,
   };
 };
 
@@ -229,6 +361,7 @@ const text: Component = (ctx) => {
   const isItalic = hasFlag(ctx.args, "italic") || hasFlag(ctx.args, "i");
   const rotate = getArg(ctx.args, "rotate", "");
   const tracking = getArg(ctx.args, "tracking", "");
+  const userClass = getArg(ctx.args, "class", "");
 
   let style = "";
   if (color) style += `color: ${color}; `;
@@ -241,8 +374,9 @@ const text: Component = (ctx) => {
     style += `letter-spacing: ${trackingValue}; `;
   }
 
+  const cls = `poly-text${userClass ? ` ${userClass}` : ""}`;
   return {
-    html: `<span class="poly-text" style="${style}">${content}</span>`,
+    html: `<span class="${cls}" style="${style}">${content}</span>`,
   };
 };
 
@@ -267,23 +401,62 @@ const quote: Component = (ctx) => {
 /**
  * /hero - Hero section
  * Usage: /hero --bg blue { content }
+ * Usage: /hero --bg gradient --pattern grid { content }
  */
 const hero: Component = (ctx) => {
   const bg = getArg(ctx.args, "bg", "");
+  const pattern = getArg(ctx.args, "pattern", "");
 
   let style = "";
+  let resolvedBg = "";
+
   if (bg) {
     if (bg.includes("gradient")) {
-      style += `background: var(--poly-hero-gradient, linear-gradient(135deg, #667eea 0%, #764ba2 100%)); color: var(--poly-hero-text, white); `;
+      resolvedBg = "var(--poly-hero-gradient, linear-gradient(135deg, #667eea 0%, #764ba2 100%))";
+      style += `color: var(--poly-hero-text, white); `;
     } else {
-      style += `background: ${bg}; `;
+      resolvedBg = bg;
     }
+  }
+
+  if (pattern) {
+    const patternSize = getArg(ctx.args, "pattern-size", "64px");
+    const patternColor = getArg(ctx.args, "pattern-color", "rgba(255,255,255,0.15)");
+    const patternFade = getArg(ctx.args, "pattern-fade", "none");
+    const pCss = generatePatternCSS({ pattern, size: patternSize, color: patternColor, fade: patternFade });
+    style += patternToInlineStyle(pCss, resolvedBg);
+  } else if (resolvedBg) {
+    style += `background: ${resolvedBg}; `;
   }
 
   const children = ctx.compileChildren();
 
   return {
     html: `<section class="poly-hero" style="${style}">${children}</section>`,
+  };
+};
+
+/**
+ * /background - Decorative pattern background
+ * Usage: /background grid { content }
+ * Usage: /background dots --size 48px --color "rgba(0,0,0,0.15)" --fade radial { content }
+ */
+const background: Component = (ctx) => {
+  const pattern = getPositional(ctx.args, 0, "grid");
+  const size = getArg(ctx.args, "size", "") || getArg(ctx.args, "s", "64px");
+  const color = getArg(ctx.args, "color", "") || getArg(ctx.args, "c", "rgba(0,0,0,0.1)");
+  const bg = getArg(ctx.args, "bg", "");
+  const fade = getArg(ctx.args, "fade", "none");
+  const padding = getArg(ctx.args, "padding", "") || getArg(ctx.args, "p", "");
+
+  const pCss = generatePatternCSS({ pattern, size, color, fade });
+  let style = patternToInlineStyle(pCss, bg || undefined);
+  if (padding) style += `padding: ${padding}; `;
+
+  const children = ctx.compileChildren();
+
+  return {
+    html: `<div class="poly-background" style="${style}">${children}</div>`,
   };
 };
 
@@ -297,16 +470,16 @@ const card: Component = (ctx) => {
 
   let iconHtml = "";
   if (icon) {
-    // Simple emoji mapping for common icons
-    const iconMap: Record<string, string> = {
-      rocket: "🚀",
-      shield: "🛡️",
-      heart: "❤️",
-      star: "⭐",
-      check: "✓",
-      bolt: "⚡",
-    };
-    iconHtml = `<div class="poly-card-icon">${iconMap[icon] || icon}</div>`;
+    const svg = getIcon(icon);
+    if (svg) {
+      iconHtml = `<div class="poly-card-icon">${svg}</div>`;
+    } else {
+      const emojiMap: Record<string, string> = {
+        rocket: "🚀", shield: "🛡️", heart: "❤️",
+        star: "⭐", check: "✓", bolt: "⚡",
+      };
+      iconHtml = `<div class="poly-card-icon">${emojiMap[icon] || icon}</div>`;
+    }
   }
 
   return {
@@ -383,11 +556,16 @@ const center: Component = (ctx) => {
  * Usage: /vcenter --height 100vh { content }
  */
 const vcenter: Component = (ctx) => {
-  const height = getArg(ctx.args, "height", "") || getArg(ctx.args, "h", "100%");
+  const height = getArg(ctx.args, "height", "") || getArg(ctx.args, "h", "");
+  // Default to page content height in paginated docs, 100% otherwise
+  const resolvedHeight = height || "var(--poly-page-height, 100%)";
   const children = ctx.compileChildren();
 
+  ctx.addStyle(`.poly-vcenter > :first-child > :first-child { margin-top: 0 !important; }
+.poly-vcenter > :first-child > :last-child { margin-bottom: 0 !important; }`);
+
   return {
-    html: `<div style="display: flex; align-items: center; justify-content: center; flex-direction: column; height: ${height}; min-height: ${height};">${children}</div>`,
+    html: `<div class="poly-vcenter" style="display: flex; align-items: center; justify-content: center; flex-direction: column; height: ${resolvedHeight}; min-height: ${resolvedHeight};">${children}</div>`,
   };
 };
 
@@ -400,13 +578,15 @@ const frame: Component = (ctx) => {
   const radius = getArg(ctx.args, "radius", "") || getArg(ctx.args, "r", "4px");
   const padding = getArg(ctx.args, "padding", "") || getArg(ctx.args, "p", "1rem");
   const bg = getArg(ctx.args, "bg", "");
+  const userClass = getArg(ctx.args, "class", "");
   const children = ctx.compileChildren();
 
   let style = `border: ${border}; border-radius: ${radius}; padding: ${padding};`;
   if (bg) style += ` background: ${bg};`;
+  const cls = `poly-frame${userClass ? ` ${userClass}` : ""}`;
 
   return {
-    html: `<div class="poly-frame" style="${style}">${children}</div>`,
+    html: `<div class="${cls}" style="${style}">${children}</div>`,
   };
 };
 
@@ -525,9 +705,11 @@ const code: Component = (ctx) => {
   }
 
   const titleHtml = title ? `<div class="poly-code-title">${escapeHtml(title)}</div>` : "";
+  const userClass = getArg(ctx.args, "class", "");
+  const blockCls = `poly-code-block${userClass ? ` ${userClass}` : ""}`;
 
   return {
-    html: `<div class="poly-code-block">${titleHtml}<pre><code class="${langClass}">${codeHtml}</code></pre></div>`,
+    html: `<div class="${blockCls}">${titleHtml}<pre><code class="${langClass}">${codeHtml}</code></pre></div>`,
   };
 };
 
@@ -655,6 +837,12 @@ const table: Component = (ctx) => {
       width: 100%;
       border-collapse: collapse;
       margin: 1rem 0;
+      break-inside: avoid;
+    }
+    @media print {
+      .poly-table thead {
+        display: table-header-group;
+      }
     }
     .poly-table th,
     .poly-table td {
@@ -928,6 +1116,28 @@ const style: Component = (ctx) => {
 };
 
 /**
+ * /import - Import a style manifest from the design library or a file.
+ * Usage: /import "@library/cards/enterprise"
+ *        /import "./shared/styles.polystyle"
+ */
+const importStyle: Component = (ctx) => {
+  const ref = getPositional(ctx.args, 0, "");
+  if (!ref) return { html: `<!-- /import: missing reference -->` };
+  try {
+    const fromDir = ctx.sourceDir || process.cwd();
+    const abs = resolveStyleRef(ref, fromDir);
+    if (!abs) {
+      return { html: `<!-- /import: could not resolve "${ref}" -->` };
+    }
+    const manifest = loadStyle(abs);
+    ctx.addStyle(manifest.css);
+    return { html: "" };
+  } catch (err: any) {
+    return { html: `<!-- /import error: ${err.message} -->` };
+  }
+};
+
+/**
  * /shape - Basic shapes
  * Usage: /shape circle --size 50px --fill red
  */
@@ -1160,25 +1370,56 @@ const divider: Component = (ctx) => {
 };
 
 /**
+ * /pagebg - Per-page background pattern/color
+ * Usage: /pagebg 1 --pattern grid --size 48px --color "rgba(0,0,0,0.035)"
+ * Usage: /pagebg 2-4 --bg "#f0f4ff"
+ * Usage: /pagebg all --pattern dots --color "rgba(0,0,0,0.08)"
+ */
+const pagebg: Component = (ctx) => {
+  const pages = getPositional(ctx.args, 0, "all");
+  const pattern = getArg(ctx.args, "pattern", "");
+  const size = getArg(ctx.args, "size", "") || getArg(ctx.args, "s", "64px");
+  const color = getArg(ctx.args, "color", "") || getArg(ctx.args, "c", "rgba(0,0,0,0.1)");
+  const bg = getArg(ctx.args, "bg", "");
+  const fade = getArg(ctx.args, "fade", "none");
+
+  let style = "";
+  if (pattern) {
+    const pCss = generatePatternCSS({ pattern, size, color, fade });
+    style = patternToInlineStyle(pCss, bg || undefined);
+  } else if (bg) {
+    style = `background: ${bg}; `;
+  }
+
+  if (style) {
+    ctx.setPageSettings({
+      pagebgs: [{ pages, style }],
+    });
+  }
+
+  return { html: "" };
+};
+
+/**
  * /pagebreak - Force a page break (for PDF output)
  * Usage: /pagebreak
  */
 const pagebreak: Component = (ctx) => {
   ctx.addStyle(`
     .poly-pagebreak {
-      page-break-after: always;
-      break-after: page;
+      page-break-before: always;
+      break-before: page;
       height: 0;
       margin: 0;
       padding: 0;
     }
     @media screen {
-      .poly-pagebreak {
+      .poly-document:not([data-page-size]) .poly-pagebreak {
         border-top: 1px dashed #ccc;
         margin: 1rem 0;
         position: relative;
       }
-      .poly-pagebreak::after {
+      .poly-document:not([data-page-size]) .poly-pagebreak::after {
         content: "page break";
         position: absolute;
         top: -0.6em;
@@ -1207,6 +1448,7 @@ export const components: Record<string, Component> = {
   text,
   quote,
   hero,
+  background,
   card,
   button,
   center,
@@ -1220,10 +1462,12 @@ export const components: Record<string, Component> = {
   fold,
   shape,
   style,
+  import: importStyle,
   icon,
   inline,
   tag,
   progress,
   divider,
+  pagebg,
   pagebreak,
 };

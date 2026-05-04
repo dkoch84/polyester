@@ -1,0 +1,9 @@
+{
+  "name": "hero-gradient",
+  "category": "heroes",
+  "description": "Bold multi-color gradient hero with large centered title.",
+  "targets": ["hero"],
+  "wrapperClass": "hero-gradient",
+  "sampleMarkup": "/region --class hero-gradient {\n  /hero {\n    ## Your Title Here\n    A short subtitle that hooks the reader.\n  }\n}",
+  "css": ".hero-gradient .poly-hero {\n  background: linear-gradient(135deg, #6366f1, #ec4899, #f59e0b);\n  color: #fff;\n  padding: 4rem 2rem !important;\n  border-radius: 20px;\n  font-family: \"Inter\", system-ui, sans-serif;\n  text-align: center;\n  box-shadow: 0 20px 60px rgba(99,102,241,0.25);\n}\n.hero-gradient .poly-hero h2 {\n  font-size: 3rem;\n  font-weight: 900;\n  letter-spacing: -0.03em;\n  margin-bottom: 0.5rem !important;\n}"
+}

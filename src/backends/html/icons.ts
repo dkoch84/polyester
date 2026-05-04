@@ -29,6 +29,8 @@ function getIconsDir(): string {
     // Fallback: try common locations
     const __dirname = dirname(fileURLToPath(import.meta.url));
     const candidates = [
+      // Bundled runtime (VS Code extension vendor dir): dist/index.js → ../icons
+      join(__dirname, "../icons"),
       join(__dirname, "../../../node_modules/lucide-static/icons"),
       join(__dirname, "../../../../node_modules/lucide-static/icons"),
     ];

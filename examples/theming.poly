@@ -1,4 +1,4 @@
-/page A4 --style corporate --spacing default
+/page --style corporate --spacing default
 
 /hero --bg gradient {
   /text "Design System Demo" --bold --size 2.5rem --color white

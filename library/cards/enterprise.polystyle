@@ -1,0 +1,9 @@
+{
+  "name": "card-enterprise",
+  "category": "cards",
+  "description": "Subtle shadow with blue accent bar. Safe, modern, corporate.",
+  "targets": ["card"],
+  "wrapperClass": "card-enterprise",
+  "sampleMarkup": "/region --class card-enterprise {\n  /columns 3 --gap 1.5rem {\n    /card --icon shield { **Security** — SOC 2 certified. }\n    /card --icon globe { **Global** — 240+ edge locations. }\n    /card --icon users { **Teams** — SSO, SCIM, RBAC. }\n  }\n}",
+  "css": ".card-enterprise .poly-card {\n  background: #fff;\n  border: 1px solid #e5e7eb;\n  border-left: 3px solid #2563eb;\n  border-radius: 8px;\n  padding: 1.25rem 1.5rem;\n  box-shadow: 0 1px 2px rgba(16,24,40,0.05);\n  font-family: \"Inter\", system-ui, sans-serif;\n}\n.card-enterprise .poly-card-icon { color: #2563eb; }"
+}

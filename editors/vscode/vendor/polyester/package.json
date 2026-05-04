@@ -1,0 +1,6 @@
+{
+  "name": "polyester",
+  "version": "bundled",
+  "type": "module",
+  "main": "dist/index.js"
+}

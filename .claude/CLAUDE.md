@@ -68,6 +68,9 @@ node dist/cli/index.js   # Run CLI directly
 
 ### Style
 - `/hero --bg gradient { }` - Hero section (purple/blue gradient is Polyester's signature)
+- `/hero --bg gradient --pattern grid { }` - Hero with pattern overlay
+- `/background grid { }` - Decorative pattern background (grid, dots, cross, diagonal)
+- `/background dots --size 48px --color "rgba(0,0,0,0.15)" --fade radial { }` - Pattern with fade
 - `/card --icon rocket { }` - Card with icon
 - `/button primary "Label"` - Button element
 - `/shape circle --size 50px --fill red --stroke black`

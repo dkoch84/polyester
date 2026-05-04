@@ -1,0 +1,9 @@
+{
+  "name": "card-glass",
+  "category": "cards",
+  "description": "Frosted glass cards over a soft pastel gradient.",
+  "targets": ["card"],
+  "wrapperClass": "card-glass",
+  "sampleMarkup": "/region --class card-glass {\n  /columns 3 --gap 1.25rem {\n    /card --icon sparkles { **Intelligent** — AI-assisted editing. }\n    /card --icon layers   { **Composable** — Standalone primitives. }\n    /card --icon zap      { **Fast** — Sub-second rebuilds. }\n  }\n}",
+  "css": ".card-glass {\n  background: linear-gradient(135deg, #e0e7ff, #fef3c7);\n  padding: 2rem !important;\n  border-radius: 16px;\n}\n.card-glass .poly-card {\n  background: rgba(255,255,255,0.55);\n  backdrop-filter: blur(12px);\n  -webkit-backdrop-filter: blur(12px);\n  border: 1px solid rgba(255,255,255,0.6);\n  border-radius: 12px;\n  box-shadow: 0 8px 24px rgba(15,23,42,0.08);\n  font-family: \"Inter\", system-ui, sans-serif;\n}"
+}

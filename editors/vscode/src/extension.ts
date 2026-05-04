@@ -9,6 +9,7 @@
  */
 
 import * as path from "path";
+import * as fs from "fs";
 import * as vscode from "vscode";
 import { exec } from "child_process";
 import {
@@ -24,6 +25,7 @@ import { ReferenceSection, CategorySection } from "./glossary";
 import { showComponentSearch, showDocsForCurrentWord } from "./docsQuickPick";
 import { openLivePreview, disposePreview } from "./livePreview";
 import { openThemeEditor, disposeThemeEditor } from "./themeEditor";
+import { openLibraryBrowser, disposeLibraryBrowser } from "./libraryBrowser";
 
 let client: LanguageClient | undefined;
 let docsTreeProvider: DocsTreeProvider | undefined;
@@ -222,6 +224,11 @@ export function activate(context: vscode.ExtensionContext) {
       openThemeEditor(context);
     }),
 
+    // Design Library browser
+    vscode.commands.registerCommand("polyester.openLibrary", () => {
+      openLibraryBrowser(context);
+    }),
+
     // Tree view
     treeView,
 
@@ -237,6 +244,7 @@ export function deactivate(): Thenable<void> | undefined {
   disposePanel();
   disposePreview();
   disposeThemeEditor();
+  disposeLibraryBrowser();
   if (!client) {
     return undefined;
   }
@@ -256,16 +264,22 @@ function getCliPath(): string {
   if (workspaceFolders) {
     for (const folder of workspaceFolders) {
       const candidate = path.join(folder.uri.fsPath, "dist", "cli", "index.js");
-      try {
-        require.resolve(candidate);
-        return candidate;
-      } catch {
-        // Not found, continue
-      }
+      if (fs.existsSync(candidate)) { return candidate; }
     }
   }
 
-  // Fallback: assume poly is in PATH
+  // Last resort: resolve `poly` via a login shell so nvm-installed binaries are found
+  try {
+    const { execSync } = require("child_process");
+    const resolved = execSync(`bash -lc 'command -v poly'`, { encoding: "utf-8" }).trim();
+    if (resolved) {
+      const real = fs.realpathSync(resolved);
+      return real.endsWith(".js") ? real : resolved;
+    }
+  } catch {
+    // fall through
+  }
+
   return "poly";
 }
 

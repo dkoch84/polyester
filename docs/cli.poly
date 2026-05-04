@@ -236,7 +236,7 @@
   ## poly help
 
   /code bash {
-    poly help              # List all 27 components
+    poly help              # List all 28 components
     poly help columns      # Show detailed help for /columns
     poly help --json       # Output as JSON (for tooling)
   }

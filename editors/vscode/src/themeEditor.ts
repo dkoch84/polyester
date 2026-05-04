@@ -9,8 +9,8 @@
 import * as vscode from "vscode";
 import * as path from "path";
 import * as fs from "fs";
-import { execSync } from "child_process";
 import { homedir } from "os";
+import { compile as compilePoly } from "./polyRuntime";
 
 let editorPanel: vscode.WebviewPanel | undefined;
 
@@ -92,6 +92,22 @@ const STYLE_PRESETS: Record<string, Record<string, string>> = {
     "hero-gradient": "linear-gradient(135deg, #1e3a8a 0%, #7c3aed 100%)",
     "hero-text": "#e2e8f0",
   },
+  codecargo: {
+    "color-primary": "#4B6CF9", "color-primary-light": "#B8F3FF", "color-primary-dark": "#09197A",
+    "color-secondary": "#FF9282", "color-accent": "#F4F060",
+    "color-bg": "#ffffff", "color-surface": "#F9F9F9",
+    "color-text": "#242733", "color-text-muted": "#7D8AB2",
+    "color-border": "#dbe2fe", "color-link": "#4B6CF9",
+    "color-success": "#34d399", "color-warning": "#F4F060", "color-error": "#ef4444",
+    "font-body": "Geist, system-ui, -apple-system, sans-serif",
+    "font-heading": "Geist, system-ui, -apple-system, sans-serif",
+    "font-mono": "Geist Mono, ui-monospace, monospace",
+    "radius": "0.75rem", "border-width": "1px",
+    "shadow-card": "0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1)",
+    "shadow-elevated": "0 0 20px rgba(75,108,249,0.4)",
+    "hero-gradient": "linear-gradient(135deg, #4B6CF9 0%, #09197A 100%)",
+    "hero-text": "#F9F9F9",
+  },
 };
 
 const SPACING_PRESETS: Record<string, Record<string, string>> = {
@@ -115,6 +131,7 @@ const SPACING_PRESETS: Record<string, Record<string, string>> = {
 const FONT_STACKS: Record<string, string> = {
   "System (default)": "system-ui, -apple-system, sans-serif",
   "Inter": "Inter, system-ui, sans-serif",
+  "Geist": "Geist, system-ui, -apple-system, sans-serif",
   "Nunito": "'Nunito', system-ui, sans-serif",
   "Georgia (serif)": "Georgia, 'Times New Roman', serif",
   "Lora (serif)": "'Lora', Georgia, serif",
@@ -123,55 +140,34 @@ const FONT_STACKS: Record<string, string> = {
 const MONO_STACKS: Record<string, string> = {
   "System mono": "ui-monospace, monospace",
   "JetBrains Mono": "JetBrains Mono, ui-monospace, monospace",
+  "Geist Mono": "Geist Mono, ui-monospace, monospace",
   "Fira Code": "'Fira Code', ui-monospace, monospace",
   "Source Code Pro": "'Source Code Pro', ui-monospace, monospace",
 };
 
-// ─── CLI / compile helpers ─────────────────────────────────────
+// ─── compile helpers (in-process) ───────────────────────────────
 
-function getCliPath(): string {
-  const config = vscode.workspace.getConfiguration("polyester");
-  const configPath = config.get<string>("cliPath");
-  if (configPath) { return configPath; }
+let cachedExtensionPath: string | undefined;
 
-  const workspaceFolders = vscode.workspace.workspaceFolders;
-  if (workspaceFolders) {
-    for (const folder of workspaceFolders) {
-      const candidate = path.join(folder.uri.fsPath, "dist", "cli", "index.js");
-      if (fs.existsSync(candidate)) { return candidate; }
-    }
-  }
-
-  const extensionPath = path.join(__dirname, "..", "..", "..", "dist", "cli", "index.js");
-  if (fs.existsSync(extensionPath)) { return extensionPath; }
-
-  return "poly";
-}
-
-function compilePolyFile(filePath: string): string {
-  const tempOut = path.join(require("os").tmpdir(), `poly-theme-${Date.now()}.html`);
+async function compilePolyFile(filePath: string): Promise<string> {
   try {
-    const cli = getCliPath();
-    const cmd = cli === "poly"
-      ? `poly build "${filePath}" -o "${tempOut}"`
-      : `node "${cli}" build "${filePath}" -o "${tempOut}"`;
-    execSync(cmd, { stdio: "pipe", timeout: 10000 });
-    const html = fs.readFileSync(tempOut, "utf-8");
-    fs.unlinkSync(tempOut);
-    return html;
+    const source = fs.readFileSync(filePath, "utf-8");
+    return await compilePoly(
+      source,
+      { sourceDir: path.dirname(filePath), title: path.basename(filePath, ".poly") },
+      cachedExtensionPath,
+    );
   } catch (err: any) {
     return `<html><body><pre>Build error: ${err.message}</pre></body></html>`;
   }
 }
 
-function compileDemoHtml(context: vscode.ExtensionContext): string {
-  // Try pre-compiled HTML first
+async function compileDemoHtml(context: vscode.ExtensionContext): Promise<string> {
   const precompiled = path.join(context.extensionPath, "out", "reference", "theme-demo.html");
   if (fs.existsSync(precompiled)) {
     return fs.readFileSync(precompiled, "utf-8");
   }
 
-  // Fall back to compiling on the fly
   const polyFile = path.join(context.extensionPath, "reference", "theme-demo.poly");
   if (!fs.existsSync(polyFile)) {
     return "<html><body><p>theme-demo.poly not found</p></body></html>";
@@ -408,6 +404,7 @@ ${demoStyles}
         <option value="minimal">Minimal</option>
         <option value="playful">Playful</option>
         <option value="dark">Dark</option>
+        <option value="codecargo">CodeCargo</option>
       </select>
     </div>
   </div>
@@ -439,6 +436,7 @@ ${demoStyles}
       <select data-token="font-body">
         <option value="system-ui, -apple-system, sans-serif" selected>System (default)</option>
         <option value="Inter, system-ui, sans-serif">Inter</option>
+        <option value="Geist, system-ui, -apple-system, sans-serif">Geist</option>
         <option value="'Nunito', system-ui, sans-serif">Nunito</option>
         <option value="Georgia, 'Times New Roman', serif">Georgia (serif)</option>
         <option value="'Lora', Georgia, serif">Lora (serif)</option>
@@ -449,6 +447,7 @@ ${demoStyles}
       <select data-token="font-heading">
         <option value="system-ui, -apple-system, sans-serif" selected>System (default)</option>
         <option value="Inter, system-ui, sans-serif">Inter</option>
+        <option value="Geist, system-ui, -apple-system, sans-serif">Geist</option>
         <option value="'Nunito', system-ui, sans-serif">Nunito</option>
         <option value="Georgia, 'Times New Roman', serif">Georgia (serif)</option>
         <option value="'Lora', Georgia, serif">Lora (serif)</option>
@@ -459,6 +458,7 @@ ${demoStyles}
       <select data-token="font-mono">
         <option value="ui-monospace, monospace" selected>System mono</option>
         <option value="JetBrains Mono, ui-monospace, monospace">JetBrains Mono</option>
+        <option value="Geist Mono, ui-monospace, monospace">Geist Mono</option>
         <option value="'Fira Code', ui-monospace, monospace">Fira Code</option>
         <option value="'Source Code Pro', ui-monospace, monospace">Source Code Pro</option>
       </select>
@@ -817,14 +817,14 @@ function getActivePolyFile(): string | null {
   return null;
 }
 
-export function openThemeEditor(context: vscode.ExtensionContext): void {
+export async function openThemeEditor(context: vscode.ExtensionContext): Promise<void> {
   if (editorPanel) {
     editorPanel.reveal(vscode.ViewColumn.One);
     return;
   }
 
-  // Compile demo document
-  const demoHtml = compileDemoHtml(context);
+  cachedExtensionPath = context.extensionPath;
+  const demoHtml = await compileDemoHtml(context);
   const activePolyFile = getActivePolyFile();
 
   editorPanel = vscode.window.createWebviewPanel(
@@ -845,9 +845,9 @@ export function openThemeEditor(context: vscode.ExtensionContext): void {
   let cachedDocPath: string | null = null;
 
   /** Compile a user document and cache it */
-  function compileUserDoc(filePath: string): { body: string; styles: string } {
+  async function compileUserDoc(filePath: string): Promise<{ body: string; styles: string }> {
     if (filePath === cachedDocPath && cachedDocParts) { return cachedDocParts; }
-    const html = compilePolyFile(filePath);
+    const html = await compilePolyFile(filePath);
     cachedDocParts = extractHtmlParts(html);
     cachedDocPath = filePath;
     return cachedDocParts;
@@ -867,7 +867,7 @@ export function openThemeEditor(context: vscode.ExtensionContext): void {
         } else if (message.source === "document") {
           const polyFile = getActivePolyFile();
           if (!polyFile) { return; }
-          const parts = compileUserDoc(polyFile);
+          const parts = await compileUserDoc(polyFile);
           editorPanel?.webview.postMessage({
             type: "updatePreview",
             body: parts.body,

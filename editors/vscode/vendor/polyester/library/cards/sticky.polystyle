@@ -1,0 +1,10 @@
+{
+  "name": "card-sticky",
+  "category": "cards",
+  "description": "Handwritten sticky notes with playful rotation and pastel colors.",
+  "targets": ["card"],
+  "wrapperClass": "sticky-grid",
+  "fontImports": ["Caveat:wght@400;600", "Permanent+Marker"],
+  "sampleMarkup": "/region --class sticky-grid {\n  /columns 3 --gap 1.5rem {\n    /card --icon lightbulb { Call mom on Sunday }\n    /card --icon coffee { Out of beans }\n    /card --icon calendar { Standup at 10:30 }\n  }\n}",
+  "css": "@import url(\"https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&family=Permanent+Marker&display=swap\");\n.sticky-grid .poly-card {\n  background: #fef9c3;\n  border: 1px solid #facc15;\n  box-shadow: 3px 5px 0 rgba(0,0,0,0.08);\n  font-family: \"Caveat\", \"Permanent Marker\", cursive;\n  font-size: 1.15rem;\n  transform: rotate(-1.2deg);\n}\n.sticky-grid .poly-card:nth-child(even) { transform: rotate(1.5deg); background: #fce7f3; border-color: #f9a8d4; }\n.sticky-grid .poly-card:nth-child(3n) { background: #dbeafe; border-color: #93c5fd; transform: rotate(-0.5deg); }\n.sticky-grid .poly-card-icon { color: #b45309; opacity: 0.7; }"
+}

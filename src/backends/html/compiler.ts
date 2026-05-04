@@ -31,6 +31,8 @@ const markdownProcessor = unified()
   .use(rehypeStringify, { allowDangerousHtml: true });
 
 export interface CompileOptions {
+  /** Directory of the source `.poly` file — used to resolve relative imports. */
+  sourceDir?: string;
   /** Include full HTML document wrapper */
   standalone?: boolean;
   /** Custom CSS to include */
@@ -47,12 +49,15 @@ export interface CompileOptions {
 
 export interface PageSettings {
   pageless?: boolean;
+  /** Document mode: "web" (continuous), "pdf" (paginated digital), "print" (paginated physical) */
+  mode?: "web" | "pdf" | "print";
   size?: string;
   orientation?: string;
   margin?: string;
   theme?: string;
   style?: string;
   spacing?: string;
+  pagebgs?: Array<{ pages: string; style: string }>;
 }
 
 export interface CompileResult {
@@ -60,6 +65,12 @@ export interface CompileResult {
   css: string;
   pageSettings: PageSettings;
 }
+
+// Page sizes in mm [width, height]
+const PAGE_SIZES: Record<string, [number, number]> = {
+  A3: [297, 420], A4: [210, 297], A5: [148, 210],
+  Letter: [215.9, 279.4], Legal: [215.9, 355.6],
+};
 
 export class HtmlCompiler {
   private options: CompileOptions;
@@ -80,8 +91,11 @@ export class HtmlCompiler {
     this.customStyles = [];
     this.pageSettings = {};
 
-    // Compile document body
-    const bodyHtml = this.compileChildren(doc.children);
+    // Compile document body — top-level children get source-line annotations
+    // so the MCP page-layout tool can map overflows back to .poly source lines.
+    const bodyHtml = doc.children
+      .map((child) => this.annotateSourceLine(this.compileNode(child), child.loc?.start.line))
+      .join("\n");
 
     // Generate CSS
     const css = this.generateCss();
@@ -99,6 +113,12 @@ export class HtmlCompiler {
 
   private compileChildren(children: (Command | Content)[]): string {
     return children.map((child) => this.compileNode(child)).join("\n");
+  }
+
+  private annotateSourceLine(html: string, line: number | undefined): string {
+    if (!line || !html) return html;
+    // Inject data-source-line into the first tag of the rendered fragment.
+    return html.replace(/^(\s*<[a-zA-Z][\w-]*)\b/, `$1 data-source-line="${line}"`);
   }
 
   private compileNode(node: Command | Content): string {
@@ -184,8 +204,14 @@ export class HtmlCompiler {
       addClass: (cls: string) => this.cssClasses.add(cls),
       addStyle: (css: string) => this.customStyles.push(css),
       setPageSettings: (settings) => {
-        this.pageSettings = { ...this.pageSettings, ...settings };
+        if (settings.pagebgs) {
+          const existing = this.pageSettings.pagebgs || [];
+          this.pageSettings = { ...this.pageSettings, ...settings, pagebgs: [...existing, ...settings.pagebgs] };
+        } else {
+          this.pageSettings = { ...this.pageSettings, ...settings };
+        }
       },
+      sourceDir: this.options.sourceDir,
     };
 
     // Execute component
@@ -272,7 +298,21 @@ export class HtmlCompiler {
   .poly-document {
     max-width: none;
     padding: 0;
+    orphans: 3;
+    widows: 3;
   }
+  .poly-content h1, .poly-content h2, .poly-content h3,
+  h1, h2, h3 {
+    break-after: avoid;
+    page-break-after: avoid;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .poly-content table, table, .poly-region, .poly-card, .poly-quote, .poly-code-block {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .poly-content li { break-inside: avoid; page-break-inside: avoid; }
 }
 
 .poly-content {
@@ -330,6 +370,10 @@ export class HtmlCompiler {
 .poly-hero {
   padding: 4rem 2rem;
   text-align: center;
+}
+
+.poly-background {
+  position: relative;
 }
 
 .poly-card {
@@ -461,14 +505,61 @@ export class HtmlCompiler {
 }
 `;
 
+    // @page rule for print/PDF rendering
+    let pageCss = "";
+    if (this.pageSettings.size && !this.pageSettings.pageless) {
+      const size = this.pageSettings.size || "A4";
+      const orientation = this.pageSettings.orientation || "portrait";
+      const margin = this.pageSettings.margin || "2cm";
+      pageCss = `
+@page {
+  size: ${size} ${orientation};
+  margin: ${margin};
+}
+`;
+    }
+
+    const pageSimCss = `
+/* Screen-only page simulation styles */
+@media screen {
+  .poly-page-boundary {
+    background: #e5e7eb;
+    box-shadow: inset 0 6px 6px -6px rgba(0,0,0,0.12),
+                inset 0 -6px 6px -6px rgba(0,0,0,0.12);
+    z-index: 10;
+  }
+  .poly-page-boundary::after {
+    content: attr(data-label);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font: 11px/1 system-ui, sans-serif;
+    color: #9ca3af;
+  }
+  .poly-document[data-page-size] .poly-pagebreak {
+    border-top: none;
+    margin: 0;
+    background: repeating-linear-gradient(-45deg,
+      transparent, transparent 8px,
+      rgba(0,0,0,0.02) 8px, rgba(0,0,0,0.02) 16px);
+  }
+  .poly-document[data-page-size] .poly-pagebreak::after {
+    content: none;
+  }
+}
+`;
+
     // Add custom styles from components
     const componentCss = this.customStyles.join("\n");
 
-    // Cascade: spacing → style → base → components → syntax → user
+    // Cascade: spacing → style → page → base → pageSim → components → syntax → user
     return [
       spacingCss,
       styleCss,
+      pageCss,
       baseCss,
+      pageSimCss,
       componentCss,
       syntaxCss,
       this.options.customCss || "",
@@ -477,6 +568,38 @@ export class HtmlCompiler {
 
   private wrapStandalone(body: string, css: string): string {
     const title = this.options.title || "Polyester Document";
+    const mode = this.pageSettings.mode || (this.pageSettings.size && !this.pageSettings.pageless ? "pdf" : "web");
+    const isPaginated = mode !== "web" && !!this.pageSettings.size;
+
+    // Build data attributes for paginated documents
+    let dataAttrs = ` data-page-mode="${mode}"`;
+    if (isPaginated) {
+      dataAttrs += ` data-page-size="${this.pageSettings.size}"`;
+      dataAttrs += ` data-page-orientation="${this.pageSettings.orientation || "portrait"}"`;
+      dataAttrs += ` data-page-margin="${this.pageSettings.margin || "2cm"}"`;
+      if (this.pageSettings.pagebgs && this.pageSettings.pagebgs.length > 0) {
+        const escaped = JSON.stringify(this.pageSettings.pagebgs).replace(/"/g, "&quot;");
+        dataAttrs += ` data-pagebgs="${escaped}"`;
+      }
+    }
+
+    // Compute page dimension CSS variables at compile time
+    let pageVarsCss = "";
+    if (isPaginated) {
+      const dims = PAGE_SIZES[this.pageSettings.size!] || PAGE_SIZES.A4;
+      const isLandscape = this.pageSettings.orientation === "landscape";
+      const pageW = isLandscape ? dims[1] : dims[0];
+      const pageH = isLandscape ? dims[0] : dims[1];
+      const margin = this.pageSettings.margin || "2cm";
+      pageVarsCss = `
+  .poly-document {
+    --poly-page-width: calc(${pageW}mm - 2 * ${margin});
+    --poly-page-height: calc(${pageH}mm - 2 * ${margin});
+  }`;
+    }
+
+    const pageScript = isPaginated ? `\n  ${this.generatePageSimScript()}` : "";
+
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -484,15 +607,449 @@ export class HtmlCompiler {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${title}</title>
   <style>
-${css}
+${css}${pageVarsCss}
   </style>
 </head>
 <body>
-  <div class="poly-document">
+  <div class="poly-document"${dataAttrs}>
 ${body}
-  </div>
+  </div>${pageScript}
 </body>
 </html>`;
+  }
+
+  /**
+   * Generate a script that lays out the document into real, discrete fixed-size
+   * page containers. Only runs on screen (not print). Natural overflow starts
+   * a new page; /pagebreak forces a cut. Elements taller than a page are
+   * allowed to overflow that page with a visible outline hint.
+   */
+  private generatePageSimScript(): string {
+    return `<script>
+(function() {
+  if (window.matchMedia('print').matches) return;
+
+  var PAGE_SIZES = {
+    A3: [297, 420], A4: [210, 297], A5: [148, 210],
+    Letter: [215.9, 279.4], Legal: [215.9, 355.6]
+  };
+  var MM_TO_PX = 96 / 25.4;
+
+  function parseLength(val) {
+    var m = String(val).match(/^([\\d.]+)\\s*(cm|mm|in|px|pt|rem|em)?$/);
+    if (!m) return 0;
+    var n = parseFloat(m[1]);
+    switch (m[2]) {
+      case 'cm': return n * 10 * MM_TO_PX;
+      case 'mm': return n * MM_TO_PX;
+      case 'in': return n * 96;
+      case 'pt': return n * (96 / 72);
+      case 'px': return n;
+      default: return n * MM_TO_PX; // default to mm
+    }
+  }
+
+  function run() {
+    var doc = document.querySelector('.poly-document[data-page-size]');
+    if (!doc) return;
+    // Already paginated? (re-run on resize shouldn't re-wrap).
+    if (doc.dataset.paginated === '1') return;
+
+    var sizeName = doc.dataset.pageSize || 'A4';
+    var orientation = doc.dataset.pageOrientation || 'portrait';
+    var marginStr = doc.dataset.pageMargin || '2cm';
+
+    var dims = PAGE_SIZES[sizeName] || PAGE_SIZES.A4;
+    var w = dims[0], h = dims[1];
+    if (orientation === 'landscape') { var tmp = w; w = h; h = tmp; }
+
+    var pageWidthPx = w * MM_TO_PX;
+    var pageHeightPx = h * MM_TO_PX;
+    var marginPx = parseLength(marginStr);
+    var contentWidth = pageWidthPx - 2 * marginPx;
+    var contentHeight = pageHeightPx - 2 * marginPx;
+
+    // Reset document container: it's now a wrapper of page containers.
+    doc.style.width = pageWidthPx + 'px';
+    doc.style.maxWidth = 'none';
+    doc.style.padding = '0';
+    doc.style.background = 'transparent';
+    doc.style.boxShadow = 'none';
+    doc.style.setProperty('--poly-page-height', contentHeight + 'px');
+    document.documentElement.style.setProperty('--poly-preview-bg', '#e8e8e8');
+    document.body.style.background = 'var(--poly-preview-bg, #e8e8e8)';
+    document.body.style.padding = '24px 0';
+    document.body.style.margin = '0';
+    document.body.style.overflowX = 'auto';
+    document.body.style.display = 'flex';
+    document.body.style.flexDirection = 'column';
+    document.body.style.alignItems = 'center';
+
+    // Snapshot children before wrapping. Filter out helper nodes from prior runs.
+    // .poly-content wrappers are unwrapped so individual paragraphs/headings/lists
+    // can be distributed across pages independently.
+    var originalChildren = [];
+    var kids = Array.prototype.slice.call(doc.children);
+    for (var i = 0; i < kids.length; i++) {
+      var k = kids[i];
+      if (k.classList && (
+        k.classList.contains('poly-page') ||
+        k.classList.contains('poly-page-overlay') ||
+        k.classList.contains('poly-pagebg') ||
+        k.classList.contains('poly-pb-gap')
+      )) continue;
+      if (k.classList && k.classList.contains('poly-content')) {
+        var inner = Array.prototype.slice.call(k.children);
+        for (var j = 0; j < inner.length; j++) originalChildren.push(inner[j]);
+      } else {
+        originalChildren.push(k);
+      }
+    }
+    for (var i = 0; i < originalChildren.length; i++) {
+      if (originalChildren[i].parentNode) {
+        originalChildren[i].parentNode.removeChild(originalChildren[i]);
+      }
+    }
+    // Remove the now-empty poly-content wrappers (and other non-helper direct children).
+    kids = Array.prototype.slice.call(doc.children);
+    for (var i = 0; i < kids.length; i++) {
+      var k = kids[i];
+      if (k.classList && (k.classList.contains('poly-page'))) continue;
+      k.parentNode.removeChild(k);
+    }
+
+    // Parse pagebgs once.
+    var pagebgEntries = [];
+    try {
+      if (doc.dataset.pagebgs) pagebgEntries = JSON.parse(doc.dataset.pagebgs);
+    } catch (e) {}
+    function pagebgStyleFor(pageNum) {
+      var styles = [];
+      for (var b = 0; b < pagebgEntries.length; b++) {
+        var entry = pagebgEntries[b];
+        var match = false;
+        if (entry.pages === 'all') match = true;
+        else if (entry.pages.indexOf('-') !== -1) {
+          var parts = entry.pages.split('-');
+          var start = parseInt(parts[0], 10);
+          var end = parseInt(parts[1], 10);
+          match = pageNum >= start && pageNum <= end;
+        } else {
+          match = parseInt(entry.pages, 10) === pageNum;
+        }
+        if (match) styles.push(entry.style);
+      }
+      return styles.join(';');
+    }
+
+    function makePage() {
+      var pageNum = pages.length + 1;
+      var page = document.createElement('div');
+      page.className = 'poly-page';
+      page.dataset.pageNumber = pageNum;
+      page.style.cssText = [
+        'width:' + pageWidthPx + 'px',
+        'height:' + pageHeightPx + 'px',
+        'padding:' + marginPx + 'px',
+        'box-sizing:border-box',
+        'background:white',
+        'box-shadow:0 2px 8px rgba(0,0,0,0.12)',
+        'position:relative',
+        'margin-bottom:24px',
+        'overflow:visible'
+      ].join(';');
+      var inner = document.createElement('div');
+      inner.className = 'poly-page-content';
+      inner.style.cssText = 'width:100%;height:100%;position:relative;';
+      // Page background decoration
+      var bgStyle = pagebgStyleFor(pageNum);
+      if (bgStyle) {
+        var bg = document.createElement('div');
+        bg.className = 'poly-pagebg';
+        bg.style.cssText = 'position:absolute;inset:0;pointer-events:none;z-index:0;' + bgStyle;
+        inner.appendChild(bg);
+      }
+      // Content wrapper sits above page bg
+      var contentWrap = document.createElement('div');
+      contentWrap.className = 'poly-page-flow poly-content';
+      contentWrap.style.cssText = 'position:relative;z-index:1;';
+      inner.appendChild(contentWrap);
+      page.appendChild(inner);
+      // Page label
+      var label = document.createElement('div');
+      label.className = 'poly-page-label';
+      label.textContent = 'Page ' + pageNum;
+      label.style.cssText = 'position:absolute;top:-18px;right:4px;font:10px/1 ui-monospace,monospace;color:#9ca3af;pointer-events:none;';
+      page.appendChild(label);
+      doc.appendChild(page);
+      pages.push({ page: page, flow: contentWrap });
+      return pages[pages.length - 1];
+    }
+
+    var pages = [];
+    var current = makePage();
+
+    function currentContentHeight() {
+      return current.flow.getBoundingClientRect().height;
+    }
+
+    function isEmpty(p) { return p.flow.children.length === 0; }
+    function isList(el) { return el && (el.tagName === 'UL' || el.tagName === 'OL'); }
+    function isTextBlock(el) {
+      if (!el || !el.tagName) return false;
+      var t = el.tagName;
+      if (t !== 'P' && t !== 'BLOCKQUOTE' && t !== 'LI') return false;
+      // Allow simple inline formatting; split where possible.
+      return true;
+    }
+    function markOversize(el) {
+      el.setAttribute('data-poly-oversize', '1');
+      el.style.outline = '2px dashed rgba(239,68,68,0.5)';
+    }
+    // Binary-search for how many leading text nodes/words fit on the current page.
+    // Returns a continuation element containing the rest, or null if splitting is impossible.
+    function splitTextBlock(child) {
+      // Flatten descendants into ordered list of text nodes.
+      var walker = document.createTreeWalker(child, NodeFilter.SHOW_TEXT, null);
+      var textNodes = [];
+      var n;
+      while ((n = walker.nextNode())) textNodes.push(n);
+      if (textNodes.length === 0) return null;
+      // Build a word list with backreferences: [{ node, start, end, text }]
+      var tokens = [];
+      for (var i = 0; i < textNodes.length; i++) {
+        var tn = textNodes[i];
+        var text = tn.nodeValue || '';
+        var re = /\S+\s*|\s+/g, m;
+        while ((m = re.exec(text)) !== null) {
+          tokens.push({ node: tn, start: m.index, end: m.index + m[0].length, text: m[0] });
+        }
+      }
+      if (tokens.length < 4) return null;
+      // Clone BEFORE mutation so the continuation has original content to work from.
+      var pristineClone = child.cloneNode(true);
+      // Save original text per node so we can restore/truncate.
+      var originalValues = textNodes.map(function(t) { return t.nodeValue; });
+      function truncateTo(tokenIdx) {
+        // Keep tokens [0, tokenIdx), clear content in later nodes.
+        var lastKept = tokenIdx - 1;
+        if (lastKept < 0) lastKept = 0;
+        var lastToken = tokens[lastKept];
+        for (var i = 0; i < textNodes.length; i++) {
+          var tn = textNodes[i];
+          if (tn === lastToken.node) {
+            tn.nodeValue = (originalValues[i] || '').slice(0, lastToken.end);
+          } else if (textNodes.indexOf(lastToken.node) > i) {
+            tn.nodeValue = originalValues[i];
+          } else {
+            tn.nodeValue = '';
+          }
+        }
+      }
+      function restore() {
+        for (var i = 0; i < textNodes.length; i++) textNodes[i].nodeValue = originalValues[i];
+      }
+      // Binary search for largest tokenIdx that fits.
+      var lo = 1, hi = tokens.length;
+      while (lo < hi) {
+        var mid = Math.ceil((lo + hi) / 2);
+        truncateTo(mid);
+        if (currentContentHeight() <= contentHeight + 1) lo = mid;
+        else hi = mid - 1;
+      }
+      if (lo <= 0) { restore(); return null; }
+      // Apply the chosen truncation to the original child.
+      truncateTo(lo);
+      // Use the pristine clone as the continuation; strip off the parts that fit on the current page.
+      var clone = pristineClone;
+      var cloneWalker = document.createTreeWalker(clone, NodeFilter.SHOW_TEXT, null);
+      var cloneTextNodes = [];
+      var cn;
+      while ((cn = cloneWalker.nextNode())) cloneTextNodes.push(cn);
+      // Determine the break point in the clone matching the original.
+      var breakToken = tokens[lo - 1];
+      var breakNodeIdx = textNodes.indexOf(breakToken.node);
+      for (var i = 0; i < cloneTextNodes.length; i++) {
+        var tn = cloneTextNodes[i];
+        if (i < breakNodeIdx) tn.nodeValue = '';
+        else if (i === breakNodeIdx) {
+          tn.nodeValue = (originalValues[i] || '').slice(breakToken.end).replace(/^\s+/, '');
+        }
+        // else: keep as is (original clone content)
+      }
+      // If clone has no remaining non-whitespace text, it's trivial — drop it.
+      if (!(clone.textContent || '').trim()) return null;
+      return clone;
+    }
+
+    function appendWithSplit(child) {
+      current.flow.appendChild(child);
+      if (currentContentHeight() <= contentHeight + 1) return; // fits
+
+      // Overflow — try to split if it's a list.
+      if (isList(child)) {
+        current.flow.removeChild(child);
+        var firstHalf = child.cloneNode(false);
+        current.flow.appendChild(firstHalf);
+        var items = Array.prototype.slice.call(child.children);
+        var firstCount = 0;
+        for (var i = 0; i < items.length; i++) {
+          firstHalf.appendChild(items[i]);
+          if (currentContentHeight() > contentHeight + 1) {
+            firstHalf.removeChild(items[i]);
+            break;
+          }
+          firstCount++;
+        }
+        if (firstCount === 0) {
+          // Nothing fits on this page. If page is otherwise empty, overflow whole list here.
+          current.flow.removeChild(firstHalf);
+          if (current.flow.children.length === 0) {
+            current.flow.appendChild(child);
+            markOversize(child);
+            current = makePage();
+          } else {
+            current = makePage();
+            appendWithSplit(child);
+          }
+          return;
+        }
+        var remaining = items.slice(firstCount);
+        if (remaining.length) {
+          var secondHalf = child.cloneNode(false);
+          for (var j = 0; j < remaining.length; j++) secondHalf.appendChild(remaining[j]);
+          if (secondHalf.tagName === 'OL') {
+            var startAttr = parseInt(child.getAttribute('start') || '1', 10);
+            secondHalf.setAttribute('start', String(startAttr + firstCount));
+          }
+          current = makePage();
+          appendWithSplit(secondHalf);
+        }
+        return;
+      }
+
+      // Try splitting text block (paragraph/li) across pages.
+      if (isTextBlock(child)) {
+        var rest = splitTextBlock(child);
+        if (rest) {
+          current = makePage();
+          appendWithSplit(rest);
+          return;
+        }
+      }
+
+      // Non-list, non-splittable overflow
+      if (current.flow.children.length === 1) {
+        markOversize(child);
+        current = makePage();
+      } else {
+        current.flow.removeChild(child);
+        current = makePage();
+        appendWithSplit(child);
+      }
+    }
+
+    for (var i = 0; i < originalChildren.length; i++) {
+      var child = originalChildren[i];
+      if (child.classList && child.classList.contains('poly-pagebreak')) {
+        if (!isEmpty(current)) current = makePage();
+        continue;
+      }
+      appendWithSplit(child);
+    }
+    // Trim trailing empty page.
+    if (pages.length > 1 && isEmpty(pages[pages.length - 1])) {
+      var last = pages.pop();
+      last.page.parentNode.removeChild(last.page);
+    }
+
+    // Zero out first-child margin-top and last-child margin-bottom on each page
+    // so content sits flush against the page's top/bottom margins.
+    for (var p = 0; p < pages.length; p++) {
+      var f = pages[p].flow;
+      if (f.firstElementChild) f.firstElementChild.style.marginTop = '0';
+      if (f.lastElementChild) f.lastElementChild.style.marginBottom = '0';
+    }
+
+    doc.dataset.paginated = '1';
+    doc.dataset.totalPages = pages.length;
+
+    renderHints(pages);
+  }
+
+  function hintsEnabled() {
+    try {
+      var params = new URLSearchParams(window.location.search);
+      if (params.get('hints') === '1') return true;
+      if (params.get('hints') === '0') return false;
+      return localStorage.getItem('poly-layout-hints') === '1';
+    } catch (e) { return false; }
+  }
+
+  function setHints(on) {
+    try { localStorage.setItem('poly-layout-hints', on ? '1' : '0'); } catch (e) {}
+  }
+
+  function renderHints(pages) {
+    // Clear any prior hint badges.
+    var prior = document.querySelectorAll('.poly-hint-badge');
+    for (var i = 0; i < prior.length; i++) prior[i].remove();
+    if (!hintsEnabled()) return;
+    for (var p = 0; p < pages.length; p++) {
+      var pageNum = p + 1;
+      var flow = pages[p].flow;
+      var kids = flow.children;
+      for (var i = 0; i < kids.length; i++) {
+        var el = kids[i];
+        if (el.classList.contains('poly-pagebg')) continue;
+        if (el.classList.contains('poly-hint-badge')) continue;
+        var srcLine = el.getAttribute('data-source-line');
+        var oversize = el.hasAttribute('data-poly-oversize');
+        if (!srcLine && !oversize) continue;
+        var badge = document.createElement('div');
+        badge.className = 'poly-hint-badge';
+        var label = (srcLine ? 'L' + srcLine + ' · ' : '') + 'p' + pageNum + (oversize ? ' ⚠' : '');
+        badge.textContent = label;
+        badge.style.cssText = 'position:absolute;top:' + (el.offsetTop + 2) + 'px;left:-64px;font:10px/1.4 ui-monospace,monospace;background:' + (oversize ? '#ef4444' : 'rgba(0,0,0,0.6)') + ';color:#fff;padding:1px 6px;border-radius:3px;pointer-events:none;z-index:5;white-space:nowrap;';
+        flow.appendChild(badge);
+      }
+    }
+  }
+
+  function ensureToggleButton() {
+    if (document.querySelector('.poly-hint-toggle')) return;
+    var btn = document.createElement('button');
+    btn.className = 'poly-hint-toggle';
+    btn.type = 'button';
+    function refresh() {
+      btn.textContent = hintsEnabled() ? '◉ Hints' : '○ Hints';
+      btn.style.background = hintsEnabled() ? '#ef4444' : 'rgba(0,0,0,0.6)';
+    }
+    btn.style.cssText = 'position:fixed;top:8px;right:8px;z-index:1000;color:#fff;border:0;border-radius:4px;padding:4px 10px;font:11px/1.4 ui-monospace,monospace;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,0.25);';
+    btn.addEventListener('click', function() {
+      setHints(!hintsEnabled());
+      refresh();
+      // Re-run hints without re-paginating.
+      var doc = document.querySelector('.poly-document[data-page-size]');
+      if (!doc) return;
+      var pageEls = doc.querySelectorAll('.poly-page');
+      var pageList = [];
+      for (var i = 0; i < pageEls.length; i++) pageList.push({ page: pageEls[i], flow: pageEls[i].querySelector('.poly-page-flow') });
+      renderHints(pageList);
+    });
+    refresh();
+    document.body.appendChild(btn);
+  }
+
+  if (document.readyState === 'complete') {
+    requestAnimationFrame(function() { run(); ensureToggleButton(); });
+  } else {
+    window.addEventListener('load', function() {
+      requestAnimationFrame(function() { run(); ensureToggleButton(); });
+    });
+  }
+})();
+</script>`;
   }
 }
 

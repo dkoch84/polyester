@@ -1,5 +1,3 @@
-/page A4
-
 # Working with Code
 
 Polyester handles code blocks seamlessly - curly braces inside code fences won't break the parser.

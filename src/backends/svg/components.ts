@@ -719,10 +719,19 @@ const badge: SvgComponent = (ctx) => {
   return { height };
 };
 
+/**
+ * /background - Pattern background (passthrough in SVG — compiles children, ignores pattern)
+ */
+const background: SvgComponent = (ctx) => {
+  const height = ctx.compileChildren();
+  return { height };
+};
+
 // Export all components
 export const components: Record<string, SvgComponent> = {
   page,
   hero,
+  background,
   text,
   button,
   code,

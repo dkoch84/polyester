@@ -18,6 +18,7 @@ import { resolve, basename, dirname, extname } from "node:path";
 import { parse } from "../parser/parser.js";
 import { compileToHtml } from "../backends/html/compiler.js";
 import { compileToSvg } from "../backends/svg/compiler.js";
+import { compilePolyDocument } from "../build.js";
 import {
   loadTheme,
   listThemes,
@@ -55,6 +56,9 @@ interface CliArgs {
   watch?: boolean;
   help?: boolean;
   json?: boolean;
+  hints?: boolean;
+  page?: number;
+  full?: boolean;
 }
 
 function parseArgs(args: string[]): CliArgs {
@@ -89,6 +93,12 @@ function parseArgs(args: string[]): CliArgs {
       result.padding = parseInt(args[++i], 10);
     } else if (arg === "--background") {
       result.background = args[++i];
+    } else if (arg === "--hints") {
+      result.hints = true;
+    } else if (arg === "--page") {
+      result.page = parseInt(args[++i], 10);
+    } else if (arg === "--full") {
+      result.full = true;
     } else if (arg === "-w" || arg === "--watch") {
       result.watch = true;
     } else if (!arg.startsWith("-")) {
@@ -201,40 +211,14 @@ function buildHtml(
 ): void {
   const absoluteInput = resolve(inputPath);
   const source = readFileSync(absoluteInput, "utf-8");
-
-  // Load config
-  const config = loadConfig();
-
-  // Parse first to check for /page settings
-  const ast = parse(source);
-
-  // Initial compile to extract pageSettings (which may contain --theme/--style/--spacing)
-  const initialResult = compileToHtml(ast, { standalone: false });
-  const ps = initialResult.pageSettings;
-
-  // Resolve modules: CLI flags → /page flags → config defaults
-  const resolved = resolveModules({
-    theme: opts?.theme || ps.theme || config.defaultTheme,
-    style: opts?.style || ps.style,
-    spacing: opts?.spacing || ps.spacing,
-  });
-
-  // Generate module CSS
-  const styleCss = styleToCSS(resolved.style);
-  const spacingCss = spacingToCSS(resolved.spacing);
-  const syntaxCss = syntaxToCSS(resolved.syntax, resolved.name);
-
-  // Re-compile with full CSS
-  const { html } = compileToHtml(ast, {
-    standalone: true,
+  const html = compilePolyDocument(source, {
+    sourceDir: dirname(absoluteInput),
     title: basename(inputPath, ".poly"),
-    styleCss,
-    spacingCss,
-    syntaxCss,
+    theme: opts?.theme,
+    style: opts?.style,
+    spacing: opts?.spacing,
   });
-
-  const absoluteOutput = resolve(outputPath);
-  writeFileSync(absoluteOutput, html);
+  writeFileSync(resolve(outputPath), html);
   console.log(`✓ Compiled ${inputPath} → ${outputPath}`);
 }
 
@@ -281,12 +265,14 @@ async function buildPdf(
   const browser = await puppeteer.default.launch();
   const page = await browser.newPage();
 
-  // Set viewport to match typical browser width for consistent rendering
-  await page.setViewport({ width: 800, height: 1200 });
+  // Emulate print media so page sim script doesn't run
+  // (it's screen-only and would leak preview chrome into the PDF)
+  await page.emulateMediaType("print");
 
   await page.setContent(html, { waitUntil: "networkidle0" });
 
   const absoluteOutput = resolve(outputPath);
+  const docMargin = pageSettings.margin || "2cm";
 
   if (pageSettings.pageless) {
     // Pageless mode: calculate full content height and render as single continuous page
@@ -304,22 +290,19 @@ async function buildPdf(
 
     // Use a standard width (A4 width) but dynamic height
     const pageWidth = 794; // A4 width in pixels at 96 DPI
-    const margin = pageSettings.margin || "1.5cm";
 
     await page.pdf({
       path: absoluteOutput,
       width: pageWidth,
       height: contentHeight + 100, // Add some padding
-      margin: { top: margin, right: margin, bottom: margin, left: margin },
+      margin: { top: docMargin, right: docMargin, bottom: docMargin, left: docMargin },
       printBackground: true,
     });
   } else {
     await page.pdf({
       path: absoluteOutput,
-      format: "A4",
-      margin: { top: "1.5cm", right: "1.5cm", bottom: "1.5cm", left: "1.5cm" },
-      printBackground: true,
       preferCSSPageSize: true,
+      printBackground: true,
     });
   }
 
@@ -355,6 +338,66 @@ interface BuildOpts {
   width?: number;
   padding?: number;
   background?: string;
+}
+
+/**
+ * Render a .poly (or .html) file in headless Chrome and save a PNG.
+ * This renders the live-preview page-sim output exactly as a browser sees it,
+ * so agents and humans look at the same pixels.
+ */
+async function screenshot(
+  inputPath: string,
+  outputPath: string | undefined,
+  opts: { hints?: boolean; page?: number; full?: boolean; width?: number } = {}
+): Promise<void> {
+  const fs = await import("node:fs");
+  if (!fs.existsSync(inputPath)) {
+    console.error(`Error: Input file not found: ${inputPath}`);
+    process.exit(1);
+  }
+
+  // Build the .poly to a temp .html (or reuse if already .html)
+  let htmlPath: string;
+  let cleanupHtml = false;
+  if (inputPath.endsWith(".html")) {
+    htmlPath = resolve(inputPath);
+  } else {
+    htmlPath = resolve(`/tmp/poly-screenshot-${Date.now()}.html`);
+    await build(inputPath, htmlPath);
+    cleanupHtml = true;
+  }
+
+  const outPath = resolve(outputPath || inputPath.replace(/\.(poly|html)$/, ".png"));
+  const url = `file://${htmlPath}${opts.hints ? "?hints=1" : ""}`;
+
+  const puppeteer = await import("puppeteer");
+  const browser = await puppeteer.default.launch();
+  try {
+    const page = await browser.newPage();
+    await page.setViewport({ width: opts.width || 1200, height: 900, deviceScaleFactor: 2 });
+    await page.goto(url, { waitUntil: "networkidle0" });
+    // Let the page-sim script settle
+    await new Promise((r) => setTimeout(r, 300));
+
+    if (opts.page) {
+      // Scroll to the top of a specific page boundary (1-indexed)
+      await page.evaluate((n: number) => {
+        const doc = document.querySelector(".poly-document") as HTMLElement | null;
+        if (!doc) return;
+        const total = parseFloat(getComputedStyle(doc).getPropertyValue("--poly-page-height")) || 0;
+        if (total) window.scrollTo(0, (n - 1) * total);
+      }, opts.page);
+      await new Promise((r) => setTimeout(r, 100));
+    }
+
+    await page.screenshot({ path: outPath, fullPage: !!opts.full });
+    console.log(`✓ Screenshot → ${outPath}`);
+  } finally {
+    await browser.close();
+    if (cleanupHtml) {
+      try { fs.unlinkSync(htmlPath); } catch {}
+    }
+  }
 }
 
 async function build(inputPath: string, outputPath?: string, opts?: BuildOpts): Promise<void> {
@@ -463,6 +506,20 @@ async function main(): Promise<void> {
           background: args.background,
         });
       }
+      break;
+
+    case "screenshot":
+      if (args.inputs.length === 0) {
+        console.error("Error: No input file specified");
+        console.error("Usage: poly screenshot <file.poly> [-o out.png] [--hints] [--full] [--page N] [--width 1200]");
+        process.exit(1);
+      }
+      await screenshot(args.inputs[0], args.output, {
+        hints: args.hints,
+        page: args.page,
+        full: args.full,
+        width: args.width,
+      });
       break;
 
     case "watch":

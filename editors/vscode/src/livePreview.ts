@@ -6,71 +6,15 @@
 
 import * as vscode from "vscode";
 import * as path from "path";
-import { execSync } from "child_process";
+import { compile as compilePoly } from "./polyRuntime";
 
 let previewPanel: vscode.WebviewPanel | undefined;
 let updateTimeout: NodeJS.Timeout | undefined;
+let extensionPath: string | undefined;
 
-/**
- * Get CLI path from config or workspace
- */
-function getCliPath(): string {
-  const config = vscode.workspace.getConfiguration("polyester");
-  const configPath = config.get<string>("cliPath");
-  if (configPath) {
-    return configPath;
-  }
-
-  const workspaceFolders = vscode.workspace.workspaceFolders;
-  if (workspaceFolders) {
-    for (const folder of workspaceFolders) {
-      const candidate = path.join(folder.uri.fsPath, "dist", "cli", "index.js");
-      try {
-        require.resolve(candidate);
-        return candidate;
-      } catch {
-        // Not found
-      }
-    }
-  }
-
-  const extensionPath = path.join(__dirname, "..", "..", "..", "dist", "cli", "index.js");
+async function compileSource(source: string, sourceDir: string, title: string): Promise<string> {
   try {
-    require.resolve(extensionPath);
-    return extensionPath;
-  } catch {
-    // Not found
-  }
-
-  return "poly";
-}
-
-/**
- * Compile a .poly file to HTML string
- */
-function compileToHtml(filePath: string): string {
-  try {
-    const cliPath = getCliPath();
-    const cmd = cliPath === "poly"
-      ? `poly build "${filePath}" -o -`
-      : `node "${cliPath}" build "${filePath}" -o -`;
-
-    // For now, build to temp file and read it
-    const tempOut = `/tmp/poly-preview-${Date.now()}.html`;
-    const buildCmd = cliPath === "poly"
-      ? `poly build "${filePath}" -o "${tempOut}"`
-      : `node "${cliPath}" build "${filePath}" -o "${tempOut}"`;
-
-    execSync(buildCmd, {
-      encoding: "utf-8",
-      timeout: 10000,
-      stdio: ["pipe", "pipe", "pipe"],
-    });
-
-    const fs = require("fs");
-    const html = fs.readFileSync(tempOut, "utf-8");
-    fs.unlinkSync(tempOut);
-    return html;
+    return await compilePoly(source, { sourceDir, title }, extensionPath);
   } catch (err: any) {
     return `<html><body style="font-family: system-ui; padding: 2rem; color: #ef4444;">
       <h2>Build Error</h2>
@@ -89,26 +33,23 @@ function escapeHtml(text: string): string {
 /**
  * Update the preview panel with current document content
  */
-function updatePreview(document: vscode.TextDocument): void {
+async function updatePreview(document: vscode.TextDocument): Promise<void> {
   if (!previewPanel) return;
   if (document.languageId !== "polyester") return;
 
-  // Save to temp file and compile
-  const fs = require("fs");
-  const tempFile = `/tmp/poly-preview-src-${Date.now()}.poly`;
-  fs.writeFileSync(tempFile, document.getText());
-
-  const html = compileToHtml(tempFile);
-  fs.unlinkSync(tempFile);
-
-  // Inject base tag for relative resources and scroll preservation script
   const baseDir = path.dirname(document.uri.fsPath);
+  const html = await compileSource(
+    document.getText(),
+    baseDir,
+    path.basename(document.fileName, ".poly"),
+  );
+  if (!previewPanel) return;
   const enhancedHtml = html.replace(
     "</head>",
     `<base href="${previewPanel.webview.asWebviewUri(vscode.Uri.file(baseDir))}/">
     <style>
-      /* Ensure white background for preview */
-      html, body { background: white; }
+      /* Background for preview — page sim script overrides for paginated docs */
+      html, body { background: var(--poly-preview-bg, white); }
     </style>
     <script>
       // Preserve scroll position on reload
@@ -141,6 +82,7 @@ function scheduleUpdate(document: vscode.TextDocument): void {
  * Open or focus the live preview panel
  */
 export function openLivePreview(context: vscode.ExtensionContext): void {
+  extensionPath = context.extensionPath;
   const editor = vscode.window.activeTextEditor;
   if (!editor || editor.document.languageId !== "polyester") {
     vscode.window.showWarningMessage("Open a .poly file to preview");

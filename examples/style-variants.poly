@@ -1,0 +1,978 @@
+/style {
+  /* Handwriting fonts for sticky notes + polaroids */
+  @import url("https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&family=Architects+Daughter&family=Permanent+Marker&family=Inter:wght@400;500;600;700;800&display=swap");
+
+  /* Sticky-note cards */
+  .sticky-grid .poly-card {
+    background: #fef9c3;
+    border: 1px solid #facc15;
+    box-shadow: 3px 5px 0 rgba(0,0,0,0.08);
+    font-family: "Caveat", "Permanent Marker", cursive;
+    font-size: 1.15rem;
+    transform: rotate(-1.2deg);
+  }
+  .sticky-grid .poly-card:nth-child(even) { transform: rotate(1.5deg); background: #fce7f3; border-color: #f9a8d4; }
+  .sticky-grid .poly-card:nth-child(3n) { background: #dbeafe; border-color: #93c5fd; transform: rotate(-0.5deg); }
+  .sticky-grid .poly-card-icon { color: #b45309; opacity: 0.7; }
+
+  /* Terminal cards */
+  .terminal-grid .poly-card {
+    background: #0a0a0a;
+    color: #4ade80;
+    border: 1px solid #1f2937;
+    border-radius: 4px;
+    font-family: ui-monospace, "Menlo", monospace;
+    font-size: 0.9rem;
+    box-shadow: 0 0 0 1px #1f2937, 0 8px 24px rgba(74,222,128,0.08);
+  }
+  .terminal-grid .poly-card::before {
+    content: "● ● ●";
+    display: block;
+    color: #525252;
+    letter-spacing: 4px;
+    margin-bottom: 0.6rem;
+    font-size: 0.7rem;
+  }
+  .terminal-grid .poly-card-icon { color: #4ade80; }
+
+  /* Brutalist cards */
+  .brutalist-grid .poly-card {
+    background: #fff;
+    border: 3px solid #000;
+    border-radius: 0;
+    box-shadow: 8px 8px 0 #000;
+    padding: 1.25rem;
+  }
+  .brutalist-grid .poly-card:nth-child(2) { background: #fef08a; box-shadow: 8px 8px 0 #db2777; }
+  .brutalist-grid .poly-card:nth-child(3) { background: #a7f3d0; box-shadow: 8px 8px 0 #1e40af; }
+
+  /* Quote variants */
+  .glow-quote .poly-quote {
+    background: linear-gradient(135deg, rgba(168,85,247,0.08), rgba(59,130,246,0.08));
+    border-left: 3px solid #a855f7;
+    padding: 1.25rem 1.5rem;
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+  }
+
+  /* Polaroid cards — photo + caption feel */
+  .polaroid-grid .poly-card {
+    background: #fff;
+    border: none;
+    border-radius: 2px;
+    padding: 1rem 1rem 2.5rem !important;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.08), 0 8px 20px rgba(0,0,0,0.12);
+    font-family: "Architects Daughter", "Caveat", cursive;
+    font-size: 1.1rem;
+    text-align: center;
+    transform: rotate(-2deg);
+  }
+  .polaroid-grid .poly-card:nth-child(even) { transform: rotate(2.5deg); }
+  .polaroid-grid .poly-card:nth-child(3n) { transform: rotate(-0.8deg); }
+  .polaroid-grid .poly-card-icon {
+    background: linear-gradient(135deg, #f3e8ff, #fce7f3);
+    border-radius: 2px;
+    padding: 2rem 0;
+    margin-bottom: 0.75rem;
+    color: #9333ea;
+  }
+  .polaroid-grid .poly-card-icon svg { width: 48px; height: 48px; }
+
+  /* Neon / synthwave */
+  .neon-grid .poly-card {
+    background: #0b0920;
+    color: #f0abfc;
+    border: 3px solid transparent;
+    border-radius: 10px;
+    background-image:
+      linear-gradient(#0b0920, #0b0920),
+      linear-gradient(135deg, #ec4899, #8b5cf6, #22d3ee);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    box-shadow: 0 0 32px rgba(236,72,153,0.45), inset 0 0 24px rgba(139,92,246,0.25);
+    font-family: ui-monospace, monospace;
+    text-shadow: 0 0 8px rgba(236,72,153,0.6);
+  }
+  .neon-grid .poly-card-icon { color: #22d3ee; filter: drop-shadow(0 0 6px rgba(34,211,238,0.8)); }
+  .neon-grid .poly-card strong { color: #fbbf24; text-shadow: 0 0 10px rgba(251,191,36,0.7); }
+
+  /* Blueprint */
+  .blueprint-grid .poly-card {
+    background: #1e40af;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.25) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.25) 1px, transparent 1px);
+    background-size: 20px 20px;
+    color: #dbeafe;
+    border: 1px dashed rgba(255,255,255,0.3);
+    border-radius: 0;
+    font-family: ui-monospace, monospace;
+    font-size: 0.9rem;
+  }
+  .blueprint-grid .poly-card-icon { color: #fef3c7; }
+  .blueprint-grid .poly-card strong { color: #fff; letter-spacing: 0.05em; }
+
+  /* Receipt — narrow paper with zigzag bottom */
+  .poly-code-block.receipt {
+    max-width: 320px;
+    margin: 1rem auto;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    background: #fafaf9;
+    background-image:
+      linear-gradient(45deg, transparent 33%, #fafaf9 33%, #fafaf9 66%, transparent 66%),
+      linear-gradient(-45deg, transparent 33%, #fafaf9 33%, #fafaf9 66%, transparent 66%);
+    background-size: 12px 12px;
+    background-position: bottom;
+    background-repeat: repeat-x;
+    padding: 1.5rem 1.25rem 2.5rem;
+  }
+  .poly-code-block.receipt pre {
+    background: transparent !important;
+    color: #1f2937 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-size: 0.8rem !important;
+    border-radius: 0 !important;
+  }
+  .poly-code-block.receipt code { color: #1f2937 !important; background: transparent !important; }
+
+  /* ─── Buttons ─── */
+  .btn-pill .poly-button {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    border: none;
+    border-radius: 999px;
+    padding: 0.6rem 1.4rem;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(99,102,241,0.4);
+  }
+  .btn-ghost .poly-button {
+    background: transparent;
+    color: #0f172a;
+    border: 1.5px solid #0f172a;
+    border-radius: 4px;
+    padding: 0.5rem 1.2rem;
+    font-weight: 500;
+  }
+  .btn-3d .poly-button {
+    background: #fbbf24;
+    color: #78350f;
+    border: 2px solid #78350f;
+    border-radius: 4px;
+    padding: 0.55rem 1.25rem;
+    font-weight: 700;
+    box-shadow: 4px 4px 0 #78350f;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .btn-brutalist .poly-button {
+    background: #000;
+    color: #fff;
+    border: 3px solid #000;
+    border-radius: 0;
+    padding: 0.6rem 1.4rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    box-shadow: 6px 6px 0 #ef4444;
+  }
+
+  /* ─── Tables ─── */
+  .tbl-minimal table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+  .tbl-minimal th, .tbl-minimal td {
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+    border: none;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .tbl-minimal th {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6b7280;
+    border-bottom: 2px solid #111827;
+  }
+
+  .tbl-sheet table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: ui-monospace, monospace;
+    font-size: 0.85rem;
+  }
+  .tbl-sheet th, .tbl-sheet td {
+    padding: 0.35rem 0.6rem;
+    border: 1px solid #d1d5db;
+    background: #fff;
+  }
+  .tbl-sheet th {
+    background: #f3f4f6;
+    font-weight: 600;
+  }
+  .tbl-sheet tr:first-child th:first-child {
+    background: #e5e7eb;
+  }
+
+  .tbl-dark table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #0f172a;
+    color: #e2e8f0;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .tbl-dark th, .tbl-dark td {
+    padding: 0.7rem 1rem;
+    border: none;
+    border-bottom: 1px solid #1e293b;
+  }
+  .tbl-dark th {
+    background: #1e293b;
+    color: #7dd3fc;
+    text-align: left;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .tbl-dark tr:hover td { background: #1e293b; }
+
+  /* ─── Headlines (scope via wrapping /region --class) ─── */
+  .hl-gradient h2 {
+    background: linear-gradient(90deg, #ec4899, #8b5cf6, #3b82f6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: 2.5rem;
+    font-weight: 800;
+  }
+  .hl-marker h2 {
+    position: relative;
+    padding-left: 1rem;
+    font-size: 1.75rem;
+  }
+  .hl-marker h2::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0.2em; bottom: 0.2em;
+    width: 5px;
+    background: linear-gradient(180deg, #f59e0b, #ef4444);
+    border-radius: 3px;
+  }
+  .hl-outline h2 {
+    color: transparent;
+    -webkit-text-stroke: 2px #0f172a;
+    font-size: 3rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+  .hl-underline h2 {
+    display: inline-block;
+    padding-bottom: 0.2rem;
+    background: linear-gradient(90deg, #fbbf24, #fbbf24) bottom / 100% 8px no-repeat;
+  }
+
+  /* ─── Code blocks ─── */
+  .code-notebook .poly-code-block pre {
+    background: #fefce8 !important;
+    color: #422006 !important;
+    border-left: 4px solid #eab308;
+    border-radius: 0 !important;
+  }
+  .code-notebook .poly-code-block code { color: #422006 !important; }
+
+  .code-ide .poly-code-block {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  }
+  .code-ide .poly-code-block::before {
+    content: "● ● ●";
+    display: block;
+    background: #2d2d2d;
+    color: #6b7280;
+    padding: 0.5rem 1rem;
+    letter-spacing: 6px;
+    font-size: 0.8rem;
+  }
+  .code-ide .poly-code-block pre { border-radius: 0 !important; }
+
+  /* ─── Inline code ─── */
+  .ic-chip code {
+    background: #1e293b;
+    color: #fbbf24;
+    padding: 0.15em 0.5em;
+    border-radius: 999px;
+    font-size: 0.85em;
+    font-weight: 500;
+  }
+  .ic-highlight code {
+    background: linear-gradient(180deg, transparent 55%, #fde68a 55%);
+    color: #78350f;
+    padding: 0 0.2em;
+    border-radius: 0;
+    font-weight: 600;
+  }
+  .ic-bracket code {
+    background: transparent;
+    color: #0f172a;
+    padding: 0;
+  }
+  .ic-bracket code::before { content: "⟪"; color: #94a3b8; }
+  .ic-bracket code::after  { content: "⟫"; color: #94a3b8; }
+
+  /* ════════════════════════════════════════════════
+     Corporate / Modern variants (clean, safe, current)
+     ════════════════════════════════════════════════ */
+
+  /* Cards — enterprise */
+  .card-enterprise .poly-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-left: 3px solid #2563eb;
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 1px 2px rgba(16,24,40,0.05);
+    font-family: "Inter", system-ui, sans-serif;
+  }
+  .card-enterprise .poly-card-icon { color: #2563eb; }
+
+  /* Cards — glass / frosted */
+  .card-glass {
+    background: linear-gradient(135deg, #e0e7ff, #fef3c7);
+    padding: 2rem !important;
+    border-radius: 16px;
+  }
+  .card-glass .poly-card {
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.6);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(15,23,42,0.08);
+    font-family: "Inter", system-ui, sans-serif;
+  }
+
+  /* Cards — minimal outlined */
+  .card-outline .poly-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 1.5rem;
+    box-shadow: none;
+    font-family: "Inter", system-ui, sans-serif;
+  }
+  .card-outline .poly-card-icon {
+    width: 40px; height: 40px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: #f3f4f6;
+    border-radius: 8px;
+    color: #374151;
+    margin-bottom: 0.75rem;
+  }
+
+  /* Cards — KPI */
+  .card-kpi .poly-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    font-family: "Inter", system-ui, sans-serif;
+  }
+  .card-kpi .poly-card-icon { display: none; }
+  .card-kpi .poly-card strong {
+    display: block;
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .card-kpi .poly-card em {
+    display: block;
+    font-size: 0.75rem;
+    font-style: normal;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #64748b;
+    margin-bottom: 0.35rem;
+  }
+
+  /* ─── Corporate buttons (named) ─── */
+  .btn-stripe .poly-button {
+    background: linear-gradient(180deg, #635bff, #5851e8);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.6rem 1.1rem;
+    font-weight: 600;
+    font-family: "Inter", system-ui, sans-serif;
+    box-shadow: 0 1px 2px rgba(50,50,93,0.1), 0 1px 1px rgba(0,0,0,0.07);
+  }
+  .btn-linear .poly-button {
+    background: #16161a;
+    color: #fff;
+    border: 1px solid #27272a;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    font-family: "Inter", system-ui, sans-serif;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+  }
+  .btn-vercel .poly-button {
+    background: #000;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.55rem 1.1rem;
+    font-weight: 600;
+    font-family: "Inter", system-ui, sans-serif;
+  }
+  .btn-notion .poly-button {
+    background: #fff;
+    color: #37352f;
+    border: 1px solid rgba(55,53,47,0.16);
+    border-radius: 4px;
+    padding: 0.4rem 0.9rem;
+    font-weight: 500;
+    font-family: "Inter", system-ui, sans-serif;
+    box-shadow: rgba(15,15,15,0.1) 0px 1px 2px;
+  }
+  .btn-github .poly-button {
+    background: #238636;
+    color: #fff;
+    border: 1px solid rgba(240,246,252,0.1);
+    border-radius: 6px;
+    padding: 0.45rem 1rem;
+    font-weight: 600;
+    font-family: "Inter", system-ui, sans-serif;
+  }
+  .btn-apple .poly-button {
+    background: #fff;
+    color: #0a0a0a;
+    border: none;
+    border-radius: 999px;
+    padding: 0.6rem 1.4rem;
+    font-weight: 500;
+    font-family: "Inter", -apple-system, sans-serif;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  }
+
+  /* ─── Corporate tables ─── */
+  .tbl-financial table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 0.9rem;
+  }
+  .tbl-financial th, .tbl-financial td {
+    padding: 0.65rem 0.9rem;
+    text-align: right;
+  }
+  .tbl-financial th:first-child, .tbl-financial td:first-child { text-align: left; }
+  .tbl-financial th {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #64748b;
+    border-bottom: 1px solid #cbd5e1;
+  }
+  .tbl-financial tr:nth-child(even) td { background: #f8fafc; }
+  .tbl-financial td { font-variant-numeric: tabular-nums; }
+
+  /* ─── Corporate headlines ─── */
+  .hl-editorial h2 {
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 2.25rem;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: #0f172a;
+  }
+  .hl-editorial h2::before {
+    content: "SECTION";
+    display: block;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    color: #2563eb;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+  }
+  .hl-kicker h2 {
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    text-align: center;
+    color: #0f172a;
+  }
+  .hl-kicker h2::before {
+    content: "— Featured —";
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #64748b;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  /* ─── Corporate code blocks ─── */
+  .code-clean .poly-code-block pre {
+    background: #f8fafc !important;
+    color: #0f172a !important;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px !important;
+    font-size: 0.85rem !important;
+  }
+  .code-clean .poly-code-block code { color: #0f172a !important; }
+
+  /* ─── Corporate inline code ─── */
+  .ic-soft code {
+    background: #f1f5f9;
+    color: #0f172a;
+    padding: 0.1em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+    border: 1px solid #e2e8f0;
+  }
+
+  /* ════════════════════════════════════════════════
+     Hero variants
+     ════════════════════════════════════════════════ */
+  .hero-centered .poly-hero {
+    background: #0f172a;
+    color: #fff;
+    padding: 4rem 2rem !important;
+    border-radius: 16px;
+    text-align: center;
+    font-family: "Inter", system-ui, sans-serif;
+  }
+  .hero-centered .poly-hero h2 {
+    font-size: 2.75rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin: 0 0 0.75rem 0 !important;
+  }
+
+  .hero-split .poly-hero {
+    background: linear-gradient(135deg, #eff6ff, #e0e7ff);
+    padding: 3rem 2.5rem !important;
+    border-radius: 12px;
+    font-family: "Inter", system-ui, sans-serif;
+    border-left: 6px solid #2563eb;
+  }
+  .hero-split .poly-hero h2 {
+    color: #0f172a;
+    font-size: 2.25rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .hero-minimal .poly-hero {
+    background: #fff;
+    padding: 2rem 0 !important;
+    border-top: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+    border-radius: 0;
+    font-family: "Inter", system-ui, sans-serif;
+  }
+  .hero-minimal .poly-hero h2 {
+    color: #0f172a;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-gradient .poly-hero {
+    background: linear-gradient(135deg, #6366f1, #ec4899, #f59e0b);
+    color: #fff;
+    padding: 4rem 2rem !important;
+    border-radius: 20px;
+    font-family: "Inter", system-ui, sans-serif;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(99,102,241,0.25);
+  }
+  .hero-gradient .poly-hero h2 {
+    font-size: 3rem;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .hero-product .poly-hero {
+    background: #fafafa;
+    padding: 3rem 2.5rem !important;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    font-family: "Inter", system-ui, sans-serif;
+  }
+  .hero-product .poly-hero::before {
+    content: "NEW";
+    display: inline-block;
+    background: #2563eb;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    margin-bottom: 0.75rem;
+  }
+  .hero-product .poly-hero h2 {
+    color: #0f172a;
+    font-size: 2.5rem;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+  }
+}
+
+/region --class hero-gradient {
+  /hero {
+    ## Element Style Variants
+    A tour of how far you can stretch the built-in components with a single `/style` block.
+  }
+}
+
+## Hero Variants
+
+/region --class hero-centered {
+  /hero {
+    ## Ship Faster
+    Everything you need to go from idea to production.
+  }
+}
+
+/region --class hero-split {
+  /hero {
+    ## Built for Teams
+    Collaborative by default. Opinionated where it matters.
+  }
+}
+
+/region --class hero-minimal {
+  /hero {
+    ## Docs That Ship Themselves
+    Write once. Publish to HTML, PDF, and print.
+  }
+}
+
+/region --class hero-product {
+  /hero {
+    ## Polyester 2.0
+    The document language for AI-assisted authoring.
+  }
+}
+
+## Sticky Notes
+
+/region --class sticky-grid {
+  /columns 3 --gap 1.5rem {
+    /card --icon lightbulb {
+      Remember to call mom on Sunday
+    }
+    /card --icon coffee {
+      Out of beans — buy the dark roast
+    }
+    /card --icon calendar {
+      Standup moved to 10:30
+    }
+  }
+}
+
+## Terminal
+
+/region --class terminal-grid {
+  /columns 2 --gap 1rem {
+    /card --icon terminal {
+      $ deploy --prod
+      Building...
+      Pushed to staging
+      ✓ Live
+    }
+    /card --icon database {
+      $ db migrate
+      Running 3 migrations
+      ✓ schema_v42
+      ✓ add_indexes
+      ✓ backfill
+    }
+  }
+}
+
+## Brutalist
+
+/region --class brutalist-grid {
+  /columns 3 --gap 2rem {
+    /card --icon zap {
+      **FAST** — Ships in milliseconds, not seconds.
+    }
+    /card --icon shield {
+      **SAFE** — Type-checked, audited, hardened.
+    }
+    /card --icon rocket {
+      **LOUD** — You'll know when it's done.
+    }
+  }
+}
+
+## Glowing Quote
+
+/region --class glow-quote {
+  /quote {
+    The best way to predict the future is to invent it. The second best way is to fork it on GitHub.
+  }
+}
+
+## Polaroids
+
+/region --class polaroid-grid {
+  /columns 3 --gap 2rem {
+    /card --icon mountain {
+      Mount Rainier, 2019
+    }
+    /card --icon palm-tree {
+      Tulum in October
+    }
+    /card --icon tent {
+      Olympic NP weekend
+    }
+  }
+}
+
+## Neon
+
+/region --class neon-grid {
+  /columns 2 --gap 1.5rem {
+    /card --icon cpu {
+      **RUNTIME** — Edge-deployed, cold-start under 40ms.
+    }
+    /card --icon wifi {
+      **NETWORK** — Anycast routing to 240+ POPs worldwide.
+    }
+  }
+}
+
+## Blueprint
+
+/region --class blueprint-grid {
+  /columns 2 --gap 1.5rem {
+    /card --icon ruler {
+      **SPEC 001** — Load-bearing wall, 2x6 studs @ 16" OC.
+    }
+    /card --icon compass {
+      **SPEC 002** — North elevation, 3:12 roof pitch.
+    }
+  }
+}
+
+## Receipt
+
+/code text --class receipt {
+POLYESTER MARKET
+123 Component St
+─────────────────
+card            1   $0.00
+quote           1   $0.00
+frame           1   $0.00
+─────────────────
+SUBTOTAL          $0.00
+TAX (∞%)          $0.00
+─────────────────
+TOTAL             $0.00
+
+Thank you, come again
+}
+
+## Buttons
+
+/columns 4 --gap 1rem {
+  /region --class btn-pill { /button "Subscribe" }
+  /region --class btn-ghost { /button "Learn more" }
+  /region --class btn-3d { /button "Click me" }
+  /region --class btn-brutalist { /button "Go" }
+}
+
+## Tables
+
+### Minimal
+
+/region --class tbl-minimal {
+  /table --header {
+    Name | Role | Joined
+    Ada  | Engineer | 2023
+    Ben  | Designer | 2024
+    Cam  | PM       | 2024
+  }
+}
+
+### Spreadsheet
+
+/region --class tbl-sheet {
+  /table --header {
+    | A | B | C
+    1 | 10 | 20 | =A+B
+    2 | 15 | 25 | =A+B
+    3 | 30 | 40 | =A+B
+  }
+}
+
+### Dark
+
+/region --class tbl-dark {
+  /table --header {
+    Service | Status | Latency
+    api.prod | healthy | 42ms
+    db.prod  | healthy | 8ms
+    cache    | degraded | 210ms
+  }
+}
+
+## Headlines
+
+/region --class hl-gradient {
+  ## Gradient Heading
+}
+
+/region --class hl-marker {
+  ## With Side Marker
+}
+
+/region --class hl-outline {
+  ## OUTLINED
+}
+
+/region --class hl-underline {
+  ## Highlighter Underline
+}
+
+## Code Blocks
+
+### Notebook
+
+/region --class code-notebook {
+  /code python {
+    def greet(name):
+        return f"hello {name}"
+  }
+}
+
+### IDE chrome
+
+/region --class code-ide {
+  /code javascript {
+    const sum = (a, b) => a + b;
+    console.log(sum(2, 3));
+  }
+}
+
+## Inline Code
+
+/region --class ic-chip {
+  Wrap any `inline.code()` to get a chip look.
+}
+
+/region --class ic-highlight {
+  Or use a `highlighter` marker for the same effect in prose.
+}
+
+/region --class ic-bracket {
+  Or angle-bracket `wrapped` code for a formal citation vibe.
+}
+
+/region --class ic-soft {
+  Or a soft gray `chip.style()` for corporate docs.
+}
+
+## Corporate Cards
+
+### Enterprise
+
+/region --class card-enterprise {
+  /columns 3 --gap 1.5rem {
+    /card --icon shield {
+      **Security** — SOC 2 Type II certified. End-to-end encryption at rest and in transit.
+    }
+    /card --icon globe {
+      **Global** — Deployed across 240+ edge locations with <40ms latency worldwide.
+    }
+    /card --icon users {
+      **Teams** — SSO, SCIM, RBAC, and audit logs included on all business plans.
+    }
+  }
+}
+
+### Glass
+
+/region --class card-glass {
+  /columns 3 --gap 1.25rem {
+    /card --icon sparkles { **Intelligent** — AI-assisted editing with inline suggestions. }
+    /card --icon layers   { **Composable** — Every block is a standalone primitive. }
+    /card --icon zap      { **Fast** — Sub-second rebuilds on every save. }
+  }
+}
+
+### Outlined
+
+/region --class card-outline {
+  /columns 3 --gap 1.25rem {
+    /card --icon book-open { **Docs** — Thorough, searchable, and always up to date. }
+    /card --icon headphones { **Support** — Human experts available 24/7 via chat. }
+    /card --icon trending-up { **Analytics** — Real-time usage data, exportable anywhere. }
+  }
+}
+
+### KPI
+
+/region --class card-kpi {
+  /columns 4 --gap 1rem {
+    /card { *Monthly active users* **128K** }
+    /card { *Conversion rate* **4.2%** }
+    /card { *Avg session* **6m 14s** }
+    /card { *NPS score* **68** }
+  }
+}
+
+## Corporate Buttons
+
+/columns 6 --gap 0.75rem {
+  /region --class btn-stripe { /button "Subscribe" }
+  /region --class btn-linear { /button "Sign in" }
+  /region --class btn-vercel { /button "Deploy" }
+  /region --class btn-notion { /button "Duplicate" }
+  /region --class btn-github { /button "Fork" }
+  /region --class btn-apple  { /button "Buy" }
+}
+
+## Corporate Table — Financial
+
+/region --class tbl-financial {
+  /table --header {
+    Quarter | Revenue | Expenses | Net
+    Q1 2025 | $1,240,000 | $812,000 | $428,000
+    Q2 2025 | $1,410,000 | $904,000 | $506,000
+    Q3 2025 | $1,530,000 | $971,000 | $559,000
+    Q4 2025 | $1,680,000 | $1,015,000 | $665,000
+  }
+}
+
+## Corporate Headlines
+
+/region --class hl-editorial {
+  ## Engineering Notes
+}
+
+/region --class hl-kicker {
+  ## The Next Chapter
+}
+
+## Corporate Code
+
+/region --class code-clean {
+  /code typescript {
+    export async function getUser(id: string): Promise<User> {
+      const res = await fetch(`/api/users/${id}`);
+      return res.json();
+    }
+  }
+}

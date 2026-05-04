@@ -73,7 +73,7 @@
     /frame --bg #f8fafc --padding 1.5rem --radius 8px {
       ### list_components
 
-      Browse all 27 components, optionally filtered by category: `layout`, `content`, `style`, or `interactive`.
+      Browse all 28 components, optionally filtered by category: `layout`, `content`, `style`, or `interactive`.
     }
 
     /frame --bg #f8fafc --padding 1.5rem --radius 8px {

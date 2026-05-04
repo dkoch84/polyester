@@ -41,12 +41,13 @@ export const COMPONENTS: ComponentDef[] = [
     description: "Set up document page properties (size, margins, orientation).",
     category: "layout",
     args: [
-      { name: "size", description: "Page size (A4, letter, legal, etc.)", default: "A4" },
+      { name: "size", description: "Page size (A4, Letter, Legal, A3, A5). Omit for unpaginated." },
     ],
     flags: [
       { name: "margin", description: "Page margins", hasValue: true, default: "2cm" },
       { name: "landscape", description: "Use landscape orientation" },
       { name: "pageless", description: "Continuous document without automatic page breaks (PDF flows like a web page)" },
+      { name: "font", description: "Set document font for body and headings", hasValue: true },
       { name: "theme", description: "Composed theme name (combines style + spacing + syntax)", hasValue: true },
       { name: "style", description: "Style module name (colors, fonts, borders, shadows)", hasValue: true },
       { name: "spacing", description: "Spacing module name (gaps, margins, padding density)", hasValue: true },
@@ -54,6 +55,7 @@ export const COMPONENTS: ComponentDef[] = [
     examples: [
       "/page A4 --margin 2cm",
       "/page letter --landscape",
+      '/page A4 --font "Noto Sans"',
       "/page --pageless",
       "/page A4 --theme corporate",
       "/page A4 --style playful --spacing compact",
@@ -309,12 +311,60 @@ export const COMPONENTS: ComponentDef[] = [
     args: [],
     flags: [
       { name: "bg", description: "Background color or 'gradient'", hasValue: true },
+      { name: "pattern", description: "Background pattern type", hasValue: true, values: ["grid", "dots", "cross", "diagonal"] },
+      { name: "pattern-size", description: "Pattern cell size", hasValue: true, default: "64px" },
+      { name: "pattern-color", description: "Pattern line/dot color", hasValue: true, default: "rgba(255,255,255,0.15)" },
+      { name: "pattern-fade", description: "Pattern fade mode", hasValue: true, values: ["none", "radial", "edges"] },
     ],
     examples: [
       "/hero --bg blue { # Welcome }",
       "/hero --bg gradient { content }",
+      "/hero --bg gradient --pattern grid { content }",
+      '/hero --bg gradient --pattern dots --pattern-color "rgba(255,255,255,0.2)" { content }',
     ],
     hasBlock: true,
+  },
+  {
+    name: "background",
+    description: "Add a decorative pattern background behind content.",
+    category: "style",
+    args: [
+      { name: "pattern", description: "Pattern type (grid, dots, cross, diagonal)", default: "grid" },
+    ],
+    flags: [
+      { name: "size", short: "s", description: "Cell size", hasValue: true, default: "64px" },
+      { name: "color", short: "c", description: "Line/dot color", hasValue: true, default: "rgba(0,0,0,0.1)" },
+      { name: "bg", description: "Base background underneath pattern", hasValue: true },
+      { name: "fade", description: "Fade mode", hasValue: true, values: ["none", "radial", "edges"] },
+      { name: "padding", short: "p", description: "Inner padding", hasValue: true },
+    ],
+    examples: [
+      "/background grid { content }",
+      '/background dots --size 48px --color "rgba(0,0,0,0.15)" --fade radial { content }',
+      '/background grid --bg "#1a1a2e" --color "rgba(255,255,255,0.1)" { content }',
+    ],
+    hasBlock: true,
+  },
+  {
+    name: "pagebg",
+    description: "Set per-page background pattern or color for paginated documents.",
+    category: "style",
+    args: [
+      { name: "pages", description: "Page range: a number (1), range (2-4), or 'all'", required: true },
+    ],
+    flags: [
+      { name: "pattern", description: "Pattern type", hasValue: true, values: ["grid", "dots", "cross", "diagonal"] },
+      { name: "size", short: "s", description: "Pattern cell size", hasValue: true, default: "64px" },
+      { name: "color", short: "c", description: "Pattern line/dot color", hasValue: true, default: "rgba(0,0,0,0.1)" },
+      { name: "bg", description: "Solid background color", hasValue: true },
+      { name: "fade", description: "Pattern fade mode", hasValue: true, values: ["none", "radial", "edges"] },
+    ],
+    examples: [
+      '/pagebg 1 --pattern grid --size 48px --color "rgba(0,0,0,0.035)"',
+      '/pagebg 2-4 --bg "#f0f4ff"',
+      "/pagebg all --pattern dots --color \"rgba(0,0,0,0.08)\"",
+    ],
+    hasBlock: false,
   },
   {
     name: "card",
@@ -390,7 +440,7 @@ export const COMPONENTS: ComponentDef[] = [
   },
   {
     name: "style",
-    description: "Inject custom CSS into the document.",
+    description: "Inject custom CSS into the document. Note: @page CSS rules have limited browser support — only margin, size, marks, and bleed are supported. Use /pagebg for page backgrounds.",
     category: "style",
     args: [],
     flags: [],
@@ -399,6 +449,21 @@ export const COMPONENTS: ComponentDef[] = [
       "/style { .poly-code-block pre { background: #282828; } }",
     ],
     hasBlock: true,
+  },
+  {
+    name: "import",
+    description: "Import a design-library style manifest or external .polystyle file. The manifest's CSS is injected into the document.",
+    category: "style",
+    args: [
+      { name: "ref", description: "Reference: @library/<category>/<name> | ./rel/path.polystyle | /abs/path.polystyle", required: true },
+    ],
+    flags: [],
+    examples: [
+      '/import "@library/cards/enterprise"',
+      '/import "@library/buttons/stripe"',
+      '/import "./shared/brand.polystyle"',
+    ],
+    hasBlock: false,
   },
 
   // ======== New Resume/Document Components ========
@@ -495,7 +560,7 @@ export const COMPONENTS: ComponentDef[] = [
   },
   {
     name: "pagebreak",
-    description: "Force a page break (for PDF output).",
+    description: "Force a page break. In paginated documents, fills remaining space on the current page.",
     category: "layout",
     args: [],
     flags: [],

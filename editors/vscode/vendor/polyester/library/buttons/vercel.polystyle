@@ -1,0 +1,9 @@
+{
+  "name": "btn-vercel",
+  "category": "buttons",
+  "description": "Vercel-style pure black button.",
+  "targets": ["button"],
+  "wrapperClass": "btn-vercel",
+  "sampleMarkup": "/region --class btn-vercel { /button \"Deploy\" }",
+  "css": ".btn-vercel .poly-button {\n  background: #000;\n  color: #fff;\n  border: none;\n  border-radius: 6px;\n  padding: 0.55rem 1.1rem;\n  font-weight: 600;\n  font-family: \"Inter\", system-ui, sans-serif;\n}"
+}
