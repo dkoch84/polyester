@@ -21,14 +21,7 @@ import {
   isBlock,
 } from "../../parser/ast.js";
 import { components, ComponentContext, ComponentResult } from "./components.js";
-
-// Create reusable Markdown processor with syntax highlighting
-const markdownProcessor = unified()
-  .use(remarkParse)
-  .use(remarkGfm) // GitHub Flavored Markdown: tables, strikethrough, etc.
-  .use(remarkRehype, { allowDangerousHtml: true })
-  .use(rehypeHighlight, { detect: true }) // Auto-detect language if not specified
-  .use(rehypeStringify, { allowDangerousHtml: true });
+import type { FontCache } from "./fonts.js";
 
 export interface CompileOptions {
   /** Directory of the source `.poly` file — used to resolve relative imports. */
@@ -45,6 +38,8 @@ export interface CompileOptions {
   spacingCss?: string;
   /** CSS for syntax highlighting */
   syntaxCss?: string;
+  /** Pre-resolved /font cache (Google Fonts + local fonts inlined as data URIs). */
+  fontCache?: FontCache;
 }
 
 export interface PageSettings {
@@ -132,11 +127,21 @@ export class HtmlCompiler {
   }
 
   private compileContent(content: Content): string {
-    const text = this.dedent(content.value).trim();
-    if (!text) return "";
+    const dedented = this.dedent(content.value);
+    const trimmed = dedented.trim();
+    if (!trimmed) return "";
 
-    // Convert Markdown to HTML using remark
-    const html = this.renderMarkdown(text);
+    // The Content's loc.start.line is the first line of the raw value. After
+    // trimming leading blanks the actual markdown starts that many lines later,
+    // so offset accordingly when annotating per-block source lines.
+    const lines = dedented.split("\n");
+    let leadingBlanks = 0;
+    while (leadingBlanks < lines.length && lines[leadingBlanks].trim() === "") {
+      leadingBlanks++;
+    }
+    const baseLine = (content.loc?.start.line ?? 1) + leadingBlanks;
+
+    const html = this.renderMarkdown(trimmed, baseLine);
     return `<div class="poly-content">${html}</div>`;
   }
 
@@ -212,6 +217,7 @@ export class HtmlCompiler {
         }
       },
       sourceDir: this.options.sourceDir,
+      fontCache: this.options.fontCache,
     };
 
     // Execute component
@@ -236,9 +242,33 @@ export class HtmlCompiler {
     return result;
   }
 
-  private renderMarkdown(text: string): string {
-    // Use remark to convert Markdown to HTML
-    const result = markdownProcessor.processSync(text);
+  private renderMarkdown(text: string, baseLine: number = 1): string {
+    // Annotate each top-level hast block with its source line in the .poly
+    // file so the sim/reporter can map page positions back to source.
+    const annotateSourceLines = () => (tree: any) => {
+      if (tree?.type === "root" && Array.isArray(tree.children)) {
+        for (const node of tree.children) {
+          if (
+            node?.type === "element" &&
+            node.position?.start?.line &&
+            !node.properties?.dataSourceLine
+          ) {
+            const sourceLine = baseLine + node.position.start.line - 1;
+            node.properties = node.properties || {};
+            node.properties.dataSourceLine = String(sourceLine);
+          }
+        }
+      }
+    };
+
+    const result = unified()
+      .use(remarkParse)
+      .use(remarkGfm)
+      .use(remarkRehype, { allowDangerousHtml: true })
+      .use(rehypeHighlight, { detect: true })
+      .use(annotateSourceLines)
+      .use(rehypeStringify, { allowDangerousHtml: true })
+      .processSync(text);
     return String(result);
   }
 
@@ -505,7 +535,8 @@ export class HtmlCompiler {
 }
 `;
 
-    // @page rule for print/PDF rendering
+    // @page rule for print/PDF rendering. PDF generation skips the in-browser
+    // pagination sim, so margins come from @page directly.
     let pageCss = "";
     if (this.pageSettings.size && !this.pageSettings.pageless) {
       const size = this.pageSettings.size || "A4";
@@ -668,6 +699,12 @@ ${body}
     var marginPx = parseLength(marginStr);
     var contentWidth = pageWidthPx - 2 * marginPx;
     var contentHeight = pageHeightPx - 2 * marginPx;
+    // Tolerance absorbs sub-pixel rounding drift accumulated across many stacked
+    // blocks. Without it, two environments rendering the same HTML with the same
+    // fonts can disagree by a fraction of a pixel per block, which adds up to a
+    // single-line discrepancy on long pages and causes one-word overflow.
+    // Half a body line at 16px base is conservative.
+    var OVERFLOW_TOLERANCE = 24;
 
     // Reset document container: it's now a wrapper of page containers.
     doc.style.width = pageWidthPx + 'px';
@@ -700,6 +737,12 @@ ${body}
       )) continue;
       if (k.classList && k.classList.contains('poly-content')) {
         var inner = Array.prototype.slice.call(k.children);
+        // Propagate the wrapper's data-source-line to the first inner child so
+        // unwrapped markdown still maps back to the .poly source.
+        var wrapperLine = k.getAttribute('data-source-line');
+        if (wrapperLine && inner.length && !inner[0].getAttribute('data-source-line')) {
+          inner[0].setAttribute('data-source-line', wrapperLine);
+        }
         for (var j = 0; j < inner.length; j++) originalChildren.push(inner[j]);
       } else {
         originalChildren.push(k);
@@ -795,6 +838,20 @@ ${body}
 
     function isEmpty(p) { return p.flow.children.length === 0; }
     function isList(el) { return el && (el.tagName === 'UL' || el.tagName === 'OL'); }
+    function isHeading(el) {
+      if (!el || !el.tagName) return false;
+      return /^H[1-6]$/.test(el.tagName);
+    }
+    // When a block is about to be pushed to a new page, also pull any heading
+    // that ended up trailing the previous page. Prevents orphan headings.
+    function pullTrailingHeading() {
+      var last = current.flow.lastElementChild;
+      if (last && isHeading(last)) {
+        current.flow.removeChild(last);
+        return last;
+      }
+      return null;
+    }
     function isTextBlock(el) {
       if (!el || !el.tagName) return false;
       var t = el.tagName;
@@ -820,7 +877,7 @@ ${body}
       for (var i = 0; i < textNodes.length; i++) {
         var tn = textNodes[i];
         var text = tn.nodeValue || '';
-        var re = /\S+\s*|\s+/g, m;
+        var re = /\\S+\\s*|\\s+/g, m;
         while ((m = re.exec(text)) !== null) {
           tokens.push({ node: tn, start: m.index, end: m.index + m[0].length, text: m[0] });
         }
@@ -849,15 +906,48 @@ ${body}
       function restore() {
         for (var i = 0; i < textNodes.length; i++) textNodes[i].nodeValue = originalValues[i];
       }
-      // Binary search for largest tokenIdx that fits.
-      var lo = 1, hi = tokens.length;
-      while (lo < hi) {
-        var mid = Math.ceil((lo + hi) / 2);
-        truncateTo(mid);
-        if (currentContentHeight() <= contentHeight + 1) lo = mid;
-        else hi = mid - 1;
+      // Identify sentence-boundary token indices (after a token whose trimmed
+      // text ends in . ! or ?). Splitting only at these prevents mid-sentence
+      // breaks that read as rendering bugs.
+      var sentenceBoundaries = [];
+      for (var bi = 0; bi < tokens.length; bi++) {
+        var trimmed = tokens[bi].text.replace(/\\s+$/, '');
+        if (/[.!?]$/.test(trimmed)) sentenceBoundaries.push(bi + 1);
       }
-      if (lo <= 0) { restore(); return null; }
+      // Need at least 2 sentences total AND a non-final boundary to split at.
+      // If the only boundary is at the end, there's nothing to split on.
+      if (sentenceBoundaries.length < 2) { restore(); return null; }
+      // Drop the trailing boundary (end of last sentence) — splitting there
+      // means everything stays on this page, nothing to spill.
+      var splitCandidates = sentenceBoundaries.slice(0, -1);
+      // Binary search for the largest sentence-boundary index that fits.
+      var lo = 0, hi = splitCandidates.length - 1, best = -1;
+      while (lo <= hi) {
+        var mid = (lo + hi) >> 1;
+        truncateTo(splitCandidates[mid]);
+        if (currentContentHeight() <= contentHeight + OVERFLOW_TOLERANCE) {
+          best = mid;
+          lo = mid + 1;
+        } else {
+          hi = mid - 1;
+        }
+      }
+      if (best < 0) { restore(); return null; }
+      // Anti-straggler: both sides must have at least 2 sentences. The kept
+      // side has best+1 sentences; the spill side has totalSentences - kept.
+      var totalSentences = sentenceBoundaries.length;
+      // If the paragraph's last token doesn't end in a terminator, count an
+      // additional partial sentence on the spill side.
+      var lastTrimmed = tokens[tokens.length - 1].text.replace(/\\s+$/, '');
+      if (!/[.!?]$/.test(lastTrimmed)) totalSentences += 1;
+      var keptSentences = best + 1;
+      var spillSentences = totalSentences - keptSentences;
+      if (keptSentences <= 1 || spillSentences <= 1) {
+        restore();
+        return null;
+      }
+      var splitTokenIdx = splitCandidates[best];
+      lo = splitTokenIdx;
       // Apply the chosen truncation to the original child.
       truncateTo(lo);
       // Use the pristine clone as the continuation; strip off the parts that fit on the current page.
@@ -873,7 +963,7 @@ ${body}
         var tn = cloneTextNodes[i];
         if (i < breakNodeIdx) tn.nodeValue = '';
         else if (i === breakNodeIdx) {
-          tn.nodeValue = (originalValues[i] || '').slice(breakToken.end).replace(/^\s+/, '');
+          tn.nodeValue = (originalValues[i] || '').slice(breakToken.end).replace(/^\\s+/, '');
         }
         // else: keep as is (original clone content)
       }
@@ -884,7 +974,7 @@ ${body}
 
     function appendWithSplit(child) {
       current.flow.appendChild(child);
-      if (currentContentHeight() <= contentHeight + 1) return; // fits
+      if (currentContentHeight() <= contentHeight + OVERFLOW_TOLERANCE) return; // fits
 
       // Overflow — try to split if it's a list.
       if (isList(child)) {
@@ -895,7 +985,7 @@ ${body}
         var firstCount = 0;
         for (var i = 0; i < items.length; i++) {
           firstHalf.appendChild(items[i]);
-          if (currentContentHeight() > contentHeight + 1) {
+          if (currentContentHeight() > contentHeight + OVERFLOW_TOLERANCE) {
             firstHalf.removeChild(items[i]);
             break;
           }
@@ -909,7 +999,9 @@ ${body}
             markOversize(child);
             current = makePage();
           } else {
+            var widowHeading = pullTrailingHeading();
             current = makePage();
+            if (widowHeading) current.flow.appendChild(widowHeading);
             appendWithSplit(child);
           }
           return;
@@ -944,7 +1036,9 @@ ${body}
         current = makePage();
       } else {
         current.flow.removeChild(child);
+        var widowHeading2 = pullTrailingHeading();
         current = makePage();
+        if (widowHeading2) current.flow.appendChild(widowHeading2);
         appendWithSplit(child);
       }
     }
@@ -1041,12 +1135,29 @@ ${body}
     document.body.appendChild(btn);
   }
 
-  if (document.readyState === 'complete') {
-    requestAnimationFrame(function() { run(); ensureToggleButton(); });
-  } else {
-    window.addEventListener('load', function() {
-      requestAnimationFrame(function() { run(); ensureToggleButton(); });
+  function start() {
+    // Force every declared @font-face to load before measuring. document.fonts.ready
+    // alone only resolves for faces *currently used* by the layout — but as the sim
+    // walks content, headings/bold/italic text trigger lazy loads of other weights,
+    // shifting metrics after the sim has already measured. Explicit f.load() ensures
+    // all weights/styles are loaded up front so measurements are stable.
+    var loadAll = Promise.resolve();
+    if (document.fonts && document.fonts.forEach) {
+      var loads = [];
+      document.fonts.forEach(function(f) { try { loads.push(f.load()); } catch (e) {} });
+      loadAll = Promise.all(loads).catch(function() {});
+    }
+    loadAll.then(function() {
+      var ready = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+      ready.then(function() {
+        requestAnimationFrame(function() { run(); ensureToggleButton(); });
+      });
     });
+  }
+  if (document.readyState === 'complete') {
+    start();
+  } else {
+    window.addEventListener('load', start);
   }
 })();
 </script>`;

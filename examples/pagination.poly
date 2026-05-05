@@ -1,120 +1,169 @@
-/page --pageless
+/page A4 --margin 2cm
+/font "Geist" --google "wght@400;500;600;700" --body --heading
 
-# Pagination Control in Polyester
+# Pagination in Polyester
 
-Polyester gives you control over how your document is paginated when generating PDFs.
+Polyester decides where one page ends and the next begins for you. The rules
+are conservative: the same source produces the same page boundaries in the
+live preview and in the rendered PDF, with no manual layout work.
 
----
+This document is itself paginated A4 — every behavior described below is
+visible as you scroll through the rendered output.
 
-## Pageless Mode
+## Page setup
 
-This document uses `/page --pageless` which creates a **continuous, scrolling PDF** instead of breaking content into fixed A4 pages.
+Every paginated document starts with a `/page` declaration:
 
-This is useful when:
-- You want to prevent tables or figures from being split across pages
-- The document is primarily meant for screen viewing
-- You want precise control over where page breaks occur
-
-/frame --bg "#f0f9ff" --border "1px solid #0ea5e9" {
-  /code polyester {
-    /page --pageless
-
-    Your content flows continuously...
-  }
+/code polyester {
+  /page A4 --margin 2cm
 }
 
----
+Supported sizes: A3, A4, A5, Letter, Legal. Add `--landscape` for landscape
+orientation. The margin can be in any CSS length unit (`2cm`, `1in`, `24pt`).
 
-## Explicit Page Breaks
+## Pageless mode
 
-Even in pageless mode, you can insert explicit page breaks using `/pagebreak`:
+If you want one long, continuous document — no automatic page breaks at all —
+declare `--pageless`:
 
-/frame --bg "#f0fdf4" --border "1px solid #22c55e" {
-  /code polyester {
-    # Section 1
-    Content for section one...
-
-    /pagebreak
-
-    # Section 2
-    This starts on a new page.
-  }
+/code polyester {
+  /page --pageless
 }
 
----
+In pageless mode the document flows as a single tall page. Use `/pagebreak`
+when you want to force a break.
 
-## Example: Keeping Tables Together
+## Manual page breaks
 
-One common use case is ensuring tables don't get split across pages:
+`/pagebreak` ends the current page. It works in both paginated and pageless
+documents.
 
-/table --header --striped --bordered {
-  Feature | Description
-  `/page --pageless` | Creates a continuous PDF without automatic page breaks
-  `/pagebreak` | Forces a page break at that location
-  Default behavior | A4 pages with automatic breaks
+/code polyester {
+  # Cover
+
+  /pagebreak
+
+  # Body
+
+  This starts on a new page.
 }
-
-Without `--pageless`, a long table might be split awkwardly between pages. With pageless mode, the table stays intact and you control exactly where breaks occur.
 
 /pagebreak
 
-# Page 2: After Explicit Break
+# Automatic pagination
 
-This content appears on a new page because we used `/pagebreak` above.
+In paginated mode, Polyester walks your content top to bottom and drops it
+onto pages. When the next block does not fit, the current page ends and the
+block moves to a new one. Several rules govern *how* the break happens.
 
-## Usage Examples
+## Paragraphs stay whole
 
-### Standard Paginated Document (Default)
+A paragraph that does not fit on the current page is moved entirely to the
+next page rather than being cut in half. You will not see a paragraph end
+with a stranded word at the bottom of one page and resume at the top of the
+next.
 
-/frame {
-  /code polyester {
-    /page A4 --margin 2cm
+If a paragraph is so long that it cannot fit on a single page even by itself
+(rare for body copy, possible for very long quotes), Polyester splits it —
+but only at sentence boundaries, never mid-sentence, and never in a way
+that leaves a single sentence dangling on either side.
 
-    Content is automatically split into A4 pages.
-  }
+## Headings stay with their content
+
+When the next block (a paragraph, a list, a table, a region) does not fit
+and gets pushed to a new page, any heading that was just placed at the
+bottom of the current page travels with it. A heading is never left orphaned
+at the end of a page with its content stranded on the next.
+
+## Lists split cleanly
+
+Lists are the one block type that Polyester *will* split across pages: items
+flow onto the current page until one does not fit, then the remaining items
+continue on the next page. Numbering is preserved for ordered lists.
+
+If a single list item is too tall to fit on a page, the whole list moves to
+the next page first, in case more room helps.
+
+/pagebreak
+
+# Fonts and deterministic pagination
+
+A document only paginates the same way in the live preview, in the rendered
+PDF, and in any browser that opens the HTML if every environment renders
+text with the same glyph metrics. That means the same font.
+
+Relying on installed system fonts is fragile: your machine has them, the PDF
+renderer might not, and a reader's browser definitely will not. The result
+is that "where the page breaks" depends on whose computer is looking at it.
+
+The fix is `/font`. Declare the font you want once, and Polyester downloads
+it (or reads it from disk), base64-inlines it into the document, and uses
+the same bytes everywhere.
+
+## Google Fonts
+
+/code polyester {
+  /font "Geist" --google "wght@400;500;700" --body --heading
+  /font "JetBrains Mono" --google --mono
 }
 
-### Continuous Document
+The `--google` value is the Google Fonts axis spec — `wght@400;700` for two
+weights, `ital,wght@0,400;1,400` for italic + roman at the same weight, and
+so on. Omit it to get the default 400 weight.
 
-/frame {
-  /code polyester {
-    /page --pageless
+`--body`, `--heading`, and `--mono` set the registered family as the default
+for body text, headings, and code respectively.
 
-    Content flows as one long page.
-    Use /pagebreak for manual control.
-  }
+## Local files
+
+/code polyester {
+  /font "MyBrand" --src "fonts/MyBrand-Regular.woff2"
+  /font "MyBrand" --src "fonts/MyBrand-Bold.woff2" --weight 700
 }
 
-### Landscape Paginated
+Paths are resolved relative to the document. WOFF2, WOFF, TTF, and OTF
+files all work; WOFF2 produces the smallest output.
 
-/frame {
-  /code polyester {
-    /page letter --landscape --margin 1in
+Once a font is fetched the bytes are cached on disk, so subsequent builds
+are offline-friendly and finish in milliseconds.
 
-    Wide content on landscape letter pages.
-  }
-}
+/pagebreak
 
----
-
-## When to Use Each Mode
+# Choosing a page mode
 
 /columns 2 {
-  /card --title "Use Pageless When:" {
+  /card --title "Use paginated when:" {
     /list {
-      Tables shouldn't split
-      Screen-first viewing
-      You want manual break control
-      Creating scrollable reports
+      Output is a printed or saved PDF
+      Content has natural section breaks
+      Page numbers, headers, or covers matter
+      You want predictable per-page layout
     }
   }
 
-  /card --title "Use Default When:" {
+  /card --title "Use pageless when:" {
     /list {
-      Printing on paper
-      Standard document flow is fine
-      Following page size conventions
-      Headers/footers matter
+      Output is a long-form web page
+      Tables or figures must never split
+      Manual page-break placement is enough
+      You want one long scroll
     }
   }
 }
+
+# What you will not see
+
+A short list of things Polyester actively prevents:
+
+/list {
+  A paragraph cut off mid-sentence
+  A single word stranded at the top or bottom of a page
+  A heading at the bottom of a page with its paragraph on the next
+  Different page boundaries between live preview and rendered PDF
+  Content that silently disappears because it did not fit
+}
+
+If a block genuinely cannot fit on any page (a region with a fixed height
+larger than the page, an image taller than the content area), Polyester
+flags it with a red dashed outline rather than dropping it. That is your
+cue to resize the content or change the page settings.

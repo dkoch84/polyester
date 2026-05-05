@@ -1,0 +1,201 @@
+/page A4 --margin 2cm
+/font "Geist" --google "wght@400;500;600;700" --body --heading
+/font "Geist Mono" --google --mono
+
+/region --bg #f8fafc --padding 0.75rem --margin "0 0 1.5rem 0" {
+  /inline --gap 0.75rem {
+    /button secondary "Home" --href "index.html"
+    /button secondary "CLI" --href "cli.html"
+    /button secondary "Authoring" --href "authoring.html"
+    /button secondary "Internals" --href "internals.html"
+    /button secondary "Design System" --href "design-system.html"
+    /button secondary "MCP" --href "mcp.html"
+  }
+}
+
+# Pagination internals
+
+How Polyester decides where pages end. Useful if you are debugging a
+pagination edge case, contributing to the project, or curious why the
+output looks the way it does.
+
+## Why an in-browser simulator
+
+The naive way to paginate HTML is to lean on the browser's native print
+layout — `@page`, `break-before`, `break-after`, `orphans`, `widows`. This
+falls apart for two reasons.
+
+First, the browser only applies print rules when actually printing. The
+live preview, by definition, is on screen, so it sees no page boundaries
+unless we draw them ourselves. Without a unified pagination pass, the
+preview and the PDF disagree about where pages break.
+
+Second, even in print mode the relevant CSS properties have spotty support
+and offer little control. `break-inside: avoid` is honored unevenly across
+elements, `orphans` and `widows` apply only to lines within a single
+block, and there is no way to express "keep this heading with whatever
+follows".
+
+So Polyester runs a small JavaScript pagination simulator in the
+document's own page (screen mode, not print). The simulator measures
+content and lays it out into discrete `.poly-page` containers. The PDF
+build then maps each `.poly-page` to one physical PDF page. The live
+preview displays the same containers as a stack. Same code, same input,
+same output.
+
+/pagebreak
+
+## The algorithm
+
+The simulator processes the document's top-level children in source
+order. It maintains a current page; for each child, it tries to append.
+
+If the child fits within the page's content area (plus a small overflow
+tolerance), it stays. If not, the simulator decides what to do based on
+the child's type.
+
+## Content height + tolerance
+
+Available content height is `page height − 2 × margin`, computed from the
+`/page` settings.
+
+After every append the simulator measures `flow.getBoundingClientRect()`
+and compares it to that target. The comparison uses a tolerance of about
+24 pixels, which is roughly half a body line. Without tolerance, sub-pixel
+rounding accumulated across dozens of stacked blocks adds up to a one-line
+divergence between environments. Tolerance absorbs that drift.
+
+## Lists
+
+Lists are split at item boundaries:
+
+/list --ordered {
+  Append the list element to the current page
+  If it fits, done — keep going
+  Otherwise, walk the items one by one, keeping each that fits
+  When an item doesn't fit, end the page and continue the remaining items on the next page
+  Ordered list `start` attribute is updated so numbering continues correctly
+  If even the first item doesn't fit, move the whole list to a new page
+}
+
+This produces visually clean splits because the only break point inside a
+list is between items.
+
+## Paragraphs
+
+Paragraphs are kept whole by default. If a paragraph does not fit, the
+simulator removes it from the current page, opens a new page, and tries
+again. The whole-paragraph-on-next-page case is the common one.
+
+A paragraph is only split — as a last resort — when even on a fresh page
+it would overflow. That is rare for body copy, common for very long pull
+quotes or single-paragraph code listings.
+
+/pagebreak
+
+## Sentence-boundary splitting
+
+When a paragraph must be split, the simulator only considers split points
+at sentence boundaries: positions immediately after a token whose trimmed
+text ends in `.`, `!`, or `?`.
+
+It binary-searches the largest sentence-boundary index that fits within
+the page's content area + tolerance. If the chosen split would leave one
+sentence or fewer on either side, the split is rejected — the whole
+paragraph moves instead.
+
+Two consequences:
+
+/list {
+  No paragraph ever cuts in the middle of a sentence
+  No page ends or begins with a single sentence stranded from a longer paragraph
+}
+
+The cost is occasional whitespace at the bottom of a page that is "almost
+full" of one paragraph too big to fit alongside what came before. That
+trade is intentional.
+
+## Heading widow protection
+
+When the simulator pushes a block to a new page, it peeks at the last
+remaining child of the page it is leaving. If that child is an
+`H1`–`H6`, the heading is removed and prepended to the new page so it
+travels with its content.
+
+This eliminates the common typographic glitch of a heading marooned at
+the bottom of a page with its first paragraph at the top of the next.
+
+/pagebreak
+
+## Fonts
+
+Determinism depends on identical glyph metrics across environments. If
+the live preview's webview falls back to one system font and the PDF's
+headless Chrome falls back to another, every paragraph wraps at a
+slightly different column, every page ends at a slightly different
+sentence, and the pagination simulator's careful measurement is
+worthless.
+
+The `/font` command fixes this by inlining font bytes as base64 data URIs
+in the document's `<style>` block. Local files are read from disk; Google
+Fonts CSS is fetched, every referenced WOFF2 is fetched, and the URLs
+are rewritten to data URIs. Results are cached on disk
+(`~/.cache/polyester/fonts/<sha256>.css`) so subsequent builds finish in
+milliseconds.
+
+The pagination simulator additionally calls `document.fonts.load()` on
+every declared `@font-face` before measuring, to force lazy weight loads
+up front. Otherwise headings or bold passages would trigger font loads
+mid-measurement and shift line heights after the simulator already
+recorded them.
+
+/pagebreak
+
+## When pagination still diverges
+
+Even with all the above, there are residual sources of small divergence:
+
+/list {
+  Different Chrome versions (VS Code's Electron vs the system Chrome that ships with Puppeteer) round font metrics slightly differently
+  Sub-pixel layout differs between versions when content uses non-integer dimensions (cm, mm, em-based)
+  Image decoding races: the simulator measures before an image's intrinsic size resolves
+}
+
+The 24-pixel overflow tolerance absorbs most of these. The
+sentence-boundary + anti-straggler rules absorb most of the rest. What
+remains is genuinely "the page is too full" — at which point the user-
+visible behavior is correct in both environments, just on different
+pages.
+
+## Oversize blocks
+
+A block can be larger than a single page (a fixed-height region, a tall
+image, a very long pull quote that even the splitter rejects). The
+simulator marks these with `data-poly-oversize="1"` and a red dashed
+outline, places them on their own page, and continues. The block
+overflows the page bounds visibly so the author can see and fix it.
+
+This is deliberately not a silent failure: dropped or clipped content
+without warning is the worst possible outcome for a document tool.
+
+# References
+
+Source: `src/backends/html/compiler.ts` — search for `generatePageSimScript`.
+The simulator is emitted as a `<script>` block injected at the bottom of
+every paginated document.
+
+Tests covering the rules described above live alongside the compiler.
+
+/region --bg #282828 --padding 2rem --margin "2rem 0 0 0" {
+  /center {
+    /text "Polyester · Internals" --bold --color white --tracking wide
+    /region --padding "0.75rem 0 0 0" {
+      /inline --gap 0.75rem {
+        /button secondary "Home" --href "index.html"
+        /button secondary "Authoring" --href "authoring.html"
+        /button secondary "CLI" --href "cli.html"
+        /button secondary "Design System" --href "design-system.html"
+      }
+    }
+  }
+}

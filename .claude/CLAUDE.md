@@ -120,7 +120,7 @@ A git pre-commit hook automatically rebuilds all rendered outputs. If you need t
 npm run build
 
 # Docs → HTML
-poly build docs/index.poly docs/cli.poly docs/mcp.poly docs/design-system.poly docs/theme-studio.poly
+poly build docs/index.poly docs/cli.poly docs/mcp.poly docs/design-system.poly docs/theme-studio.poly docs/authoring.poly docs/internals.poly
 
 # README hero → SVG
 poly build docs/about-polyester.poly -o docs/about-polyester.svg

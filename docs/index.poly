@@ -1,4 +1,4 @@
-/page A4 --margin 0 --max-width none
+/page --pageless --max-width none
 
 /style {
   body {
@@ -586,13 +586,14 @@
 
         ## Pagination
 
+        /page A4 --margin 2cm
+        /font "Geist" --google --body
+
+        Pages break automatically.
+        Headings stay with content.
+
         /page --pageless
-
-        Content flows continuously...
-
         /pagebreak
-
-        New section starts here.
 
       }
     }
@@ -602,9 +603,18 @@
 
     ## Pagination
 
-    Control how PDFs are paginated. Use `--pageless` for continuous scrolling, or `/pagebreak` for explicit control.
+    Polyester paginates automatically and *deterministically* — the live preview, the PDF, and any browser opening the HTML all break at the same place. Paragraphs stay whole, headings travel with their content, and `/font` ensures every environment renders with identical glyph metrics.
 
-    /columns 2 --gap 2rem {
+    /columns 3 --gap 1.5rem {
+
+      /frame --bg #fef3c7 --padding 1.5rem --radius 8px {
+        /text "Automatic" --bold --size 0.9rem
+        /code polyester {
+          /page A4 --margin 2cm
+          /font "Geist" --google --body
+        }
+        Smart breaks: no widowed headings, no mid-sentence cuts.
+      }
 
       /frame --bg #f0f9ff --padding 1.5rem --radius 8px {
         /text "Continuous" --bold --size 0.9rem
@@ -690,6 +700,8 @@
 
       /inline --gap 1rem {
         /button secondary "CLI Reference" --href "cli.html"
+        /button secondary "Authoring" --href "authoring.html"
+        /button secondary "Internals" --href "internals.html"
         /button secondary "MCP Server" --href "mcp.html"
       }
     }

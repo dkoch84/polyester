@@ -559,6 +559,32 @@ export const COMPONENTS: ComponentDef[] = [
     hasBlock: false,
   },
   {
+    name: "font",
+    description: "Register a font family from a local file or Google Fonts. Inlines the font as a data URI so live preview, PDF, and standalone HTML all render with identical metrics.",
+    category: "style",
+    args: [
+      { name: "name", description: "Font family name (used in CSS font-family declarations)", required: true },
+    ],
+    flags: [
+      { name: "src", description: "Local font file path (woff2, woff, ttf, or otf), resolved relative to the document", hasValue: true },
+      { name: "google", description: "Fetch from Google Fonts. Boolean for default 400, or axis spec like 'wght@400;700' or 'ital,wght@0,400;1,400;0,700'", hasValue: true },
+      { name: "weight", description: "Font weight for --src declarations (100-900)", hasValue: true, default: "400" },
+      { name: "style", description: "Font style for --src declarations (normal, italic)", hasValue: true, default: "normal" },
+      { name: "display", description: "font-display value (swap, auto, block, fallback, optional)", hasValue: true, default: "swap" },
+      { name: "body", description: "Set as the document's body font" },
+      { name: "heading", description: "Set as the document's heading font" },
+      { name: "mono", description: "Set as the document's monospace font" },
+    ],
+    examples: [
+      '/font "Inter" --google --body --heading',
+      '/font "Inter" --google "wght@400;500;700"',
+      '/font "JetBrains Mono" --google --mono',
+      '/font "MyBrand" --src "fonts/MyBrand-Regular.woff2"',
+      '/font "MyBrand" --src "fonts/MyBrand-Bold.woff2" --weight 700',
+    ],
+    hasBlock: false,
+  },
+  {
     name: "pagebreak",
     description: "Force a page break. In paginated documents, fills remaining space on the current page.",
     category: "layout",

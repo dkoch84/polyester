@@ -41,12 +41,6 @@
   --poly-hero-text: #ffffff;
 }
 
-@page {
-  size: A4 portrait;
-  margin: 0;
-}
-
-
 /* Polyester Base Styles */
 .poly-document {
   font-family: var(--poly-font-body, system-ui, -apple-system, sans-serif);
@@ -300,10 +294,6 @@
 }
 
 
-    @page {
-      size: A4 portrait;
-      margin: 0;
-    }
     @media print {
       .poly-document {
         max-width: none;
@@ -1740,6 +1730,52 @@ body {
       border-color: var(--poly-color-border, #e5e5e5);
     }
   
+
+    .poly-button {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--poly-radius, 0.375rem);
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      border: var(--poly-border-width, 1px) solid var(--poly-color-border, #e5e5e5);
+      background: var(--poly-color-bg, white);
+      color: var(--poly-color-text, inherit);
+    }
+    .poly-button-primary {
+      background: var(--poly-color-primary, #3b82f6);
+      color: white;
+      border-color: var(--poly-color-primary, #3b82f6);
+    }
+    .poly-button-secondary {
+      background: var(--poly-color-surface, #f3f4f6);
+      color: var(--poly-color-text, #374151);
+      border-color: var(--poly-color-border, #e5e5e5);
+    }
+  
+
+    .poly-button {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--poly-radius, 0.375rem);
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      border: var(--poly-border-width, 1px) solid var(--poly-color-border, #e5e5e5);
+      background: var(--poly-color-bg, white);
+      color: var(--poly-color-text, inherit);
+    }
+    .poly-button-primary {
+      background: var(--poly-color-primary, #3b82f6);
+      color: white;
+      border-color: var(--poly-color-primary, #3b82f6);
+    }
+    .poly-button-secondary {
+      background: var(--poly-color-surface, #f3f4f6);
+      color: var(--poly-color-text, #374151);
+      border-color: var(--poly-color-border, #e5e5e5);
+    }
+  
 /* Syntax highlighting: gruvbox */
 .poly-content pre {
   background: #1d2021;
@@ -1797,14 +1833,10 @@ body {
 .hljs-addition { color: #98971a; }
 
 .hljs-deletion { color: #cc241d; }
-  .poly-document {
-    --poly-page-width: calc(210mm - 2 * 0);
-    --poly-page-height: calc(297mm - 2 * 0);
-  }
   </style>
 </head>
 <body>
-  <div class="poly-document" data-page-mode="pdf" data-page-size="A4" data-page-orientation="portrait" data-page-margin="0">
+  <div class="poly-document" data-page-mode="web">
 
 
 <div data-source-line="40" class="poly-grid" style="grid-template-columns: 420px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "><div class="poly-code-block"><pre><code class="language-polyester"><span class="poly-hl-command">/hero</span> <span class="poly-hl-flag">--bg</span> gradient <span class="poly-hl-brace">{</span>
@@ -2036,514 +2068,11 @@ poly theme list</code></pre></div></div></div>
 <div data-source-line="435" class="poly-grid" style="grid-template-columns: 420px 1fr; gap: 1rem;"><div class="poly-region" style="background: #282828; padding: 1.5rem; "></div>
 <div class="poly-region" style="background: #282828; padding: 3rem; "><div style="text-align: center; display: flex; align-items: center; justify-content: center; flex-direction: column;"><span class="poly-text" style="color: white; font-size: 1.5rem; font-weight: bold; letter-spacing: 0.1em; ">Polyester Design System</span>
 <div class="poly-region" style="padding: 1rem; "><span class="poly-inline"><a class="poly-button poly-button-secondary" href="index.html">Home</a>
+<a class="poly-button poly-button-secondary" href="authoring.html">Authoring</a>
+<a class="poly-button poly-button-secondary" href="internals.html">Internals</a>
 <a class="poly-button poly-button-secondary" href="cli.html">CLI Reference</a>
 <a class="poly-button poly-button-secondary" href="theme-studio.html">Theme Studio</a>
 <a class="poly-button poly-button-secondary" href="mcp.html">MCP Server</a></span></div></div></div></div>
   </div>
-  <script>
-(function() {
-  if (window.matchMedia('print').matches) return;
-
-  var PAGE_SIZES = {
-    A3: [297, 420], A4: [210, 297], A5: [148, 210],
-    Letter: [215.9, 279.4], Legal: [215.9, 355.6]
-  };
-  var MM_TO_PX = 96 / 25.4;
-
-  function parseLength(val) {
-    var m = String(val).match(/^([\d.]+)\s*(cm|mm|in|px|pt|rem|em)?$/);
-    if (!m) return 0;
-    var n = parseFloat(m[1]);
-    switch (m[2]) {
-      case 'cm': return n * 10 * MM_TO_PX;
-      case 'mm': return n * MM_TO_PX;
-      case 'in': return n * 96;
-      case 'pt': return n * (96 / 72);
-      case 'px': return n;
-      default: return n * MM_TO_PX; // default to mm
-    }
-  }
-
-  function run() {
-    var doc = document.querySelector('.poly-document[data-page-size]');
-    if (!doc) return;
-    // Already paginated? (re-run on resize shouldn't re-wrap).
-    if (doc.dataset.paginated === '1') return;
-
-    var sizeName = doc.dataset.pageSize || 'A4';
-    var orientation = doc.dataset.pageOrientation || 'portrait';
-    var marginStr = doc.dataset.pageMargin || '2cm';
-
-    var dims = PAGE_SIZES[sizeName] || PAGE_SIZES.A4;
-    var w = dims[0], h = dims[1];
-    if (orientation === 'landscape') { var tmp = w; w = h; h = tmp; }
-
-    var pageWidthPx = w * MM_TO_PX;
-    var pageHeightPx = h * MM_TO_PX;
-    var marginPx = parseLength(marginStr);
-    var contentWidth = pageWidthPx - 2 * marginPx;
-    var contentHeight = pageHeightPx - 2 * marginPx;
-    // Tolerance absorbs sub-pixel rounding drift accumulated across many stacked
-    // blocks. Without it, two environments rendering the same HTML with the same
-    // fonts can disagree by a fraction of a pixel per block, which adds up to a
-    // single-line discrepancy on long pages and causes one-word overflow.
-    // Half a body line at 16px base is conservative.
-    var OVERFLOW_TOLERANCE = 24;
-
-    // Reset document container: it's now a wrapper of page containers.
-    doc.style.width = pageWidthPx + 'px';
-    doc.style.maxWidth = 'none';
-    doc.style.padding = '0';
-    doc.style.background = 'transparent';
-    doc.style.boxShadow = 'none';
-    doc.style.setProperty('--poly-page-height', contentHeight + 'px');
-    document.documentElement.style.setProperty('--poly-preview-bg', '#e8e8e8');
-    document.body.style.background = 'var(--poly-preview-bg, #e8e8e8)';
-    document.body.style.padding = '24px 0';
-    document.body.style.margin = '0';
-    document.body.style.overflowX = 'auto';
-    document.body.style.display = 'flex';
-    document.body.style.flexDirection = 'column';
-    document.body.style.alignItems = 'center';
-
-    // Snapshot children before wrapping. Filter out helper nodes from prior runs.
-    // .poly-content wrappers are unwrapped so individual paragraphs/headings/lists
-    // can be distributed across pages independently.
-    var originalChildren = [];
-    var kids = Array.prototype.slice.call(doc.children);
-    for (var i = 0; i < kids.length; i++) {
-      var k = kids[i];
-      if (k.classList && (
-        k.classList.contains('poly-page') ||
-        k.classList.contains('poly-page-overlay') ||
-        k.classList.contains('poly-pagebg') ||
-        k.classList.contains('poly-pb-gap')
-      )) continue;
-      if (k.classList && k.classList.contains('poly-content')) {
-        var inner = Array.prototype.slice.call(k.children);
-        // Propagate the wrapper's data-source-line to the first inner child so
-        // unwrapped markdown still maps back to the .poly source.
-        var wrapperLine = k.getAttribute('data-source-line');
-        if (wrapperLine && inner.length && !inner[0].getAttribute('data-source-line')) {
-          inner[0].setAttribute('data-source-line', wrapperLine);
-        }
-        for (var j = 0; j < inner.length; j++) originalChildren.push(inner[j]);
-      } else {
-        originalChildren.push(k);
-      }
-    }
-    for (var i = 0; i < originalChildren.length; i++) {
-      if (originalChildren[i].parentNode) {
-        originalChildren[i].parentNode.removeChild(originalChildren[i]);
-      }
-    }
-    // Remove the now-empty poly-content wrappers (and other non-helper direct children).
-    kids = Array.prototype.slice.call(doc.children);
-    for (var i = 0; i < kids.length; i++) {
-      var k = kids[i];
-      if (k.classList && (k.classList.contains('poly-page'))) continue;
-      k.parentNode.removeChild(k);
-    }
-
-    // Parse pagebgs once.
-    var pagebgEntries = [];
-    try {
-      if (doc.dataset.pagebgs) pagebgEntries = JSON.parse(doc.dataset.pagebgs);
-    } catch (e) {}
-    function pagebgStyleFor(pageNum) {
-      var styles = [];
-      for (var b = 0; b < pagebgEntries.length; b++) {
-        var entry = pagebgEntries[b];
-        var match = false;
-        if (entry.pages === 'all') match = true;
-        else if (entry.pages.indexOf('-') !== -1) {
-          var parts = entry.pages.split('-');
-          var start = parseInt(parts[0], 10);
-          var end = parseInt(parts[1], 10);
-          match = pageNum >= start && pageNum <= end;
-        } else {
-          match = parseInt(entry.pages, 10) === pageNum;
-        }
-        if (match) styles.push(entry.style);
-      }
-      return styles.join(';');
-    }
-
-    function makePage() {
-      var pageNum = pages.length + 1;
-      var page = document.createElement('div');
-      page.className = 'poly-page';
-      page.dataset.pageNumber = pageNum;
-      page.style.cssText = [
-        'width:' + pageWidthPx + 'px',
-        'height:' + pageHeightPx + 'px',
-        'padding:' + marginPx + 'px',
-        'box-sizing:border-box',
-        'background:white',
-        'box-shadow:0 2px 8px rgba(0,0,0,0.12)',
-        'position:relative',
-        'margin-bottom:24px',
-        'overflow:visible'
-      ].join(';');
-      var inner = document.createElement('div');
-      inner.className = 'poly-page-content';
-      inner.style.cssText = 'width:100%;height:100%;position:relative;';
-      // Page background decoration
-      var bgStyle = pagebgStyleFor(pageNum);
-      if (bgStyle) {
-        var bg = document.createElement('div');
-        bg.className = 'poly-pagebg';
-        bg.style.cssText = 'position:absolute;inset:0;pointer-events:none;z-index:0;' + bgStyle;
-        inner.appendChild(bg);
-      }
-      // Content wrapper sits above page bg
-      var contentWrap = document.createElement('div');
-      contentWrap.className = 'poly-page-flow poly-content';
-      contentWrap.style.cssText = 'position:relative;z-index:1;';
-      inner.appendChild(contentWrap);
-      page.appendChild(inner);
-      // Page label
-      var label = document.createElement('div');
-      label.className = 'poly-page-label';
-      label.textContent = 'Page ' + pageNum;
-      label.style.cssText = 'position:absolute;top:-18px;right:4px;font:10px/1 ui-monospace,monospace;color:#9ca3af;pointer-events:none;';
-      page.appendChild(label);
-      doc.appendChild(page);
-      pages.push({ page: page, flow: contentWrap });
-      return pages[pages.length - 1];
-    }
-
-    var pages = [];
-    var current = makePage();
-
-    function currentContentHeight() {
-      return current.flow.getBoundingClientRect().height;
-    }
-
-    function isEmpty(p) { return p.flow.children.length === 0; }
-    function isList(el) { return el && (el.tagName === 'UL' || el.tagName === 'OL'); }
-    function isHeading(el) {
-      if (!el || !el.tagName) return false;
-      return /^H[1-6]$/.test(el.tagName);
-    }
-    // When a block is about to be pushed to a new page, also pull any heading
-    // that ended up trailing the previous page. Prevents orphan headings.
-    function pullTrailingHeading() {
-      var last = current.flow.lastElementChild;
-      if (last && isHeading(last)) {
-        current.flow.removeChild(last);
-        return last;
-      }
-      return null;
-    }
-    function isTextBlock(el) {
-      if (!el || !el.tagName) return false;
-      var t = el.tagName;
-      if (t !== 'P' && t !== 'BLOCKQUOTE' && t !== 'LI') return false;
-      // Allow simple inline formatting; split where possible.
-      return true;
-    }
-    function markOversize(el) {
-      el.setAttribute('data-poly-oversize', '1');
-      el.style.outline = '2px dashed rgba(239,68,68,0.5)';
-    }
-    // Binary-search for how many leading text nodes/words fit on the current page.
-    // Returns a continuation element containing the rest, or null if splitting is impossible.
-    function splitTextBlock(child) {
-      // Flatten descendants into ordered list of text nodes.
-      var walker = document.createTreeWalker(child, NodeFilter.SHOW_TEXT, null);
-      var textNodes = [];
-      var n;
-      while ((n = walker.nextNode())) textNodes.push(n);
-      if (textNodes.length === 0) return null;
-      // Build a word list with backreferences: [{ node, start, end, text }]
-      var tokens = [];
-      for (var i = 0; i < textNodes.length; i++) {
-        var tn = textNodes[i];
-        var text = tn.nodeValue || '';
-        var re = /\S+\s*|\s+/g, m;
-        while ((m = re.exec(text)) !== null) {
-          tokens.push({ node: tn, start: m.index, end: m.index + m[0].length, text: m[0] });
-        }
-      }
-      if (tokens.length < 4) return null;
-      // Clone BEFORE mutation so the continuation has original content to work from.
-      var pristineClone = child.cloneNode(true);
-      // Save original text per node so we can restore/truncate.
-      var originalValues = textNodes.map(function(t) { return t.nodeValue; });
-      function truncateTo(tokenIdx) {
-        // Keep tokens [0, tokenIdx), clear content in later nodes.
-        var lastKept = tokenIdx - 1;
-        if (lastKept < 0) lastKept = 0;
-        var lastToken = tokens[lastKept];
-        for (var i = 0; i < textNodes.length; i++) {
-          var tn = textNodes[i];
-          if (tn === lastToken.node) {
-            tn.nodeValue = (originalValues[i] || '').slice(0, lastToken.end);
-          } else if (textNodes.indexOf(lastToken.node) > i) {
-            tn.nodeValue = originalValues[i];
-          } else {
-            tn.nodeValue = '';
-          }
-        }
-      }
-      function restore() {
-        for (var i = 0; i < textNodes.length; i++) textNodes[i].nodeValue = originalValues[i];
-      }
-      // Identify sentence-boundary token indices (after a token whose trimmed
-      // text ends in . ! or ?). Splitting only at these prevents mid-sentence
-      // breaks that read as rendering bugs.
-      var sentenceBoundaries = [];
-      for (var bi = 0; bi < tokens.length; bi++) {
-        var trimmed = tokens[bi].text.replace(/\s+$/, '');
-        if (/[.!?]$/.test(trimmed)) sentenceBoundaries.push(bi + 1);
-      }
-      // Need at least 2 sentences total AND a non-final boundary to split at.
-      // If the only boundary is at the end, there's nothing to split on.
-      if (sentenceBoundaries.length < 2) { restore(); return null; }
-      // Drop the trailing boundary (end of last sentence) — splitting there
-      // means everything stays on this page, nothing to spill.
-      var splitCandidates = sentenceBoundaries.slice(0, -1);
-      // Binary search for the largest sentence-boundary index that fits.
-      var lo = 0, hi = splitCandidates.length - 1, best = -1;
-      while (lo <= hi) {
-        var mid = (lo + hi) >> 1;
-        truncateTo(splitCandidates[mid]);
-        if (currentContentHeight() <= contentHeight + OVERFLOW_TOLERANCE) {
-          best = mid;
-          lo = mid + 1;
-        } else {
-          hi = mid - 1;
-        }
-      }
-      if (best < 0) { restore(); return null; }
-      // Anti-straggler: both sides must have at least 2 sentences. The kept
-      // side has best+1 sentences; the spill side has totalSentences - kept.
-      var totalSentences = sentenceBoundaries.length;
-      // If the paragraph's last token doesn't end in a terminator, count an
-      // additional partial sentence on the spill side.
-      var lastTrimmed = tokens[tokens.length - 1].text.replace(/\s+$/, '');
-      if (!/[.!?]$/.test(lastTrimmed)) totalSentences += 1;
-      var keptSentences = best + 1;
-      var spillSentences = totalSentences - keptSentences;
-      if (keptSentences <= 1 || spillSentences <= 1) {
-        restore();
-        return null;
-      }
-      var splitTokenIdx = splitCandidates[best];
-      lo = splitTokenIdx;
-      // Apply the chosen truncation to the original child.
-      truncateTo(lo);
-      // Use the pristine clone as the continuation; strip off the parts that fit on the current page.
-      var clone = pristineClone;
-      var cloneWalker = document.createTreeWalker(clone, NodeFilter.SHOW_TEXT, null);
-      var cloneTextNodes = [];
-      var cn;
-      while ((cn = cloneWalker.nextNode())) cloneTextNodes.push(cn);
-      // Determine the break point in the clone matching the original.
-      var breakToken = tokens[lo - 1];
-      var breakNodeIdx = textNodes.indexOf(breakToken.node);
-      for (var i = 0; i < cloneTextNodes.length; i++) {
-        var tn = cloneTextNodes[i];
-        if (i < breakNodeIdx) tn.nodeValue = '';
-        else if (i === breakNodeIdx) {
-          tn.nodeValue = (originalValues[i] || '').slice(breakToken.end).replace(/^\s+/, '');
-        }
-        // else: keep as is (original clone content)
-      }
-      // If clone has no remaining non-whitespace text, it's trivial — drop it.
-      if (!(clone.textContent || '').trim()) return null;
-      return clone;
-    }
-
-    function appendWithSplit(child) {
-      current.flow.appendChild(child);
-      if (currentContentHeight() <= contentHeight + OVERFLOW_TOLERANCE) return; // fits
-
-      // Overflow — try to split if it's a list.
-      if (isList(child)) {
-        current.flow.removeChild(child);
-        var firstHalf = child.cloneNode(false);
-        current.flow.appendChild(firstHalf);
-        var items = Array.prototype.slice.call(child.children);
-        var firstCount = 0;
-        for (var i = 0; i < items.length; i++) {
-          firstHalf.appendChild(items[i]);
-          if (currentContentHeight() > contentHeight + OVERFLOW_TOLERANCE) {
-            firstHalf.removeChild(items[i]);
-            break;
-          }
-          firstCount++;
-        }
-        if (firstCount === 0) {
-          // Nothing fits on this page. If page is otherwise empty, overflow whole list here.
-          current.flow.removeChild(firstHalf);
-          if (current.flow.children.length === 0) {
-            current.flow.appendChild(child);
-            markOversize(child);
-            current = makePage();
-          } else {
-            var widowHeading = pullTrailingHeading();
-            current = makePage();
-            if (widowHeading) current.flow.appendChild(widowHeading);
-            appendWithSplit(child);
-          }
-          return;
-        }
-        var remaining = items.slice(firstCount);
-        if (remaining.length) {
-          var secondHalf = child.cloneNode(false);
-          for (var j = 0; j < remaining.length; j++) secondHalf.appendChild(remaining[j]);
-          if (secondHalf.tagName === 'OL') {
-            var startAttr = parseInt(child.getAttribute('start') || '1', 10);
-            secondHalf.setAttribute('start', String(startAttr + firstCount));
-          }
-          current = makePage();
-          appendWithSplit(secondHalf);
-        }
-        return;
-      }
-
-      // Try splitting text block (paragraph/li) across pages.
-      if (isTextBlock(child)) {
-        var rest = splitTextBlock(child);
-        if (rest) {
-          current = makePage();
-          appendWithSplit(rest);
-          return;
-        }
-      }
-
-      // Non-list, non-splittable overflow
-      if (current.flow.children.length === 1) {
-        markOversize(child);
-        current = makePage();
-      } else {
-        current.flow.removeChild(child);
-        var widowHeading2 = pullTrailingHeading();
-        current = makePage();
-        if (widowHeading2) current.flow.appendChild(widowHeading2);
-        appendWithSplit(child);
-      }
-    }
-
-    for (var i = 0; i < originalChildren.length; i++) {
-      var child = originalChildren[i];
-      if (child.classList && child.classList.contains('poly-pagebreak')) {
-        if (!isEmpty(current)) current = makePage();
-        continue;
-      }
-      appendWithSplit(child);
-    }
-    // Trim trailing empty page.
-    if (pages.length > 1 && isEmpty(pages[pages.length - 1])) {
-      var last = pages.pop();
-      last.page.parentNode.removeChild(last.page);
-    }
-
-    // Zero out first-child margin-top and last-child margin-bottom on each page
-    // so content sits flush against the page's top/bottom margins.
-    for (var p = 0; p < pages.length; p++) {
-      var f = pages[p].flow;
-      if (f.firstElementChild) f.firstElementChild.style.marginTop = '0';
-      if (f.lastElementChild) f.lastElementChild.style.marginBottom = '0';
-    }
-
-    doc.dataset.paginated = '1';
-    doc.dataset.totalPages = pages.length;
-
-    renderHints(pages);
-  }
-
-  function hintsEnabled() {
-    try {
-      var params = new URLSearchParams(window.location.search);
-      if (params.get('hints') === '1') return true;
-      if (params.get('hints') === '0') return false;
-      return localStorage.getItem('poly-layout-hints') === '1';
-    } catch (e) { return false; }
-  }
-
-  function setHints(on) {
-    try { localStorage.setItem('poly-layout-hints', on ? '1' : '0'); } catch (e) {}
-  }
-
-  function renderHints(pages) {
-    // Clear any prior hint badges.
-    var prior = document.querySelectorAll('.poly-hint-badge');
-    for (var i = 0; i < prior.length; i++) prior[i].remove();
-    if (!hintsEnabled()) return;
-    for (var p = 0; p < pages.length; p++) {
-      var pageNum = p + 1;
-      var flow = pages[p].flow;
-      var kids = flow.children;
-      for (var i = 0; i < kids.length; i++) {
-        var el = kids[i];
-        if (el.classList.contains('poly-pagebg')) continue;
-        if (el.classList.contains('poly-hint-badge')) continue;
-        var srcLine = el.getAttribute('data-source-line');
-        var oversize = el.hasAttribute('data-poly-oversize');
-        if (!srcLine && !oversize) continue;
-        var badge = document.createElement('div');
-        badge.className = 'poly-hint-badge';
-        var label = (srcLine ? 'L' + srcLine + ' · ' : '') + 'p' + pageNum + (oversize ? ' ⚠' : '');
-        badge.textContent = label;
-        badge.style.cssText = 'position:absolute;top:' + (el.offsetTop + 2) + 'px;left:-64px;font:10px/1.4 ui-monospace,monospace;background:' + (oversize ? '#ef4444' : 'rgba(0,0,0,0.6)') + ';color:#fff;padding:1px 6px;border-radius:3px;pointer-events:none;z-index:5;white-space:nowrap;';
-        flow.appendChild(badge);
-      }
-    }
-  }
-
-  function ensureToggleButton() {
-    if (document.querySelector('.poly-hint-toggle')) return;
-    var btn = document.createElement('button');
-    btn.className = 'poly-hint-toggle';
-    btn.type = 'button';
-    function refresh() {
-      btn.textContent = hintsEnabled() ? '◉ Hints' : '○ Hints';
-      btn.style.background = hintsEnabled() ? '#ef4444' : 'rgba(0,0,0,0.6)';
-    }
-    btn.style.cssText = 'position:fixed;top:8px;right:8px;z-index:1000;color:#fff;border:0;border-radius:4px;padding:4px 10px;font:11px/1.4 ui-monospace,monospace;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,0.25);';
-    btn.addEventListener('click', function() {
-      setHints(!hintsEnabled());
-      refresh();
-      // Re-run hints without re-paginating.
-      var doc = document.querySelector('.poly-document[data-page-size]');
-      if (!doc) return;
-      var pageEls = doc.querySelectorAll('.poly-page');
-      var pageList = [];
-      for (var i = 0; i < pageEls.length; i++) pageList.push({ page: pageEls[i], flow: pageEls[i].querySelector('.poly-page-flow') });
-      renderHints(pageList);
-    });
-    refresh();
-    document.body.appendChild(btn);
-  }
-
-  function start() {
-    // Force every declared @font-face to load before measuring. document.fonts.ready
-    // alone only resolves for faces *currently used* by the layout — but as the sim
-    // walks content, headings/bold/italic text trigger lazy loads of other weights,
-    // shifting metrics after the sim has already measured. Explicit f.load() ensures
-    // all weights/styles are loaded up front so measurements are stable.
-    var loadAll = Promise.resolve();
-    if (document.fonts && document.fonts.forEach) {
-      var loads = [];
-      document.fonts.forEach(function(f) { try { loads.push(f.load()); } catch (e) {} });
-      loadAll = Promise.all(loads).catch(function() {});
-    }
-    loadAll.then(function() {
-      var ready = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
-      ready.then(function() {
-        requestAnimationFrame(function() { run(); ensureToggleButton(); });
-      });
-    });
-  }
-  if (document.readyState === 'complete') {
-    start();
-  } else {
-    window.addEventListener('load', start);
-  }
-})();
-</script>
 </body>
 </html>

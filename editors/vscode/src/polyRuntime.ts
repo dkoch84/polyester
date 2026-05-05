@@ -17,7 +17,7 @@ interface PolyApi {
     theme?: string;
     style?: string;
     spacing?: string;
-  }) => string;
+  }) => Promise<string>;
   listLibrary: () => Array<{
     name: string;
     category: string;

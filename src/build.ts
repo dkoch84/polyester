@@ -8,6 +8,7 @@
 import { basename } from "node:path";
 import { parse } from "./parser/parser.js";
 import { compileToHtml } from "./backends/html/compiler.js";
+import { prefetchFonts } from "./backends/html/fonts.js";
 import {
   resolveModules,
   styleToCSS,
@@ -35,11 +36,15 @@ export interface CompileDocOptions {
  * Replicates the two-pass compile used by the CLI: first to extract `/page`
  * settings (theme/style/spacing), then with the resolved module CSS applied.
  */
-export function compilePolyDocument(source: string, opts: CompileDocOptions = {}): string {
+export async function compilePolyDocument(source: string, opts: CompileDocOptions = {}): Promise<string> {
   const config = loadConfig();
   const ast = parse(source);
 
-  const initial = compileToHtml(ast, { standalone: false, sourceDir: opts.sourceDir });
+  // Resolve /font references (Google Fonts fetched + cached, local files read)
+  // before compile so the sync component can emit inlined @font-face blocks.
+  const fontCache = await prefetchFonts(ast, opts.sourceDir || process.cwd());
+
+  const initial = compileToHtml(ast, { standalone: false, sourceDir: opts.sourceDir, fontCache });
   const ps = initial.pageSettings;
 
   const resolved = resolveModules({
@@ -59,6 +64,7 @@ export function compilePolyDocument(source: string, opts: CompileDocOptions = {}
     styleCss,
     spacingCss,
     syntaxCss,
+    fontCache,
   });
 
   return html;

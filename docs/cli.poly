@@ -1,4 +1,4 @@
-/page A4 --margin 0 --max-width none
+/page --pageless --max-width none
 
 /style {
   body {
@@ -145,7 +145,7 @@
     /card --icon bolt {
       ### PDF
 
-      Renders HTML through Chrome via Puppeteer. Supports `/page` settings for paper size, margins, and pageless mode.
+      Renders HTML through Chrome via Puppeteer. The same in-browser pagination simulator runs in both the live preview and the PDF build, so page boundaries match exactly. Declare web fonts with `/font` to keep glyph metrics identical across environments.
 
       /code bash {
         poly build doc.poly --format pdf
@@ -275,6 +275,8 @@
     /region --padding 1rem {
       /inline --gap 1rem {
         /button secondary "Home" --href "index.html"
+        /button secondary "Authoring" --href "authoring.html"
+        /button secondary "Internals" --href "internals.html"
         /button secondary "Design Tokens" --href "design-system.html"
         /button secondary "MCP Server" --href "mcp.html"
       }

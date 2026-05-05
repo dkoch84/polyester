@@ -7,6 +7,7 @@
 import { getIcon } from "./icons.js";
 import { resolveStyleRef, loadStyle } from "../../library/index.js";
 import type { PageSettings } from "./compiler.js";
+import { fontCacheKey, type FontCache } from "./fonts.js";
 
 export interface ComponentContext {
   /** Parsed arguments (positional as _0, _1, etc; flags by name) */
@@ -25,6 +26,8 @@ export interface ComponentContext {
   setPageSettings: (settings: Partial<PageSettings>) => void;
   /** Directory of the source document — used by /import to resolve relative paths. */
   sourceDir?: string;
+  /** Pre-resolved /font cache populated by the async prefetch pass. */
+  fontCache?: FontCache;
 }
 
 export interface ComponentResult {
@@ -221,10 +224,13 @@ const page: Component = (ctx) => {
     }${extraStyles}
   `);
   } else {
+    // Paginated docs: PDF generation runs the pagination sim, which creates
+    // .poly-page wrappers whose padding provides the physical margin.
+    // @page margin must therefore be 0 to avoid double-margining.
     ctx.addStyle(`
     @page {
       size: ${size} ${orientation};
-      margin: ${margin};
+      margin: 0;
     }
     @media print {
       .poly-document {
@@ -1438,6 +1444,50 @@ const pagebreak: Component = (ctx) => {
   };
 };
 
+/**
+ * /font - Register a font family from a local file or Google Fonts.
+ *
+ * Looks up the resolved CSS produced by the async prefetch pass (fonts.ts).
+ * Emits the @font-face block(s) into the document and optionally sets the
+ * --poly-font-body / --poly-font-heading / --poly-font-mono CSS variables so
+ * the registered family becomes the default for body/headings/code.
+ */
+const font: Component = (ctx) => {
+  const family = getPositional(ctx.args, 0, "");
+  if (!family) return { html: "" };
+
+  const src = ctx.args["src"];
+  const google = ctx.args["google"];
+
+  let key: string | null = null;
+  if (typeof src === "string") {
+    key = fontCacheKey(family, `src:${src}`);
+  } else if (google !== undefined) {
+    const axes = typeof google === "string" ? google : "";
+    key = fontCacheKey(family, `google:${axes}`);
+  }
+
+  const decl = key && ctx.fontCache ? ctx.fontCache.get(key) : undefined;
+  if (decl) {
+    ctx.addStyle(decl.css);
+  } else {
+    console.warn(`⚠ /font "${family}" not in prefetch cache — did the prefetch step run?`);
+  }
+
+  // Apply as default body/heading/mono if requested.
+  const stack = `"${family.replace(/"/g, '\\"')}", system-ui, -apple-system, sans-serif`;
+  const monoStack = `"${family.replace(/"/g, '\\"')}", ui-monospace, monospace`;
+  const vars: string[] = [];
+  if (hasFlag(ctx.args, "body")) vars.push(`--poly-font-body: ${stack};`);
+  if (hasFlag(ctx.args, "heading")) vars.push(`--poly-font-heading: ${stack};`);
+  if (hasFlag(ctx.args, "mono")) vars.push(`--poly-font-mono: ${monoStack};`);
+  if (vars.length) {
+    ctx.addStyle(`.poly-document {\n  ${vars.join("\n  ")}\n}`);
+  }
+
+  return { html: "" };
+};
+
 // Export all components
 export const components: Record<string, Component> = {
   page,
@@ -1470,4 +1520,5 @@ export const components: Record<string, Component> = {
   divider,
   pagebg,
   pagebreak,
+  font,
 };

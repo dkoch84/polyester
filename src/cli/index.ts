@@ -17,6 +17,7 @@ import { readFileSync, writeFileSync, watch } from "node:fs";
 import { resolve, basename, dirname, extname } from "node:path";
 import { parse } from "../parser/parser.js";
 import { compileToHtml } from "../backends/html/compiler.js";
+import { prefetchFonts } from "../backends/html/fonts.js";
 import { compileToSvg } from "../backends/svg/compiler.js";
 import { compilePolyDocument } from "../build.js";
 import {
@@ -204,14 +205,14 @@ function printComponentHelp(componentName?: string, asJson?: boolean): void {
   }
 }
 
-function buildHtml(
+async function buildHtml(
   inputPath: string,
   outputPath: string,
   opts?: { theme?: string; style?: string; spacing?: string },
-): void {
+): Promise<void> {
   const absoluteInput = resolve(inputPath);
   const source = readFileSync(absoluteInput, "utf-8");
-  const html = compilePolyDocument(source, {
+  const html = await compilePolyDocument(source, {
     sourceDir: dirname(absoluteInput),
     title: basename(inputPath, ".poly"),
     theme: opts?.theme,
@@ -235,9 +236,14 @@ async function buildPdf(
 
   // Parse
   const ast = parse(source);
+  const sourceDir = dirname(absoluteInput);
+
+  // Resolve /font references (Google Fonts + local) before compile so the
+  // sync compiler emits inlined @font-face blocks.
+  const fontCache = await prefetchFonts(ast, sourceDir);
 
   // Initial compile to extract pageSettings
-  const initialResult = compileToHtml(ast, { standalone: false });
+  const initialResult = compileToHtml(ast, { standalone: false, sourceDir, fontCache });
   const ps = initialResult.pageSettings;
 
   // Resolve modules
@@ -255,27 +261,29 @@ async function buildPdf(
   const { html, pageSettings } = compileToHtml(ast, {
     standalone: true,
     title: basename(inputPath, ".poly"),
+    sourceDir,
     styleCss,
     spacingCss,
     syntaxCss,
+    fontCache,
   });
 
-  // Use Puppeteer to render HTML to PDF
+  // Use Puppeteer to render HTML to PDF.
+  // For paginated docs we let the in-browser pagination sim run (screen media)
+  // so the PDF matches the live preview exactly. Each .poly-page becomes one
+  // physical PDF page via break-after rules injected below.
   const puppeteer = await import("puppeteer");
   const browser = await puppeteer.default.launch();
   const page = await browser.newPage();
-
-  // Emulate print media so page sim script doesn't run
-  // (it's screen-only and would leak preview chrome into the PDF)
-  await page.emulateMediaType("print");
-
-  await page.setContent(html, { waitUntil: "networkidle0" });
 
   const absoluteOutput = resolve(outputPath);
   const docMargin = pageSettings.margin || "2cm";
 
   if (pageSettings.pageless) {
-    // Pageless mode: calculate full content height and render as single continuous page
+    // Pageless mode: skip the sim, render as one continuous page.
+    await page.emulateMediaType("print");
+    await page.setContent(html, { waitUntil: "networkidle0" });
+
     const contentHeight = await page.evaluate(() => {
       const body = document.body;
       const html = document.documentElement;
@@ -288,17 +296,73 @@ async function buildPdf(
       );
     });
 
-    // Use a standard width (A4 width) but dynamic height
     const pageWidth = 794; // A4 width in pixels at 96 DPI
 
     await page.pdf({
       path: absoluteOutput,
       width: pageWidth,
-      height: contentHeight + 100, // Add some padding
+      height: contentHeight + 100,
       margin: { top: docMargin, right: docMargin, bottom: docMargin, left: docMargin },
       printBackground: true,
     });
   } else {
+    // Paginated: render with the sim, then map each .poly-page to a physical
+    // PDF page. A viewport wider than the page lets the sim measure correctly.
+    await page.setViewport({ width: 1400, height: 2000 });
+    // page.pdf() defaults to print media which reflows text differently than
+    // the screen-media layout the sim measured. Force screen media so the PDF
+    // matches the live preview line-for-line.
+    await page.emulateMediaType("screen");
+    await page.setContent(html, { waitUntil: "networkidle0" });
+
+    // Wait for the in-browser sim to finish wrapping content into pages.
+    await page.waitForFunction(
+      () => {
+        const d = document.querySelector(".poly-document[data-page-size]") as HTMLElement | null;
+        return !!(d && d.dataset.paginated === "1");
+      },
+      { timeout: 15000 },
+    );
+
+    // Strip preview chrome and force one physical page per .poly-page.
+    await page.addStyleTag({
+      content: `
+        html, body {
+          background: white !important;
+          padding: 0 !important;
+          margin: 0 !important;
+          display: block !important;
+        }
+        .poly-document {
+          padding: 0 !important;
+          margin: 0 !important;
+          background: transparent !important;
+          box-shadow: none !important;
+          width: auto !important;
+          max-width: none !important;
+        }
+        .poly-page {
+          box-shadow: none !important;
+          margin: 0 !important;
+          page-break-after: always !important;
+          break-after: page !important;
+          page-break-inside: avoid !important;
+          break-inside: avoid !important;
+        }
+        .poly-page:last-child {
+          page-break-after: auto !important;
+          break-after: auto !important;
+        }
+        .poly-hint-badge,
+        .poly-hint-toggle,
+        .poly-page-label,
+        .poly-pagebreak {
+          display: none !important;
+        }
+        @page { margin: 0 !important; }
+      `,
+    });
+
     await page.pdf({
       path: absoluteOutput,
       preferCSSPageSize: true,
@@ -423,7 +487,7 @@ async function build(inputPath: string, outputPath?: string, opts?: BuildOpts): 
   } else if (outputFormat === "svg") {
     buildSvg(inputPath, finalOutput, { width: opts?.width, padding: opts?.padding, background: opts?.background });
   } else {
-    buildHtml(inputPath, finalOutput, moduleOpts);
+    await buildHtml(inputPath, finalOutput, moduleOpts);
   }
 }
 

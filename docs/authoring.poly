@@ -1,0 +1,275 @@
+/page A4 --margin 2cm
+/font "Geist" --google "wght@400;500;600;700" --body --heading
+/font "Geist Mono" --google --mono
+
+/region --bg #f8fafc --padding 0.75rem --margin "0 0 1.5rem 0" {
+  /inline --gap 0.75rem {
+    /button secondary "Home" --href "index.html"
+    /button secondary "CLI" --href "cli.html"
+    /button secondary "Authoring" --href "authoring.html"
+    /button secondary "Internals" --href "internals.html"
+    /button secondary "Design System" --href "design-system.html"
+    /button secondary "MCP" --href "mcp.html"
+  }
+}
+
+# Crafting documents with Polyester
+
+A guide for writing real documents — proposals, reports, resumes, manuals —
+that look polished in the live preview, render the same way in PDF, and
+hold up across machines.
+
+This document is itself a paginated A4 Polyester document. Every rule
+below is in effect as you read it.
+
+## The shape of a document
+
+Every Polyester document opens with at least two declarations:
+
+/code polyester {
+  /page A4 --margin 2cm
+  /font "Geist" --google --body --heading
+}
+
+The first chooses the paper size and margins. The second locks in the font
+so every reader sees the same line breaks. Body content — headings,
+paragraphs, lists, tables — flows below. Polyester paginates it for you.
+
+If you want one continuous web-style document, swap `/page A4` for
+`/page --pageless` and the rest still works.
+
+## Markdown is the body
+
+Inside a `.poly` file, anything that is not a `/command` is Markdown. Use
+GitHub-flavored Markdown: `#` headings, `**bold**`, `*italic*`, fenced
+code, bullet lists with `-`, ordered lists with `1.`, tables with `|`,
+links and images.
+
+For rendering polish — colored regions, callouts, multi-column layouts,
+icons, badges — drop in a Polyester command. Markdown and commands mix
+freely.
+
+/pagebreak
+
+# Pagination guarantees
+
+Polyester's automatic pagination follows a small set of rules that you can
+rely on without thinking about. The full story is in
+[examples/pagination.poly](../examples/pagination.html); the short version:
+
+/list {
+  Paragraphs are never cut mid-sentence
+  A heading at the bottom of a page travels to the next page with its content
+  Lists split at item boundaries; ordered list numbering continues correctly
+  Live preview and rendered PDF break at the same place
+  Content that genuinely cannot fit is flagged with a red outline, never silently dropped
+}
+
+If you find a case where these rules disagree with what you expect, treat
+that as a layout bug worth reporting — they are guarantees, not heuristics.
+
+## Forcing a break
+
+Use `/pagebreak` when you want a section to start on a fresh page (cover,
+chapter, appendix). It works in paginated mode and in pageless mode.
+
+/code polyester {
+  # Cover
+
+  /pagebreak
+
+  # Chapter 1
+}
+
+/pagebreak
+
+# Fonts
+
+Default Polyester documents use system fallback fonts. That is fine for
+quick drafts but breaks down the moment you share the output: the recipient
+likely has a different system font, the PDF renderer might not support
+your fallback, and line breaks shift accordingly.
+
+For anything you intend to share, declare a real font with `/font`. The
+font is fetched once, base64-inlined into the document, and rendered from
+those exact bytes everywhere — your editor's preview, the PDF, a browser,
+an emailed HTML file.
+
+## From Google Fonts
+
+/code polyester {
+  /font "Geist" --google "wght@400;500;700" --body --heading
+  /font "Geist Mono" --google --mono
+  /font "Source Serif 4" --google "ital,wght@0,400;1,400;0,700"
+}
+
+The string after `--google` is a Google Fonts axis spec: which weights,
+italics, or variable axes you want. Omit it for a default 400 weight.
+
+The flags `--body`, `--heading`, and `--mono` set the registered family as
+the document's default body, heading, and monospace fonts respectively.
+
+## From local files
+
+/code polyester {
+  /font "Acme Brand" --src "fonts/AcmeBrand-Regular.woff2"
+  /font "Acme Brand" --src "fonts/AcmeBrand-Bold.woff2" --weight 700
+}
+
+Paths resolve relative to the `.poly` file. WOFF2 produces the smallest
+output. Each `/font` call defines one weight/style; declare additional
+calls for additional variants.
+
+/pagebreak
+
+# Layout building blocks
+
+Polyester ships a small kit of layout commands that compose well. None are
+mandatory — plain Markdown is enough for plain documents — but reach for
+them when structure helps the reader.
+
+## Regions and frames
+
+/code polyester {
+  /region --bg "#f8fafc" --padding 2rem {
+    Content with a tinted background.
+  }
+
+  /frame --border "1px solid #cbd5e1" --radius 8px --padding 1.5rem {
+    Content inside a bordered card.
+  }
+}
+
+Use regions for full-bleed callouts and frames for cards that sit inside
+the text flow.
+
+## Columns and grids
+
+/code polyester {
+  /columns 2 --gap 2rem {
+    Left column.
+
+    Right column.
+  }
+
+  /grid "1fr 2fr" --gap 1rem {
+    Narrow.
+
+    Wider.
+  }
+}
+
+`/columns` takes a count or a ratio string; `/grid` takes a CSS
+`grid-template-columns` template directly.
+
+## Tables and lists
+
+Markdown tables and lists work. The Polyester `/table` and `/list`
+commands give you styled variants when you need headers, striping,
+borders, custom markers, or ordered numbering.
+
+/pagebreak
+
+# Themes and styles
+
+Polyester has a small library of named style presets — see the design
+system page for a full tour. To apply one, name it on `/page`:
+
+/code polyester {
+  /page A4 --margin 2cm --style codecargo
+  /page Letter --landscape --theme corporate
+}
+
+Styles control colors, spacing, typography, and component look. They
+compose with `/font` cleanly: the style picks the family stack, `/font`
+guarantees those families are actually available.
+
+You can also import an external style file with `/import`:
+
+/code polyester {
+  /import "./shared/brand.polystyle"
+}
+
+# Putting a real document together
+
+A typical Polyester document:
+
+/code polyester {
+  /page A4 --margin 2cm --style codecargo
+  /font "Geist" --google "wght@400;500;700" --body --heading
+  /font "Geist Mono" --google --mono
+
+  /region --bg gradient {
+    /vcenter --height 80vh {
+      /text "Project Proposal" --size 4rem --bold
+      /text "Coty + CodeCargo" --size 1.5rem
+    }
+  }
+
+  /pagebreak
+
+  # Introduction
+  Body content begins here...
+
+  ## The Project
+  ...
+}
+
+That gives you: deterministic fonts, predictable pagination, a styled
+cover, a forced break before body content. Everything beyond it is
+Markdown plus the occasional layout command.
+
+/pagebreak
+
+# When something goes wrong
+
+A few common situations and how Polyester handles them.
+
+## A paragraph is too long for a single page
+
+Polyester splits it — but only at sentence boundaries, and only if both
+sides of the split contain at least two sentences. If neither condition
+can be met, the whole paragraph moves to the next page and runs over its
+bottom margin if it has to.
+
+## A figure or fixed-height region exceeds the page
+
+You will see a red dashed outline around the offending block in the live
+preview. The block stays in the document, overflowing visibly, so you can
+see the problem and fix it (resize the figure, increase margins, switch
+to landscape, or split the content).
+
+## The live preview does not match the PDF
+
+This should not happen. If it does:
+
+/list {
+  Check that you have declared web fonts with `/font` (system fonts diverge across environments)
+  Reload the live preview window — the preview caches the runtime
+  Rebuild the PDF after any source change
+}
+
+If after all that the two outputs still differ, file it as a bug.
+
+# Where to next
+
+/list {
+  pagination.html — pagination rules with live demos
+  cli.html — CLI reference
+  design-system.html — built-in style presets
+  internals.html — how the pagination simulator works
+}
+
+/region --bg #282828 --padding 2rem --margin "2rem 0 0 0" {
+  /center {
+    /text "Polyester · Crafting documents" --bold --color white --tracking wide
+    /region --padding "0.75rem 0 0 0" {
+      /inline --gap 0.75rem {
+        /button secondary "Home" --href "index.html"
+        /button secondary "CLI" --href "cli.html"
+        /button secondary "Internals" --href "internals.html"
+        /button secondary "Design System" --href "design-system.html"
+      }
+    }
+  }
+}

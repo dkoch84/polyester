@@ -37,3 +37,9 @@ tmp/
 
 # Packages
 *.pkg.tar.zst
+
+# Personal document examples
+examples-private/
+
+# Local Claude Code permissions cache
+.claude/settings.local.json
