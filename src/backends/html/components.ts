@@ -203,11 +203,22 @@ function patternToInlineStyle(patternCss: PatternCSS, existingBg?: string): stri
  *
  * Legacy: --pageless is accepted as an alias for --mode web.
  */
+/** A bare number means px, matching how CSS lengths are usually written here. */
+function isValidLength(value: string): boolean {
+  return /^\d+(\.\d+)?(px|pt|mm|cm|in)?$/.test(value.trim());
+}
+
+function normalizeLength(value: string): string {
+  const v = value.trim();
+  return /^\d+(\.\d+)?$/.test(v) ? `${v}px` : v;
+}
+
 const page: Component = (ctx) => {
   const size = getPositional(ctx.args, 0, "");
   const margin = getArg(ctx.args, "margin", "2cm");
   const orientation = hasFlag(ctx.args, "landscape") ? "landscape" : "portrait";
   const maxWidth = getArg(ctx.args, "max-width", "");
+  const width = getArg(ctx.args, "width", "");
   const pageless = hasFlag(ctx.args, "pageless");
   const theme = getArg(ctx.args, "theme", "");
   const style = getArg(ctx.args, "style", "");
@@ -227,8 +238,16 @@ const page: Component = (ctx) => {
   const isPaginated = mode !== "web";
 
   // Store page settings for PDF generation and theme resolution
+  if (width && !isValidLength(width)) {
+    ctx.report(
+      "error",
+      `/page --width "${width}" is not a length: use px, pt, mm, cm or in (for example 1100px)`,
+    );
+  }
+
   ctx.setPageSettings({
     ...(size && { size }),
+    ...(width && isValidLength(width) && { width: normalizeLength(width) }),
     margin,
     orientation,
     pageless: !isPaginated,

@@ -67,3 +67,32 @@ describe("/table markup", () => {
     expect(html).toContain('text-align: right');
   });
 });
+
+/** Task 652. */
+describe("/page --width", () => {
+  it("carries a pageless paper width into page settings", () => {
+    const { pageSettings, diagnostics } = compile("/page --pageless --width 1100px\n");
+    expect(pageSettings.width).toBe("1100px");
+    expect(diagnostics).toEqual([]);
+  });
+
+  it("treats a bare number as px", () => {
+    expect(compile("/page --pageless --width 1100\n").pageSettings.width).toBe("1100px");
+  });
+
+  it("accepts physical units", () => {
+    expect(compile("/page --pageless --width 25cm\n").pageSettings.width).toBe("25cm");
+  });
+
+  it("leaves the width unset when the document does not ask for one", () => {
+    expect(compile("/page --pageless\n").pageSettings.width).toBeUndefined();
+  });
+
+  it("errors on a value that is not a length", () => {
+    const { diagnostics, pageSettings } = compile('/page --pageless --width "wide"\n');
+    expect(diagnostics).toHaveLength(1);
+    expect(diagnostics[0].severity).toBe("error");
+    expect(diagnostics[0].message).toContain("not a length");
+    expect(pageSettings.width).toBeUndefined();
+  });
+});

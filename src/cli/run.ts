@@ -251,7 +251,7 @@ async function buildHtml(
 async function buildPdf(
   inputPath: string,
   outputPath: string,
-  opts?: { theme?: string; style?: string; spacing?: string },
+  opts?: { theme?: string; style?: string; spacing?: string; width?: number },
 ): Promise<void> {
   const absoluteInput = resolve(inputPath);
   const source = readFileSync(absoluteInput, "utf-8");
@@ -337,7 +337,8 @@ async function buildPdf(
       );
     });
 
-    const pageWidth = 794; // A4 width in pixels at 96 DPI
+    // A CLI --width beats the document, the document beats the A4 default.
+    const pageWidth = opts?.width ? `${opts.width}px` : pageSettings.width || "794px";
 
     await page.pdf({
       path: absoluteOutput,
@@ -526,7 +527,7 @@ async function build(inputPath: string, outputPath?: string, opts?: BuildOpts): 
   const moduleOpts = { theme: opts?.theme, style: opts?.style, spacing: opts?.spacing };
 
   if (outputFormat === "pdf") {
-    await buildPdf(inputPath, finalOutput, moduleOpts);
+    await buildPdf(inputPath, finalOutput, { ...moduleOpts, width: opts?.width });
   } else if (outputFormat === "svg") {
     buildSvg(inputPath, finalOutput, { width: opts?.width, padding: opts?.padding, background: opts?.background });
   } else {

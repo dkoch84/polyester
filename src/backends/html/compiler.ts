@@ -655,8 +655,8 @@ export class HtmlCompiler {
     const componentCss = this.customStyles.join("\n");
 
     // Cascade: spacing, style tokens, page, base, page sim, components,
-    // syntax, the document's own /style and /import, then any caller-supplied
-    // CSS last.
+    // syntax, theme CSS, the document's own /style and /import, then any
+    // caller-supplied CSS last.
     return [
       spacingCss,
       styleCss,
