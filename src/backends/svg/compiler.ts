@@ -15,6 +15,7 @@ import {
   isContent,
 } from "../../parser/ast.js";
 import { components, SvgComponentContext, SvgComponentResult } from "./components.js";
+import type { Diagnostic } from "../../diagnostics.js";
 
 export interface SvgCompileOptions {
   /** Document width in pixels */
@@ -37,6 +38,8 @@ export interface SvgCompileResult {
   svg: string;
   width: number;
   height: number;
+  /** Problems found while compiling; errors fail the build. */
+  diagnostics: Diagnostic[];
 }
 
 export interface LayoutState {
@@ -57,6 +60,7 @@ export class SvgCompiler {
   private elements: string[] = [];
   private layout: LayoutState;
   private defIds: Set<string> = new Set();
+  private diagnostics: Diagnostic[] = [];
 
   constructor(options: SvgCompileOptions = {}) {
     const padding = options.padding ?? 40;
@@ -88,6 +92,7 @@ export class SvgCompiler {
     this.defs = [];
     this.elements = [];
     this.defIds = new Set();
+    this.diagnostics = [];
     this.layout.y = this.options.padding;
 
     // Add gradient definitions
@@ -106,6 +111,7 @@ export class SvgCompiler {
       svg,
       width: this.options.width,
       height: finalHeight,
+      diagnostics: this.diagnostics,
     };
   }
 
@@ -204,7 +210,11 @@ export class SvgCompiler {
     const component = components[cmd.name];
 
     if (!component) {
-      console.warn(`Unknown command for SVG: /${cmd.name}`);
+      this.diagnostics.push({
+        severity: "error",
+        message: `Unknown command for SVG: /${cmd.name}`,
+        ...(cmd.loc?.start.line !== undefined && { line: cmd.loc.start.line }),
+      });
       return;
     }
 

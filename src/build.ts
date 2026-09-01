@@ -16,6 +16,7 @@ import {
   syntaxToCSS,
 } from "./themes/loader.js";
 import { loadConfig } from "./config/index.js";
+import { assertNoErrors } from "./diagnostics.js";
 
 export interface CompileDocOptions {
   /** Directory of the source file — used to resolve relative /import paths. */
@@ -35,6 +36,10 @@ export interface CompileDocOptions {
  *
  * Replicates the two-pass compile used by the CLI: first to extract `/page`
  * settings (theme/style/spacing), then with the resolved module CSS applied.
+ *
+ * Throws {@link PolyBuildError} if the document has errors (unknown commands,
+ * unresolvable fonts). Nothing is returned in that case: a document that
+ * silently degrades to fallback fonts is not a successful build.
  */
 export async function compilePolyDocument(source: string, opts: CompileDocOptions = {}): Promise<string> {
   const config = loadConfig();
@@ -42,8 +47,14 @@ export async function compilePolyDocument(source: string, opts: CompileDocOption
 
   // Resolve /font references (Google Fonts fetched + cached, local files read)
   // before compile so the sync component can emit inlined @font-face blocks.
-  const fontCache = await prefetchFonts(ast, opts.sourceDir || process.cwd());
+  const { cache: fontCache, diagnostics: fontDiagnostics } = await prefetchFonts(
+    ast,
+    opts.sourceDir || process.cwd(),
+  );
 
+  // Probe pass: only its pageSettings are used. Its diagnostics are discarded
+  // because the final pass produces the same ones, and reporting both is what
+  // made every warning appear twice.
   const initial = compileToHtml(ast, { standalone: false, sourceDir: opts.sourceDir, fontCache });
   const ps = initial.pageSettings;
 
@@ -57,7 +68,7 @@ export async function compilePolyDocument(source: string, opts: CompileDocOption
   const spacingCss = spacingToCSS(resolved.spacing);
   const syntaxCss = syntaxToCSS(resolved.syntax, resolved.name);
 
-  const { html } = compileToHtml(ast, {
+  const { html, diagnostics } = compileToHtml(ast, {
     standalone: true,
     title: opts.title || "Untitled",
     sourceDir: opts.sourceDir,
@@ -66,6 +77,13 @@ export async function compilePolyDocument(source: string, opts: CompileDocOption
     syntaxCss,
     fontCache,
   });
+
+  // Throws PolyBuildError on any error, so a document that references a font
+  // or command it cannot resolve never reaches the caller as "successful" HTML.
+  assertNoErrors([
+    ...fontDiagnostics,
+    ...diagnostics,
+  ]);
 
   return html;
 }

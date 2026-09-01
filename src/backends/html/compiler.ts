@@ -22,6 +22,7 @@ import {
 } from "../../parser/ast.js";
 import { components, ComponentContext, ComponentResult } from "./components.js";
 import type { FontCache } from "./fonts.js";
+import type { Diagnostic, DiagnosticSeverity } from "../../diagnostics.js";
 
 export interface CompileOptions {
   /** Directory of the source `.poly` file — used to resolve relative imports. */
@@ -59,6 +60,12 @@ export interface CompileResult {
   html: string;
   css: string;
   pageSettings: PageSettings;
+  /**
+   * Problems found while compiling. Collected rather than printed so callers
+   * can report them once (every build path compiles twice) and fail the build
+   * before writing output.
+   */
+  diagnostics: Diagnostic[];
 }
 
 // Page sizes in mm [width, height]
@@ -71,7 +78,15 @@ export class HtmlCompiler {
   private options: CompileOptions;
   private cssClasses: Set<string> = new Set();
   private customStyles: string[] = [];
+  /**
+   * CSS from the document's own /style blocks and /import statements, kept
+   * apart from component CSS so it lands last in the cascade. Interleaved with
+   * component CSS it lost to any component that injected its rules later,
+   * which is why documents had to reach for !important to restyle one.
+   */
+  private userStyles: string[] = [];
   private pageSettings: PageSettings = {};
+  private diagnostics: Diagnostic[] = [];
 
   constructor(options: CompileOptions = {}) {
     this.options = {
@@ -84,7 +99,9 @@ export class HtmlCompiler {
     // Reset state
     this.cssClasses = new Set();
     this.customStyles = [];
+    this.userStyles = [];
     this.pageSettings = {};
+    this.diagnostics = [];
 
     // Compile document body — top-level children get source-line annotations
     // so the MCP page-layout tool can map overflows back to .poly source lines.
@@ -103,7 +120,7 @@ export class HtmlCompiler {
       html = bodyHtml;
     }
 
-    return { html, css, pageSettings: this.pageSettings };
+    return { html, css, pageSettings: this.pageSettings, diagnostics: this.diagnostics };
   }
 
   private compileChildren(children: (Command | Content)[]): string {
@@ -174,7 +191,7 @@ export class HtmlCompiler {
     const component = components[cmd.name];
 
     if (!component) {
-      console.warn(`Unknown command: /${cmd.name}`);
+      this.report("error", `Unknown command: /${cmd.name}`, cmd.loc?.start.line);
       return `<!-- Unknown command: /${cmd.name} -->`;
     }
 
@@ -208,6 +225,7 @@ export class HtmlCompiler {
       renderMarkdown: (text: string) => this.renderMarkdown(text),
       addClass: (cls: string) => this.cssClasses.add(cls),
       addStyle: (css: string) => this.customStyles.push(css),
+      addUserStyle: (css: string) => this.userStyles.push(css),
       setPageSettings: (settings) => {
         if (settings.pagebgs) {
           const existing = this.pageSettings.pagebgs || [];
@@ -218,12 +236,18 @@ export class HtmlCompiler {
       },
       sourceDir: this.options.sourceDir,
       fontCache: this.options.fontCache,
+      report: (severity, message) =>
+        this.report(severity, message, cmd.loc?.start.line),
     };
 
     // Execute component
     const result = component(ctx);
 
     return result.html;
+  }
+
+  private report(severity: DiagnosticSeverity, message: string, line?: number): void {
+    this.diagnostics.push({ severity, message, ...(line !== undefined && { line }) });
   }
 
   private parseArgs(args: Argument[]): Record<string, string | boolean> {

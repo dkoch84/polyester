@@ -16,6 +16,8 @@ import { existsSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, extname, isAbsolute, resolve } from "node:path";
 import type { Document, Command } from "../../parser/ast.js";
+import type { Diagnostic } from "../../diagnostics.js";
+import type { ResolvedTheme } from "../../themes/loader.js";
 
 const CACHE_DIR = resolve(homedir(), ".cache", "polyester", "fonts");
 
@@ -27,9 +29,21 @@ export interface FontDecl {
   family: string;
   /** Pre-rendered @font-face CSS (one or more blocks, src already inlined). */
   css: string;
+  /**
+   * Set when this /font could not be resolved. The prefetch pass has already
+   * reported the real cause, so the component stays silent rather than adding
+   * a second, vaguer message on top of it.
+   */
+  failed?: boolean;
 }
 
 export type FontCache = Map<string, FontDecl>;
+
+export interface FontPrefetchResult {
+  cache: FontCache;
+  /** One error per /font that could not be resolved. */
+  diagnostics: Diagnostic[];
+}
 
 /** Stable key for matching prefetched results back to a /font invocation. */
 export function fontCacheKey(family: string, source: string): string {
@@ -44,32 +58,52 @@ export function fontCacheKey(family: string, source: string): string {
 export async function prefetchFonts(
   doc: Document,
   sourceDir: string,
-): Promise<FontCache> {
+): Promise<FontPrefetchResult> {
   const cache: FontCache = new Map();
+  const diagnostics: Diagnostic[] = [];
   const fontCmds = collectFontCommands(doc);
 
   for (const cmd of fontCmds) {
+    const line = cmd.loc?.start.line;
     const family = getPositional(cmd, 0);
     if (!family) continue;
     const src = getFlag(cmd, "src");
     const google = getFlag(cmd, "google");
 
+    // Computed up front so a failure can be recorded under the same key the
+    // component will look up, which is what keeps it from reporting twice.
+    let key: string | undefined;
+    if (typeof src === "string") {
+      key = fontCacheKey(family, `src:${src}`);
+    } else if (google !== undefined) {
+      const axes = typeof google === "string" && google.length ? google : "";
+      key = fontCacheKey(family, `google:${axes}`);
+    }
+    if (!key) continue; // No source given; the component reports this one.
+
     try {
       if (typeof src === "string") {
         const css = await loadLocalFont(family, src, sourceDir, cmd);
-        cache.set(fontCacheKey(family, `src:${src}`), { family, css });
-      } else if (google !== undefined) {
+        cache.set(key, { family, css });
+      } else {
         const axes = typeof google === "string" && google.length ? google : "";
         const css = await loadGoogleFont(family, axes, cmd);
-        cache.set(fontCacheKey(family, `google:${axes}`), { family, css });
+        cache.set(key, { family, css });
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      console.warn(`⚠ /font "${family}" failed: ${msg}`);
+      // An unresolvable font is a hard error: rendering in a fallback face
+      // silently changes every line break in the document.
+      diagnostics.push({
+        severity: "error",
+        message: `/font "${family}" could not be loaded: ${msg}`,
+        ...(line !== undefined && { line }),
+      });
+      cache.set(key, { family, css: "", failed: true });
     }
   }
 
-  return cache;
+  return { cache, diagnostics };
 }
 
 function collectFontCommands(doc: Document): Command[] {

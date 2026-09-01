@@ -9,6 +9,37 @@ import { getIcon } from "./icons.js";
 import { resolveStyleRef, loadStyle } from "../../library/index.js";
 import type { PageSettings } from "./compiler.js";
 import { fontCacheKey, type FontCache } from "./fonts.js";
+import type { DiagnosticSeverity } from "../../diagnostics.js";
+import { readFileSync, existsSync } from "node:fs";
+import { resolve as resolvePath, extname, isAbsolute } from "node:path";
+
+const IMAGE_MIME: Record<string, string> = {
+  ".svg": "image/svg+xml",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".gif": "image/gif",
+  ".webp": "image/webp",
+  ".avif": "image/avif",
+};
+
+/**
+ * Embed a local image as a data URI so it resolves in both standalone HTML and
+ * PDF (Puppeteer) output, where relative paths have no base to resolve against.
+ * Remote URLs, existing data URIs, and unreadable/unknown files are passed through unchanged.
+ */
+function embedImage(src: string, sourceDir?: string): string {
+  if (/^(https?:|data:|\/\/)/i.test(src)) return src;
+  try {
+    const abs = isAbsolute(src) ? src : resolvePath(sourceDir || process.cwd(), src);
+    if (!existsSync(abs)) return src;
+    const mime = IMAGE_MIME[extname(abs).toLowerCase()];
+    if (!mime) return src;
+    return `data:${mime};base64,${readFileSync(abs).toString("base64")}`;
+  } catch {
+    return src;
+  }
+}
 
 export interface ComponentContext {
   /** Parsed arguments (positional as _0, _1, etc; flags by name) */
@@ -23,12 +54,22 @@ export interface ComponentContext {
   addClass: (cls: string) => void;
   /** Add custom CSS */
   addStyle: (css: string) => void;
+  /**
+   * Add CSS authored by the document (/style, /import). Lands after component
+   * and theme CSS so the document always wins.
+   */
+  addUserStyle: (css: string) => void;
   /** Set page settings (for PDF generation) */
   setPageSettings: (settings: Partial<PageSettings>) => void;
   /** Directory of the source document — used by /import to resolve relative paths. */
   sourceDir?: string;
   /** Pre-resolved /font cache populated by the async prefetch pass. */
   fontCache?: FontCache;
+  /**
+   * Report a problem against this command. Errors fail the build; the compiler
+   * attaches the source line and reports everything once, after the final pass.
+   */
+  report: (severity: DiagnosticSeverity, message: string) => void;
 }
 
 export interface ComponentResult {
@@ -1552,11 +1593,28 @@ const font: Component = (ctx) => {
     key = fontCacheKey(family, `google:${axes}`);
   }
 
-  const decl = key && ctx.fontCache ? ctx.fontCache.get(key) : undefined;
+  if (!key) {
+    ctx.report(
+      "error",
+      `/font "${family}" needs a source: add --src "path.woff2" or --google`,
+    );
+    return { html: "" };
+  }
+
+  const decl = ctx.fontCache?.get(key);
+  if (decl?.failed) {
+    // The prefetch pass already reported why. Saying anything more here would
+    // bury that message under noise.
+    return { html: "" };
+  }
   if (decl) {
     ctx.addStyle(decl.css);
   } else {
-    console.warn(`⚠ /font "${family}" not in prefetch cache — did the prefetch step run?`);
+    ctx.report(
+      "error",
+      `/font "${family}" was not resolved by the font prefetch pass (internal error)`,
+    );
+    return { html: "" };
   }
 
   // Apply as default body/heading/mono if requested.

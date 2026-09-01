@@ -20,6 +20,7 @@ import { compileToHtml } from "../backends/html/compiler.js";
 import { prefetchFonts } from "../backends/html/fonts.js";
 import { compileToSvg } from "../backends/svg/compiler.js";
 import { compilePolyDocument } from "../build.js";
+import { assertNoErrors, PolyBuildError } from "../diagnostics.js";
 import {
   loadTheme,
   listThemes,
@@ -240,9 +241,11 @@ async function buildPdf(
 
   // Resolve /font references (Google Fonts + local) before compile so the
   // sync compiler emits inlined @font-face blocks.
-  const fontCache = await prefetchFonts(ast, sourceDir);
+  const { cache: fontCache, diagnostics: fontDiagnostics } = await prefetchFonts(ast, sourceDir);
 
-  // Initial compile to extract pageSettings
+  // Initial compile to extract pageSettings. Its diagnostics are discarded:
+  // the final pass reports the same ones, and counting both printed everything
+  // twice.
   const initialResult = compileToHtml(ast, { standalone: false, sourceDir, fontCache });
   const ps = initialResult.pageSettings;
 
@@ -258,7 +261,7 @@ async function buildPdf(
   const syntaxCss = syntaxToCSS(resolved.syntax, resolved.name);
 
   // Compile to HTML
-  const { html, pageSettings } = compileToHtml(ast, {
+  const { html, pageSettings, diagnostics } = compileToHtml(ast, {
     standalone: true,
     title: basename(inputPath, ".poly"),
     sourceDir,
@@ -267,6 +270,13 @@ async function buildPdf(
     syntaxCss,
     fontCache,
   });
+
+  // Fail before launching Chrome: rendering a PDF in fallback fonts wastes the
+  // slowest part of the build and produces a file that looks fine but is wrong.
+  assertNoErrors([
+    ...fontDiagnostics,
+    ...diagnostics,
+  ]);
 
   // Use Puppeteer to render HTML to PDF.
   // For paginated docs we let the in-browser pagination sim run (screen media)
@@ -382,11 +392,13 @@ function buildSvg(inputPath: string, outputPath: string, options?: { width?: num
   const ast = parse(source);
 
   // Compile to SVG
-  const { svg } = compileToSvg(ast, {
+  const { svg, diagnostics } = compileToSvg(ast, {
     width: options?.width ?? 800,
     ...(options?.padding !== undefined && { padding: options.padding }),
     ...(options?.background !== undefined && { background: options.background }),
   });
+
+  assertNoErrors(diagnostics);
 
   // Output
   const absoluteOutput = resolve(outputPath);
@@ -498,21 +510,25 @@ async function watchFile(inputPath: string, opts?: BuildOpts): Promise<void> {
 
   console.log(`Watching ${inputPath} (output: ${outputFormat})...`);
 
+  // A failed build must not kill the watcher: the author is mid-edit, and the
+  // next save is how they fix it. The output file is left untouched.
+  const buildOnce = async () => {
+    try {
+      await build(inputPath, outputPath, opts);
+    } catch (err) {
+      console.error(
+        err instanceof PolyBuildError ? err.message : `Error: ${(err as Error).message}`,
+      );
+    }
+  };
+
   // Initial build
-  try {
-    await build(inputPath, outputPath, opts);
-  } catch (err) {
-    console.error(`Error: ${(err as Error).message}`);
-  }
+  await buildOnce();
 
   // Watch for changes
   watch(absoluteInput, async (eventType) => {
     if (eventType === "change") {
-      try {
-        await build(inputPath, outputPath, opts);
-      } catch (err) {
-        console.error(`Error: ${(err as Error).message}`);
-      }
+      await buildOnce();
     }
   });
 }
@@ -531,6 +547,7 @@ function themeImport(filePath: string, name: string, format?: string): void {
     process.exit(1);
   }
 }
+
 
 function themeList(): void {
   const themes = listThemes();
@@ -624,6 +641,7 @@ async function main(): Promise<void> {
           themeList();
           break;
 
+
         default:
           console.error("Error: Unknown theme subcommand");
           console.error("Available: import, list");
@@ -669,6 +687,8 @@ async function main(): Promise<void> {
 }
 
 main().catch((err) => {
-  console.error(`Error: ${err.message}`);
+  // A PolyBuildError already reads as a formatted diagnostic list; prefixing
+  // it with "Error:" would bury the first line.
+  console.error(err instanceof PolyBuildError ? err.message : `Error: ${err.message}`);
   process.exit(1);
 });

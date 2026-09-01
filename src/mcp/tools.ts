@@ -6,6 +6,7 @@
 
 import { parse } from "../parser/parser.js";
 import { compileToHtml } from "../backends/html/compiler.js";
+import { formatDiagnostics, hasErrors } from "../diagnostics.js";
 import { listLibrary, type PolyStyle } from "../library/index.js";
 import {
   getComponent,
@@ -106,7 +107,15 @@ export function validateDocument(source: string): ToolResult {
 export function compileDocument(source: string): ToolResult {
   try {
     const ast = parse(source);
-    const { html } = compileToHtml(ast, { standalone: true });
+    const { html, diagnostics } = compileToHtml(ast, { standalone: true });
+    // Returning HTML for a document with errors would hand back markup that
+    // renders but is not the document that was asked for.
+    if (hasErrors(diagnostics)) {
+      return {
+        content: [{ type: "text", text: formatDiagnostics(diagnostics) }],
+        isError: true,
+      };
+    }
     return { content: [{ type: "text", text: html }] };
   } catch (err: any) {
     return {
