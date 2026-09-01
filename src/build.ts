@@ -8,9 +8,9 @@
 import { basename } from "node:path";
 import { parse } from "./parser/parser.js";
 import { compileToHtml } from "./backends/html/compiler.js";
-import { prefetchFonts } from "./backends/html/fonts.js";
+import { prefetchFonts, prefetchThemeFonts } from "./backends/html/fonts.js";
 import {
-  resolveModules,
+  tryResolveModules,
   styleToCSS,
   spacingToCSS,
   syntaxToCSS,
@@ -58,7 +58,7 @@ export async function compilePolyDocument(source: string, opts: CompileDocOption
   const initial = compileToHtml(ast, { standalone: false, sourceDir: opts.sourceDir, fontCache });
   const ps = initial.pageSettings;
 
-  const resolved = resolveModules({
+  const { resolved, diagnostics: themeDiagnostics } = tryResolveModules({
     theme: opts.theme || ps.theme || config.defaultTheme,
     style: opts.style || ps.style,
     spacing: opts.spacing || ps.spacing,
@@ -68,6 +68,10 @@ export async function compilePolyDocument(source: string, opts: CompileDocOption
   const spacingCss = spacingToCSS(resolved.spacing);
   const syntaxCss = syntaxToCSS(resolved.syntax, resolved.name);
 
+  // A directory-form theme carries its own CSS and font faces.
+  const themeFonts = await prefetchThemeFonts(resolved);
+  const themeCss = [themeFonts.css, resolved.css || ""].filter(Boolean).join("\n");
+
   const { html, diagnostics } = compileToHtml(ast, {
     standalone: true,
     title: opts.title || "Untitled",
@@ -75,6 +79,7 @@ export async function compilePolyDocument(source: string, opts: CompileDocOption
     styleCss,
     spacingCss,
     syntaxCss,
+    themeCss,
     fontCache,
   });
 
@@ -82,6 +87,8 @@ export async function compilePolyDocument(source: string, opts: CompileDocOption
   // or command it cannot resolve never reaches the caller as "successful" HTML.
   assertNoErrors([
     ...fontDiagnostics,
+    ...themeDiagnostics,
+    ...themeFonts.diagnostics,
     ...diagnostics,
   ]);
 

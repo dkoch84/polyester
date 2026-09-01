@@ -143,11 +143,30 @@ function getFlag(cmd: Command, name: string): string | boolean | undefined {
 
 // ─── Local font loading ────────────────────────────────────────────────
 
+interface FaceOptions {
+  weight?: string;
+  style?: string;
+  display?: string;
+}
+
 async function loadLocalFont(
   family: string,
   src: string,
   sourceDir: string,
   cmd: Command,
+): Promise<string> {
+  return loadLocalFontFile(family, src, sourceDir, {
+    weight: getFlag(cmd, "weight") as string,
+    style: getFlag(cmd, "style") as string,
+    display: getFlag(cmd, "display") as string,
+  });
+}
+
+export async function loadLocalFontFile(
+  family: string,
+  src: string,
+  sourceDir: string,
+  opts: FaceOptions = {},
 ): Promise<string> {
   const fontPath = isAbsolute(src) ? src : resolve(sourceDir, src);
   const data = await readFile(fontPath);
@@ -155,9 +174,9 @@ async function loadLocalFont(
   const format = formatForExt(extname(fontPath));
   const dataUri = `data:${mime};base64,${data.toString("base64")}`;
 
-  const weight = (getFlag(cmd, "weight") as string) || "400";
-  const style = (getFlag(cmd, "style") as string) || "normal";
-  const display = (getFlag(cmd, "display") as string) || "swap";
+  const weight = opts.weight || "400";
+  const style = opts.style || "normal";
+  const display = opts.display || "swap";
 
   return `@font-face {
   font-family: ${cssQuote(family)};
@@ -206,7 +225,15 @@ async function loadGoogleFont(
   axes: string,
   cmd: Command,
 ): Promise<string> {
-  const display = (getFlag(cmd, "display") as string) || "swap";
+  return loadGoogleFontSpec(family, axes, { display: getFlag(cmd, "display") as string });
+}
+
+export async function loadGoogleFontSpec(
+  family: string,
+  axes: string,
+  opts: FaceOptions = {},
+): Promise<string> {
+  const display = opts.display || "swap";
   const cacheKey = createHash("sha256")
     .update(`${family}|${axes}|${display}`)
     .digest("hex")
@@ -258,4 +285,61 @@ function buildGoogleFontsUrl(family: string, axes: string, display: string): str
   const fam = encodeURIComponent(family).replace(/%20/g, "+");
   const spec = axes ? `${fam}:${axes}` : fam;
   return `https://fonts.googleapis.com/css2?family=${spec}&display=${encodeURIComponent(display)}`;
+}
+
+// ─── Theme fonts ────────────────────────────────────────────────
+
+/**
+ * Resolve the font faces a directory-form theme declares.
+ *
+ * Local `src` paths resolve against the theme's own directory, which is the
+ * point of the directory form: the faces travel with the theme instead of
+ * depending on where the document sits. Returns ready-to-emit CSS plus one
+ * error per face that could not be loaded.
+ */
+export async function prefetchThemeFonts(
+  theme: ResolvedTheme,
+): Promise<{ css: string; diagnostics: Diagnostic[] }> {
+  const faces = theme.fonts;
+  if (!faces?.length || !theme.dir) return { css: "", diagnostics: [] };
+
+  const blocks: string[] = [];
+  const diagnostics: Diagnostic[] = [];
+  const vars: string[] = [];
+
+  for (const face of faces) {
+    const opts = {
+      weight: face.weight,
+      style: face.style,
+      display: face.display,
+    };
+    try {
+      if (face.src) {
+        blocks.push(await loadLocalFontFile(face.family, face.src, theme.dir, opts));
+      } else if (face.google !== undefined) {
+        blocks.push(await loadGoogleFontSpec(face.family, face.google || "", opts));
+      } else {
+        throw new Error("needs either src or google");
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      diagnostics.push({
+        severity: "error",
+        message: `Theme "${theme.name}" font "${face.family}" could not be loaded: ${msg}`,
+      });
+      continue;
+    }
+
+    const stack = `${cssQuote(face.family)}, system-ui, -apple-system, sans-serif`;
+    const monoStack = `${cssQuote(face.family)}, ui-monospace, monospace`;
+    if (face.body) vars.push(`--poly-font-body: ${stack};`);
+    if (face.heading) vars.push(`--poly-font-heading: ${stack};`);
+    if (face.mono) vars.push(`--poly-font-mono: ${monoStack};`);
+  }
+
+  if (vars.length) {
+    blocks.push(`.poly-document {\n  ${vars.join("\n  ")}\n}`);
+  }
+
+  return { css: blocks.join("\n"), diagnostics };
 }

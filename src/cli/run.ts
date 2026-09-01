@@ -7,26 +7,34 @@
  *   poly build input.poly -o output.html
  *   poly build input.poly --format html --theme gruvbox
  *   poly watch input.poly
+ *   poly theme extract report.poly --name house-style --adopt
+ *   poly theme add git@github.com:you/poly-themes.git
  *   poly theme import ~/.Xresources --name gruvbox
  *   poly theme list
  *   poly help
  *   poly help <component>
  */
 
-import { readFileSync, writeFileSync, watch } from "node:fs";
-import { resolve, basename, dirname, extname } from "node:path";
+import { readFileSync, writeFileSync, watch, existsSync, mkdirSync, readdirSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { homedir } from "node:os";
+import { resolve, basename, dirname, extname, join } from "node:path";
 import { parse } from "../parser/parser.js";
 import { compileToHtml } from "../backends/html/compiler.js";
-import { prefetchFonts } from "../backends/html/fonts.js";
+import { prefetchFonts, prefetchThemeFonts } from "../backends/html/fonts.js";
 import { compileToSvg } from "../backends/svg/compiler.js";
 import { compilePolyDocument } from "../build.js";
+import { extractTheme } from "../themes/extract.js";
 import { assertNoErrors, PolyBuildError } from "../diagnostics.js";
 import {
   loadTheme,
   listThemes,
   saveTheme,
   themeToCSS,
-  resolveModules,
+  tryResolveModules,
+  themeRoots,
+  findModuleFile,
+  PACKS_DIR,
   styleToCSS,
   spacingToCSS,
   syntaxToCSS,
@@ -56,6 +64,10 @@ interface CliArgs {
   padding?: number;
   background?: string;
   watch?: boolean;
+  /** theme extract: where to write the theme directory. */
+  to?: string;
+  /** theme extract: rewrite the source document to use the theme. */
+  adopt?: boolean;
   help?: boolean;
   json?: boolean;
   hints?: boolean;
@@ -95,6 +107,10 @@ function parseArgs(args: string[]): CliArgs {
       result.padding = parseInt(args[++i], 10);
     } else if (arg === "--background") {
       result.background = args[++i];
+    } else if (arg === "--to") {
+      result.to = args[++i];
+    } else if (arg === "--adopt") {
+      result.adopt = true;
     } else if (arg === "--hints") {
       result.hints = true;
     } else if (arg === "--page") {
@@ -127,6 +143,9 @@ Usage:
   poly build <input.poly...> [-o output] [--format html|pdf|svg] [--theme name]
   poly watch <input.poly> [--format html|pdf]
   poly help [component]
+  poly theme extract <doc.poly> --name <name> [--to <dir>] [--adopt]
+  poly theme add <git-url> [--name <pack>]
+  poly theme update [<pack>]
   poly theme import <file> --name <name> [--format <format>]
   poly theme list
   poly style list
@@ -136,8 +155,11 @@ Commands:
   build           Compile .poly files to HTML, PDF, or SVG
   watch           Watch file and recompile on changes
   help            List all components or show help for a specific component
+  theme extract   Lift a document's CSS, tokens and fonts into a reusable theme
+  theme add       Clone a theme pack repository onto the search path
+  theme update    Pull the latest themes for one or all packs
   theme import    Import a colorscheme as a syntax theme
-  theme list      List available themes
+  theme list      List available themes and where they resolve from
   style list      List available style modules
   spacing list    List available spacing presets
 
@@ -148,6 +170,8 @@ Options:
   -t, --theme <name>    Composed theme (style + spacing + syntax)
   --style <name>        Style module (colors, fonts, borders, shadows)
   --spacing <name>      Spacing module (compact, default, spacious)
+  --to <dir>            For theme extract: write the theme into this directory
+  --adopt               For theme extract: rewrite the document to use the theme
   -n, --name <name>     Name for imported theme
   -w, --watch           Watch for changes
   -h, --help            Show this help message
@@ -250,7 +274,7 @@ async function buildPdf(
   const ps = initialResult.pageSettings;
 
   // Resolve modules
-  const resolved = resolveModules({
+  const { resolved, diagnostics: themeDiagnostics } = tryResolveModules({
     theme: opts?.theme || ps.theme || config.defaultTheme,
     style: opts?.style || ps.style,
     spacing: opts?.spacing || ps.spacing,
@@ -260,6 +284,10 @@ async function buildPdf(
   const spacingCss = spacingToCSS(resolved.spacing);
   const syntaxCss = syntaxToCSS(resolved.syntax, resolved.name);
 
+  // A directory-form theme carries its own CSS and font faces.
+  const themeFonts = await prefetchThemeFonts(resolved);
+  const themeCss = [themeFonts.css, resolved.css || ""].filter(Boolean).join("\n");
+
   // Compile to HTML
   const { html, pageSettings, diagnostics } = compileToHtml(ast, {
     standalone: true,
@@ -268,6 +296,7 @@ async function buildPdf(
     styleCss,
     spacingCss,
     syntaxCss,
+    themeCss,
     fontCache,
   });
 
@@ -275,6 +304,8 @@ async function buildPdf(
   // slowest part of the build and produces a file that looks fine but is wrong.
   assertNoErrors([
     ...fontDiagnostics,
+    ...themeDiagnostics,
+    ...themeFonts.diagnostics,
     ...diagnostics,
   ]);
 
@@ -549,11 +580,105 @@ function themeImport(filePath: string, name: string, format?: string): void {
 }
 
 
+function themeExtract(
+  documentPath: string,
+  name: string,
+  opts: { to?: string; adopt?: boolean },
+): void {
+  const outDir = opts.to
+    ? resolve(opts.to, name)
+    : join(homedir(), ".config", "polyester", "themes", name);
+
+  const result = extractTheme({ documentPath, name, outDir, adopt: opts.adopt });
+
+  console.log(`\u2713 Extracted theme "${name}" to ${result.themeDir}`);
+  for (const file of result.written) {
+    console.log(`    ${file.startsWith(result.themeDir) ? file.slice(result.themeDir.length + 1) : file}`);
+  }
+
+  console.log(`  ${result.mappedTokens.length} token(s) mapped into theme.json` +
+    (result.mappedTokens.length ? `: ${result.mappedTokens.join(", ")}` : ""));
+  console.log(`  ${result.cssLines} line(s) of CSS carried verbatim into theme.css`);
+  console.log(`  ${result.fonts.length} font face(s) carried into the theme`);
+  console.log(`  style, spacing and syntax inherited from "${result.inheritedFrom}" so --adopt changes nothing visually`);
+
+  for (const note of result.notes) {
+    console.log(`  note: ${note}`);
+  }
+
+  if (result.documentRewritten) {
+    console.log(`\u2713 Rewrote ${result.documentRewritten} to use --theme ${name}`);
+  } else {
+    console.log(`  Use it with: /page --theme ${name}   (or re-run with --adopt)`);
+  }
+}
+
+/**
+ * Clone a theme pack so its themes join the search path.
+ *
+ * A pack is an ordinary git repository laid out like a search root: themes,
+ * styles and spacing directories at its top level.
+ */
+function themeAdd(url: string, name?: string): void {
+  const packName = name || basename(url).replace(/\.git$/, "");
+  const target = join(PACKS_DIR, packName);
+
+  if (existsSync(target)) {
+    console.error(`Error: pack "${packName}" already exists at ${target}`);
+    console.error("Run 'poly theme update' to refresh it, or remove the directory first.");
+    process.exit(1);
+  }
+
+  mkdirSync(PACKS_DIR, { recursive: true });
+  const res = spawnSync("git", ["clone", "--depth", "1", url, target], { stdio: "inherit" });
+  if (res.status !== 0) {
+    console.error(`Error: git clone failed for ${url}`);
+    process.exit(1);
+  }
+
+  console.log(`\u2713 Added pack "${packName}" from ${url}`);
+  const names = listThemes().filter((t) => t !== "default");
+  console.log(`  Themes now on the search path: ${names.join(", ") || "(none)"}`);
+}
+
+function themeUpdate(only?: string): void {
+  if (!existsSync(PACKS_DIR)) {
+    console.log("No packs installed. Add one with 'poly theme add <git-url>'.");
+    return;
+  }
+
+  const packs = readdirSync(PACKS_DIR).filter((p) => !only || p === only);
+  if (!packs.length) {
+    console.error(only ? `Error: no pack named "${only}"` : "No packs installed.");
+    process.exit(1);
+  }
+
+  let failed = 0;
+  for (const pack of packs) {
+    const dir = join(PACKS_DIR, pack);
+    console.log(`Updating ${pack}...`);
+    const res = spawnSync("git", ["-C", dir, "pull", "--ff-only"], { stdio: "inherit" });
+    if (res.status !== 0) failed++;
+  }
+
+  // A pack that would not update leaves the search path serving stale themes,
+  // which is exactly the drift this whole mechanism exists to avoid.
+  if (failed) {
+    console.error(`Error: ${failed} pack(s) failed to update`);
+    process.exit(1);
+  }
+}
+
 function themeList(): void {
-  const themes = listThemes();
-  console.log("Available themes:");
-  for (const name of themes) {
-    console.log(`  ${name}`);
+  console.log("Search path (highest precedence first):");
+  for (const root of themeRoots()) {
+    console.log(`  ${root}`);
+  }
+
+  console.log("\nAvailable themes:");
+  for (const name of listThemes()) {
+    const path = name === "default" ? "(built-in)" : findModuleFile("themes", name) || "";
+    console.log(`  ${name.padEnd(20)} ${path}`);
   }
 }
 
@@ -641,10 +766,36 @@ async function main(): Promise<void> {
           themeList();
           break;
 
+        case "extract":
+          if (args.inputs.length === 0) {
+            console.error("Error: No document specified");
+            console.error("Usage: poly theme extract <document.poly> --name <name> [--to <dir>] [--adopt]");
+            process.exit(1);
+          }
+          if (!args.name) {
+            console.error("Error: No theme name specified");
+            console.error("Usage: poly theme extract <document.poly> --name <name> [--to <dir>] [--adopt]");
+            process.exit(1);
+          }
+          themeExtract(args.inputs[0], args.name, { to: args.to, adopt: args.adopt });
+          break;
+
+        case "add":
+          if (args.inputs.length === 0) {
+            console.error("Error: No repository URL specified");
+            console.error("Usage: poly theme add <git-url> [--name <pack-name>]");
+            process.exit(1);
+          }
+          themeAdd(args.inputs[0], args.name);
+          break;
+
+        case "update":
+          themeUpdate(args.inputs[0]);
+          break;
 
         default:
           console.error("Error: Unknown theme subcommand");
-          console.error("Available: import, list");
+          console.error("Available: extract, add, update, import, list");
           process.exit(1);
       }
       break;

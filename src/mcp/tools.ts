@@ -17,7 +17,7 @@ import {
   type ComponentDef,
 } from "../components/registry.js";
 import {
-  resolveModules,
+  tryResolveModules,
   styleToCSS,
   spacingToCSS,
   syntaxToCSS,
@@ -194,12 +194,19 @@ export async function analyzePageLayout(source: string): Promise<ToolResult> {
       };
     }
 
-    // Resolve theme modules
-    const resolved = resolveModules({
+    // Resolve theme modules. A named theme that does not exist is an error:
+    // analysing a layout in the wrong design measures the wrong document.
+    const { resolved, diagnostics: themeDiagnostics } = tryResolveModules({
       theme: ps.theme || config.defaultTheme,
       style: ps.style,
       spacing: ps.spacing,
     });
+    if (hasErrors(themeDiagnostics)) {
+      return {
+        content: [{ type: "text", text: formatDiagnostics(themeDiagnostics) }],
+        isError: true,
+      };
+    }
 
     const styleCss = styleToCSS(resolved.style);
     const spacingCss = spacingToCSS(resolved.spacing);

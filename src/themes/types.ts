@@ -159,6 +159,27 @@ export interface LegacyTheme {
 }
 
 /**
+ * A font face a theme carries with it.
+ *
+ * `src` is resolved against the theme's own directory, so the face travels
+ * with the theme rather than depending on where the document happens to live.
+ */
+export interface ThemeFontFace {
+  family: string;
+  /** Font file relative to the theme directory (woff2, woff, ttf, otf). */
+  src?: string;
+  /** Google Fonts axis spec, e.g. "wght@400;700". Use instead of `src`. */
+  google?: string;
+  weight?: string;
+  style?: string;
+  display?: string;
+  /** Apply this family as the document body / heading / mono font. */
+  body?: boolean;
+  heading?: boolean;
+  mono?: boolean;
+}
+
+/**
  * Composed theme — references or inlines style, spacing, and syntax modules.
  * String values are resolved by name (built-in or filesystem).
  * Object values are used inline.
@@ -170,6 +191,8 @@ export interface Theme {
   style?: StyleTokens | string;
   spacing?: SpacingTokens | string;
   syntax?: ThemeColors | string;
+  /** Directory-form themes only: faces shipped alongside theme.json. */
+  fonts?: ThemeFontFace[];
   /** @deprecated Use `syntax` instead. Kept for backward compat. */
   colors?: ThemeColors;
 }

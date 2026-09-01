@@ -41,10 +41,22 @@ export interface CompileOptions {
   syntaxCss?: string;
   /** Pre-resolved /font cache (Google Fonts + local fonts inlined as data URIs). */
   fontCache?: FontCache;
+  /**
+   * CSS carried by a directory-form theme (its theme.css plus any inlined
+   * @font-face blocks). Sits after component CSS so a theme can restyle
+   * components, and before document /style so the document still wins.
+   */
+  themeCss?: string;
 }
 
 export interface PageSettings {
   pageless?: boolean;
+  /**
+   * Paper width for pageless PDF output, as a CSS length. Paginated documents
+   * take their width from the page size; pageless had no control at all and
+   * was fixed at A4, so a wide table could only be shrunk to fit.
+   */
+  width?: string;
   /** Document mode: "web" (continuous), "pdf" (paginated digital), "print" (paginated physical) */
   mode?: "web" | "pdf" | "print";
   size?: string;
@@ -329,7 +341,8 @@ export class HtmlCompiler {
     // 3. Base CSS         (uses var(--poly-*) with fallbacks)
     // 4. Component CSS    (uses var(--poly-*) with fallbacks)
     // 5. Syntax theme CSS (.hljs-* rules)
-    // 6. User /style CSS  (full override power)
+    // 6. Theme CSS       (a directory-form theme's theme.css)
+    // 7. User /style CSS  (full override power)
 
     const spacingCss = this.options.spacingCss || "";
     const styleCss = this.options.styleCss || "";
@@ -652,6 +665,7 @@ export class HtmlCompiler {
       pageSimCss,
       componentCss,
       syntaxCss,
+      this.options.themeCss || "",
       this.userStyles.join("\n"),
       this.options.customCss || "",
     ].filter(Boolean).join("\n");

@@ -2,14 +2,24 @@
  * Theme Loader
  *
  * Handles loading, saving, and listing themes, styles, and spacing modules.
- * Directories:
- *   ~/.config/polyester/themes/   — composed themes + syntax themes
- *   ~/.config/polyester/styles/   — style modules
- *   ~/.config/polyester/spacing/  — spacing modules
+ *
+ * Modules are searched across several roots, highest precedence first:
+ *   $POLY_THEME_PATH entries: colon-separated, for a checkout or a share
+ *   each subdirectory of ~/.config/polyester/packs: clones from `poly theme add`
+ *   ~/.config/polyester itself: this machine's own themes
+ * and finally the built-in presets compiled into the binary.
+ *
+ * Each root holds the same three directories: themes, styles and spacing.
+ *
+ * A theme is either `themes/<name>.json` or a self-contained directory
+ * `themes/<name>` holding theme.json, an optional theme.css, and an optional
+ * fonts directory. The directory form is what makes a theme portable: the CSS
+ * and the font files travel with the tokens instead of living beside one
+ * document.
  */
 
-import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from "node:fs";
-import { join, basename } from "node:path";
+import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync, statSync } from "node:fs";
+import { join, basename, dirname, resolve, isAbsolute } from "node:path";
 import { homedir } from "node:os";
 import {
   Theme,
@@ -20,13 +30,82 @@ import {
   DEFAULT_SYNTAX,
   DEFAULT_STYLE,
   DEFAULT_SPACING,
+  ThemeFontFace,
 } from "./types.js";
 import { BUILTIN_STYLES, BUILTIN_SPACING } from "./starters.js";
+import type { Diagnostic } from "../diagnostics.js";
 
 const CONFIG_DIR = join(homedir(), ".config", "polyester");
 const THEMES_DIR = join(CONFIG_DIR, "themes");
 const STYLES_DIR = join(CONFIG_DIR, "styles");
 const SPACING_DIR = join(CONFIG_DIR, "spacing");
+/** Clones managed by `poly theme add`. Each subdirectory is a search root. */
+export const PACKS_DIR = join(CONFIG_DIR, "packs");
+
+export type ModuleKind = "themes" | "styles" | "spacing";
+
+/**
+ * Search roots, highest precedence first.
+ *
+ * Writes always go to CONFIG_DIR; only reads consult the wider path.
+ */
+export function themeRoots(): string[] {
+  const roots: string[] = [];
+
+  const envPath = process.env.POLY_THEME_PATH;
+  if (envPath) {
+    for (const entry of envPath.split(":")) {
+      const trimmed = entry.trim();
+      if (trimmed) roots.push(resolve(trimmed));
+    }
+  }
+
+  if (existsSync(PACKS_DIR)) {
+    for (const entry of readdirSync(PACKS_DIR).sort()) {
+      const dir = join(PACKS_DIR, entry);
+      if (statSync(dir).isDirectory()) roots.push(dir);
+    }
+  }
+
+  roots.push(CONFIG_DIR);
+  return roots;
+}
+
+/**
+ * Find a module file by name across the search path.
+ *
+ * For themes the directory form wins over the flat file, so a theme can grow
+ * a theme.css without changing how documents refer to it.
+ */
+export function findModuleFile(kind: ModuleKind, name: string): string | null {
+  for (const root of themeRoots()) {
+    if (kind === "themes") {
+      const dirForm = join(root, "themes", name, "theme.json");
+      if (existsSync(dirForm)) return dirForm;
+    }
+    const flat = join(root, kind, `${name}.json`);
+    if (existsSync(flat)) return flat;
+  }
+  return null;
+}
+
+/** Every module name of one kind found on the search path. */
+function listModuleNames(kind: ModuleKind): string[] {
+  const names = new Set<string>();
+  for (const root of themeRoots()) {
+    const dir = join(root, kind);
+    if (!existsSync(dir)) continue;
+    for (const entry of readdirSync(dir)) {
+      const full = join(dir, entry);
+      if (entry.endsWith(".json")) {
+        names.add(basename(entry, ".json"));
+      } else if (kind === "themes" && statSync(full).isDirectory()) {
+        if (existsSync(join(full, "theme.json"))) names.add(entry);
+      }
+    }
+  }
+  return [...names];
+}
 
 // ─── Directory Management ──────────────────────────────────────
 
@@ -38,35 +117,53 @@ export function ensureConfigDirs(): void {
   }
 }
 
+/**
+ * A named theme, style, spacing preset or syntax scheme could not be resolved.
+ *
+ * Thrown rather than defaulted: a document that asks for a theme and silently
+ * gets the built-in default is a document rendered in the wrong design, and it
+ * reports success while doing it.
+ */
+export class ThemeError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ThemeError";
+  }
+}
+
+/** "corporate, minimal, playful": the "did you mean" half of an error. */
+function available(names: string[]): string {
+  return names.sort().join(", ");
+}
+
 // ─── Style Module Loading ──────────────────────────────────────
 
 export function loadStyle(name: string): StyleTokens {
-  // 1. Check built-in presets
-  if (name === "default") return { ...DEFAULT_STYLE };
-  if (BUILTIN_STYLES[name]) return { ...BUILTIN_STYLES[name] };
-
-  // 2. Check filesystem
-  const filePath = join(STYLES_DIR, `${name}.json`);
-  if (existsSync(filePath)) {
+  // 1. Search path first. Disk beats built-ins deliberately: a built-in that
+  //    shadowed a same-named file made overriding a shipped style impossible
+  //    to do without deleting it from the source.
+  const filePath = findModuleFile("styles", name);
+  if (filePath) {
     try {
       return JSON.parse(readFileSync(filePath, "utf-8")) as StyleTokens;
     } catch (err) {
-      console.warn(`Error loading style "${name}": ${(err as Error).message}`);
+      throw new ThemeError(
+        `Style "${name}" at ${filePath} could not be parsed: ${(err as Error).message}`,
+      );
     }
   }
 
-  console.warn(`Style "${name}" not found, using default`);
-  return { ...DEFAULT_STYLE };
+  // 2. Built-in presets
+  if (BUILTIN_STYLES[name]) return { ...BUILTIN_STYLES[name] };
+  if (name === "default") return { ...DEFAULT_STYLE };
+
+  throw new ThemeError(
+    `Style "${name}" not found. Available: ${available(listStyles())}`,
+  );
 }
 
 export function listStyles(): string[] {
-  const names = new Set(["default", ...Object.keys(BUILTIN_STYLES)]);
-  if (existsSync(STYLES_DIR)) {
-    for (const f of readdirSync(STYLES_DIR)) {
-      if (f.endsWith(".json")) names.add(basename(f, ".json"));
-    }
-  }
-  return [...names];
+  return [...new Set(["default", ...Object.keys(BUILTIN_STYLES), ...listModuleNames("styles")])];
 }
 
 export function saveStyle(style: StyleTokens): void {
@@ -78,31 +175,28 @@ export function saveStyle(style: StyleTokens): void {
 // ─── Spacing Module Loading ────────────────────────────────────
 
 export function loadSpacing(name: string): SpacingTokens {
-  // 1. Check built-in presets
-  if (BUILTIN_SPACING[name]) return { ...BUILTIN_SPACING[name] };
-
-  // 2. Check filesystem
-  const filePath = join(SPACING_DIR, `${name}.json`);
-  if (existsSync(filePath)) {
+  // Search path first, same reasoning as loadStyle.
+  const filePath = findModuleFile("spacing", name);
+  if (filePath) {
     try {
       return JSON.parse(readFileSync(filePath, "utf-8")) as SpacingTokens;
     } catch (err) {
-      console.warn(`Error loading spacing "${name}": ${(err as Error).message}`);
+      throw new ThemeError(
+        `Spacing "${name}" at ${filePath} could not be parsed: ${(err as Error).message}`,
+      );
     }
   }
 
-  console.warn(`Spacing "${name}" not found, using default`);
-  return { ...DEFAULT_SPACING };
+  if (BUILTIN_SPACING[name]) return { ...BUILTIN_SPACING[name] };
+  if (name === "default") return { ...DEFAULT_SPACING };
+
+  throw new ThemeError(
+    `Spacing "${name}" not found. Available: ${available(listSpacingPresets())}`,
+  );
 }
 
 export function listSpacingPresets(): string[] {
-  const names = new Set(Object.keys(BUILTIN_SPACING));
-  if (existsSync(SPACING_DIR)) {
-    for (const f of readdirSync(SPACING_DIR)) {
-      if (f.endsWith(".json")) names.add(basename(f, ".json"));
-    }
-  }
-  return [...names];
+  return [...new Set([...Object.keys(BUILTIN_SPACING), ...listModuleNames("spacing")])];
 }
 
 export function saveSpacing(spacing: SpacingTokens): void {
@@ -116,11 +210,23 @@ export function saveSpacing(spacing: SpacingTokens): void {
 function loadSyntaxColors(name: string): ThemeColors {
   if (name === "default") return DEFAULT_SYNTAX;
 
-  const themePath = join(THEMES_DIR, `${name}.json`);
-  if (!existsSync(themePath)) return DEFAULT_SYNTAX;
+  const themePath = findModuleFile("themes", name);
+  if (!themePath) {
+    throw new ThemeError(
+      `Syntax theme "${name}" not found. Available: ${available(listThemes())}`,
+    );
+  }
 
+  let data: any;
   try {
-    const data = JSON.parse(readFileSync(themePath, "utf-8"));
+    data = JSON.parse(readFileSync(themePath, "utf-8"));
+  } catch (err) {
+    throw new ThemeError(
+      `Syntax theme "${name}" at ${themePath} could not be parsed: ${(err as Error).message}`,
+    );
+  }
+
+  {
     // Could be a legacy theme file with `colors` key
     if (data.colors && !data.syntax && !data.style) {
       return data.colors as ThemeColors;
@@ -132,8 +238,8 @@ function loadSyntaxColors(name: string): ThemeColors {
     if (data.background && data.foreground && data.keyword) {
       return data as ThemeColors;
     }
-    return DEFAULT_SYNTAX;
-  } catch {
+    // The file exists and parsed but carries no syntax section. That is a
+    // legitimate theme shape (style/spacing only), so the default stands.
     return DEFAULT_SYNTAX;
   }
 }
@@ -145,6 +251,16 @@ export interface ResolvedTheme {
   style: StyleTokens;
   spacing: SpacingTokens;
   syntax: ThemeColors;
+  /**
+   * Directory-form themes only: the theme's own directory. Font sources inside
+   * the theme resolve against it, which is what lets a theme carry its faces
+   * instead of borrowing whatever the document happens to sit next to.
+   */
+  dir?: string;
+  /** Contents of the theme's theme.css, if it has one. */
+  css?: string;
+  /** Font faces the theme declares. Inlined by prefetchThemeFonts at build time. */
+  fonts?: ThemeFontFace[];
 }
 
 /**
@@ -161,19 +277,38 @@ export function resolveTheme(name: string): ResolvedTheme {
     };
   }
 
-  const themePath = join(THEMES_DIR, `${name}.json`);
-  if (!existsSync(themePath)) {
-    console.warn(`Theme "${name}" not found, using default`);
-    return resolveTheme("default");
+  const themePath = findModuleFile("themes", name);
+  if (!themePath) {
+    throw new ThemeError(
+      `Theme "${name}" not found. Available: ${available(listThemes())}`,
+    );
   }
 
+  let data: Theme;
   try {
-    const data = JSON.parse(readFileSync(themePath, "utf-8")) as Theme;
-    return resolveThemeData(data);
+    data = JSON.parse(readFileSync(themePath, "utf-8")) as Theme;
   } catch (err) {
-    console.error(`Error loading theme "${name}": ${(err as Error).message}`);
-    return resolveTheme("default");
+    throw new ThemeError(
+      `Theme "${name}" at ${themePath} could not be parsed: ${(err as Error).message}`,
+    );
   }
+
+  // Resolution of the theme's own style/spacing/syntax references throws
+  // ThemeError in its own right, and that message is more specific than
+  // anything this frame could add, so it is left to propagate.
+  const resolved = resolveThemeData(data);
+  resolved.name = data.name || name;
+
+  // Directory form: pick up the sibling CSS and font declarations.
+  if (basename(themePath) === "theme.json") {
+    const dir = dirname(themePath);
+    resolved.dir = dir;
+    const cssPath = join(dir, "theme.css");
+    if (existsSync(cssPath)) resolved.css = readFileSync(cssPath, "utf-8");
+    if (data.fonts?.length) resolved.fonts = data.fonts;
+  }
+
+  return resolved;
 }
 
 /**
@@ -243,6 +378,31 @@ export function resolveModules(opts: {
   if (opts.syntax) resolved.syntax = loadSyntaxColors(opts.syntax);
 
   return resolved;
+}
+
+/**
+ * resolveModules, but a ThemeError becomes a diagnostic instead of a throw.
+ *
+ * On failure the defaults are returned so the caller can finish compiling and
+ * collect the document's other errors: the build is going to fail either way,
+ * and one report listing every problem beats one that stops at the first.
+ * Any other error is a real fault and still propagates.
+ */
+export function tryResolveModules(opts: {
+  theme?: string;
+  style?: string;
+  spacing?: string;
+  syntax?: string;
+}): { resolved: ResolvedTheme; diagnostics: Diagnostic[] } {
+  try {
+    return { resolved: resolveModules(opts), diagnostics: [] };
+  } catch (err) {
+    if (!(err instanceof ThemeError)) throw err;
+    return {
+      resolved: resolveModules({}),
+      diagnostics: [{ severity: "error", message: err.message }],
+    };
+  }
 }
 
 // ─── CSS Generation ────────────────────────────────────────────
@@ -408,14 +568,7 @@ export function saveTheme(theme: Theme): void {
 }
 
 export function listThemes(): string[] {
-  ensureConfigDirs();
-  const themes = ["default"];
-  if (existsSync(THEMES_DIR)) {
-    for (const f of readdirSync(THEMES_DIR)) {
-      if (f.endsWith(".json")) themes.push(basename(f, ".json"));
-    }
-  }
-  return themes;
+  return [...new Set(["default", ...listModuleNames("themes")])];
 }
 
 export function themeExists(name: string): boolean {
