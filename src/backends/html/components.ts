@@ -1243,7 +1243,7 @@ const fold: Component = (ctx) => {
  */
 const style: Component = (ctx) => {
   const css = ctx.getRawContent();
-  ctx.addStyle(css);
+  ctx.addUserStyle(css);
   return { html: "" };
 };
 
@@ -1254,18 +1254,24 @@ const style: Component = (ctx) => {
  */
 const importStyle: Component = (ctx) => {
   const ref = getPositional(ctx.args, 0, "");
-  if (!ref) return { html: `<!-- /import: missing reference -->` };
+  if (!ref) {
+    ctx.report("error", "/import needs a reference to a style or .polystyle file");
+    return { html: "" };
+  }
   try {
     const fromDir = ctx.sourceDir || process.cwd();
     const abs = resolveStyleRef(ref, fromDir);
     if (!abs) {
-      return { html: `<!-- /import: could not resolve "${ref}" -->` };
+      // An unresolvable import used to emit an HTML comment and build clean,
+      // so a moved .polystyle produced an unstyled document at exit 0.
+      ctx.report("error", `/import could not resolve "${ref}"`);
+      return { html: "" };
     }
-    const manifest = loadStyle(abs);
-    ctx.addStyle(manifest.css);
+    ctx.addUserStyle(loadStyle(abs).css);
     return { html: "" };
   } catch (err: any) {
-    return { html: `<!-- /import error: ${err.message} -->` };
+    ctx.report("error", `/import "${ref}" failed: ${err.message}`);
+    return { html: "" };
   }
 };
 

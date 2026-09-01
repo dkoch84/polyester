@@ -335,12 +335,27 @@ export class HtmlCompiler {
     const styleCss = this.options.styleCss || "";
     const syntaxCss = this.options.syntaxCss || "";
 
+    // Base selectors are wrapped in :where() so they contribute zero
+    // specificity. `.poly-document` (0,1,0) and `.poly-content h1` (0,1,1) used
+    // to beat a theme's plain `body` and `h1` rules no matter how late those
+    // were injected, so a document could set a font, render in system-ui, and
+    // report success. Themes had to either drive --poly-font-* or prefix every
+    // selector with .poly-document, which bakes a Polyester implementation
+    // detail into every rule they write.
     const baseCss = `
 /* Polyester Base Styles */
-.poly-document {
+
+/* Inheritable typography sits on body, not on .poly-document. A property set
+   directly on .poly-document beats one inherited from body whatever the
+   specificity, so :where() alone would not let a plain body rule win: the
+   declaration has to live on the same element the author is targeting. */
+:where(body) {
   font-family: var(--poly-font-body, system-ui, -apple-system, sans-serif);
   line-height: 1.6;
   color: var(--poly-color-text, #1a1a1a);
+}
+
+:where(.poly-document) {
   background: var(--poly-color-bg, #ffffff);
   max-width: 800px;
   margin: 0 auto;
@@ -349,43 +364,50 @@ export class HtmlCompiler {
 
 /* Print styles for PDF generation */
 @media print {
-  .poly-document {
+  :where(.poly-document) {
     max-width: none;
     padding: 0;
     orphans: 3;
     widows: 3;
   }
-  .poly-content h1, .poly-content h2, .poly-content h3,
+  :where(.poly-content) h1, :where(.poly-content) h2, :where(.poly-content) h3,
   h1, h2, h3 {
     break-after: avoid;
     page-break-after: avoid;
     break-inside: avoid;
     page-break-inside: avoid;
   }
-  .poly-content table, table, .poly-region, .poly-card, .poly-quote, .poly-code-block {
+  :where(.poly-content) table, table, .poly-region, .poly-card, .poly-quote, .poly-code-block {
     break-inside: avoid;
     page-break-inside: avoid;
   }
-  .poly-content li { break-inside: avoid; page-break-inside: avoid; }
+  :where(.poly-content) li { break-inside: avoid; page-break-inside: avoid; }
 }
 
-.poly-content {
+:where(.poly-content) {
   margin-bottom: var(--poly-spacing-base, 1rem);
 }
 
-.poly-content p {
+:where(.poly-content) p {
   margin: 0 0 1em 0;
 }
 
-.poly-content h1, .poly-content h2, .poly-content h3 {
+:where(.poly-content) h1, :where(.poly-content) h2, :where(.poly-content) h3 {
   font-family: var(--poly-font-heading, system-ui, -apple-system, sans-serif);
   margin: 1.5em 0 0.5em 0;
   line-height: 1.3;
 }
 
-.poly-content h1 { font-size: 2rem; }
-.poly-content h2 { font-size: 1.5rem; }
-.poly-content h3 { font-size: 1.25rem; }
+:where(.poly-content) h1, :where(.poly-content) h2 {
+  color: var(--poly-color-heading, var(--poly-color-text, #1a1a1a));
+}
+:where(.poly-content) h3 {
+  color: var(--poly-color-heading-sub, var(--poly-color-heading, var(--poly-color-text, #1a1a1a)));
+}
+
+:where(.poly-content) h1 { font-size: 2rem; }
+:where(.poly-content) h2 { font-size: 1.5rem; }
+:where(.poly-content) h3 { font-size: 1.25rem; }
 
 /* Component styles */
 .poly-columns {
@@ -470,7 +492,7 @@ export class HtmlCompiler {
   font-size: 0.9em;
 }
 
-.poly-content pre {
+:where(.poly-content) pre {
   background: #0d1117;
   color: #c9d1d9;
   padding: var(--poly-spacing-block-padding, 1rem);
@@ -479,7 +501,7 @@ export class HtmlCompiler {
   margin: 1em 0;
 }
 
-.poly-content pre code {
+:where(.poly-content) pre code {
   background: none;
   padding: 0;
   color: inherit;
@@ -529,41 +551,41 @@ export class HtmlCompiler {
 .hljs-deletion { color: #ffa198; background: #490202; }
 .hljs-addition { color: #aff5b4; background: #033a16; }
 
-.poly-content table {
+:where(.poly-content) table {
   border-collapse: collapse;
   width: 100%;
   margin: 1em 0;
 }
 
-.poly-content th, .poly-content td {
+:where(.poly-content) th, :where(.poly-content) td {
   border: var(--poly-border-width, 1px) solid var(--poly-color-border, #e5e7eb);
   padding: 0.5rem 0.75rem;
   text-align: left;
 }
 
-.poly-content th {
+:where(.poly-content) th {
   background: var(--poly-color-surface, #f9fafb);
   font-weight: 600;
 }
 
-.poly-content blockquote {
+:where(.poly-content) blockquote {
   border-left: 4px solid var(--poly-color-primary, #e5e5e5);
   padding-left: 1rem;
   margin: 1em 0;
   color: var(--poly-color-text-muted, #666);
 }
 
-.poly-content a {
+:where(.poly-content) a {
   color: var(--poly-color-link, #3b82f6);
   text-decoration: underline;
 }
 
-.poly-content img {
+:where(.poly-content) img {
   max-width: 100%;
   height: auto;
 }
 
-.poly-content hr {
+:where(.poly-content) hr {
   border: none;
   border-top: var(--poly-border-width, 1px) solid var(--poly-color-border, #e5e7eb);
   margin: var(--poly-spacing-section-gap, 2em) 0;
@@ -619,7 +641,9 @@ export class HtmlCompiler {
     // Add custom styles from components
     const componentCss = this.customStyles.join("\n");
 
-    // Cascade: spacing → style → page → base → pageSim → components → syntax → user
+    // Cascade: spacing, style tokens, page, base, page sim, components,
+    // syntax, the document's own /style and /import, then any caller-supplied
+    // CSS last.
     return [
       spacingCss,
       styleCss,
@@ -628,6 +652,7 @@ export class HtmlCompiler {
       pageSimCss,
       componentCss,
       syntaxCss,
+      this.userStyles.join("\n"),
       this.options.customCss || "",
     ].filter(Boolean).join("\n");
   }
