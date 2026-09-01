@@ -265,6 +265,8 @@ export function styleToCSS(style: StyleTokens): string {
   --poly-color-surface: ${c.surface};
   --poly-color-text: ${c.text};
   --poly-color-text-muted: ${c["text-muted"]};
+  --poly-color-heading: ${c.heading || c.text};
+  --poly-color-heading-sub: ${c["heading-sub"] || c.heading || c.text};
   --poly-color-border: ${c.border};
   --poly-color-link: ${c.link};
   --poly-color-success: ${c.success};
@@ -278,6 +280,7 @@ export function styleToCSS(style: StyleTokens): string {
   --poly-shadow-card: ${s.card};
   --poly-shadow-elevated: ${s.elevated || "0 4px 12px rgba(0,0,0,0.1)"};
   --poly-hero-gradient: ${h.gradient};
+  --poly-hero-bg: ${h.background || h.gradient};
   --poly-hero-text: ${h["text-color"]};
 }`;
 }

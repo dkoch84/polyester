@@ -413,21 +413,32 @@ export class HtmlCompiler {
   box-shadow: var(--poly-shadow-card, none);
 }
 
+.poly-card-accent {
+  border-color: color-mix(in srgb, var(--poly-color-primary, #3b82f6) 45%, transparent);
+  background: color-mix(in srgb, var(--poly-color-primary, #3b82f6) 7%, var(--poly-color-bg, #fff));
+  box-shadow: none;
+}
+
+/* Card titles sit flush with the top of the card. */
+.poly-card :where(.poly-content):first-child > :first-child {
+  margin-top: 0;
+}
+
 .poly-text {
   display: inline;
 }
 
 /* Markdown content styles */
-.poly-content ul, .poly-content ol {
+:where(.poly-content) ul, :where(.poly-content) ol {
   margin: 0 0 1em 0;
   padding-left: 1.5em;
 }
 
-.poly-content li {
+:where(.poly-content) li {
   margin-bottom: 0.25em;
 }
 
-.poly-content code {
+:where(.poly-content) code {
   background: var(--poly-color-surface, #f3f4f6);
   padding: 0.125em 0.25em;
   border-radius: var(--poly-radius, 0.25em);
@@ -804,13 +815,14 @@ ${body}
       var inner = document.createElement('div');
       inner.className = 'poly-page-content';
       inner.style.cssText = 'width:100%;height:100%;position:relative;';
-      // Page background decoration
+      // Page background decoration — appended to page (not inner) so inset:0 covers
+      // the full physical page including the margin padding area (full-bleed)
       var bgStyle = pagebgStyleFor(pageNum);
       if (bgStyle) {
         var bg = document.createElement('div');
         bg.className = 'poly-pagebg';
         bg.style.cssText = 'position:absolute;inset:0;pointer-events:none;z-index:0;' + bgStyle;
-        inner.appendChild(bg);
+        page.appendChild(bg);
       }
       // Content wrapper sits above page bg
       var contentWrap = document.createElement('div');
@@ -860,8 +872,9 @@ ${body}
       return true;
     }
     function markOversize(el) {
+      // Authoring hint only — the dashed outline is styled screen-only (see
+      // pageSimCss) so it never leaks into printed/PDF output.
       el.setAttribute('data-poly-oversize', '1');
-      el.style.outline = '2px dashed rgba(239,68,68,0.5)';
     }
     // Binary-search for how many leading text nodes/words fit on the current page.
     // Returns a continuation element containing the rest, or null if splitting is impossible.
@@ -1085,9 +1098,13 @@ ${body}
   }
 
   function renderHints(pages) {
-    // Clear any prior hint badges.
+    // Clear any prior hint badges and oversize outlines.
     var prior = document.querySelectorAll('.poly-hint-badge');
     for (var i = 0; i < prior.length; i++) prior[i].remove();
+    var marked = document.querySelectorAll('[data-poly-oversize]');
+    for (var m = 0; m < marked.length; m++) marked[m].style.outline = '';
+    // Hints are off by default (and during PDF export), so the dashed
+    // oversize outline below only ever shows in the live, hints-on preview.
     if (!hintsEnabled()) return;
     for (var p = 0; p < pages.length; p++) {
       var pageNum = p + 1;
@@ -1100,6 +1117,7 @@ ${body}
         var srcLine = el.getAttribute('data-source-line');
         var oversize = el.hasAttribute('data-poly-oversize');
         if (!srcLine && !oversize) continue;
+        if (oversize) el.style.outline = '2px dashed rgba(239,68,68,0.5)';
         var badge = document.createElement('div');
         badge.className = 'poly-hint-badge';
         var label = (srcLine ? 'L' + srcLine + ' · ' : '') + 'p' + pageNum + (oversize ? ' ⚠' : '');

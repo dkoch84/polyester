@@ -102,40 +102,6 @@ const playful: StyleTokens = {
   },
 };
 
-const codecargo: StyleTokens = {
-  name: "codecargo",
-  colors: {
-    primary: "#4B6CF9",
-    "primary-light": "#B8F3FF",
-    "primary-dark": "#09197A",
-    secondary: "#FF9282",
-    accent: "#F4F060",
-    background: "#ffffff",
-    surface: "#F9F9F9",
-    text: "#242733",
-    "text-muted": "#7D8AB2",
-    border: "#dbe2fe",
-    link: "#4B6CF9",
-    success: "#34d399",
-    warning: "#F4F060",
-    error: "#ef4444",
-  },
-  fonts: {
-    body: "Geist, system-ui, -apple-system, sans-serif",
-    heading: "Geist, system-ui, -apple-system, sans-serif",
-    mono: "Geist Mono, ui-monospace, monospace",
-  },
-  borders: { radius: "0.75rem", width: "1px" },
-  shadows: {
-    card: "0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1)",
-    elevated: "0 0 20px rgba(75,108,249,0.4)",
-  },
-  hero: {
-    gradient: "linear-gradient(135deg, #4B6CF9 0%, #09197A 100%)",
-    "text-color": "#F9F9F9",
-  },
-};
-
 const dark: StyleTokens = {
   name: "dark",
   colors: {
@@ -172,7 +138,6 @@ export const BUILTIN_STYLES: Record<string, StyleTokens> = {
   minimal,
   playful,
   dark,
-  codecargo,
 };
 
 // ─── Spacing Presets ───────────────────────────────────────────

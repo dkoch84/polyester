@@ -26,6 +26,10 @@ export interface StyleColors {
   success: string;
   warning: string;
   error: string;
+  /** Optional heading color for h1/h2 (defaults to `text`). */
+  heading?: string;
+  /** Optional color for h3 / card titles (defaults to `heading`, then `text`). */
+  "heading-sub"?: string;
 }
 
 export interface StyleFonts {
@@ -46,6 +50,8 @@ export interface StyleShadows {
 
 export interface StyleHero {
   gradient: string;
+  /** Optional non-gradient default background (solid color, image, or any CSS background). Used by `/hero --bg theme`. */
+  background?: string;
   "text-color": string;
 }
 

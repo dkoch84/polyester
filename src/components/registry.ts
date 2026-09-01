@@ -310,7 +310,10 @@ export const COMPONENTS: ComponentDef[] = [
     category: "style",
     args: [],
     flags: [
-      { name: "bg", description: "Background color or 'gradient'", hasValue: true },
+      { name: "bg", description: "Background: a color (e.g. blue, #4b6cf9), 'gradient' (theme gradient), or 'theme' (theme hero background). Text color is auto-contrasted for solid colors.", hasValue: true },
+      { name: "image", description: "Background image URL/path (sized cover, centered)", hasValue: true },
+      { name: "overlay", description: "Color scrim layered over the image for legibility (e.g. \"rgba(0,0,0,0.4)\")", hasValue: true },
+      { name: "text", description: "Explicit text color (overrides auto-contrast)", hasValue: true },
       { name: "pattern", description: "Background pattern type", hasValue: true, values: ["grid", "dots", "cross", "diagonal"] },
       { name: "pattern-size", description: "Pattern cell size", hasValue: true, default: "64px" },
       { name: "pattern-color", description: "Pattern line/dot color", hasValue: true, default: "rgba(255,255,255,0.15)" },
@@ -319,8 +322,9 @@ export const COMPONENTS: ComponentDef[] = [
     examples: [
       "/hero --bg blue { # Welcome }",
       "/hero --bg gradient { content }",
-      "/hero --bg gradient --pattern grid { content }",
-      '/hero --bg gradient --pattern dots --pattern-color "rgba(255,255,255,0.2)" { content }',
+      '/hero --bg "#4b6cf9" --pattern grid { content }',
+      "/hero --bg theme { content }",
+      '/hero --image "cover.jpg" --overlay "rgba(0,0,0,0.45)" { content }',
     ],
     hasBlock: true,
   },
@@ -374,10 +378,14 @@ export const COMPONENTS: ComponentDef[] = [
     flags: [
       { name: "icon", description: "Icon name or emoji", hasValue: true, values: ["rocket", "shield", "heart", "star", "check", "bolt"] },
       { name: "title", description: "Card title", hasValue: true },
+      { name: "accent", description: "Accent variant: light primary-tinted fill with a primary border", hasValue: false },
+      { name: "top", description: "Colored top-border accent (e.g. a hex/brand color) to distinguish grouped cards", hasValue: true },
     ],
     examples: [
       "/card --icon rocket { content }",
       "/card --title Features { ... }",
+      "/card --accent { ## Highlight\\nStands out from sibling cards }",
+      '/card --top "#09197a" { ### Group A\\nTop-accented card }',
     ],
     hasBlock: true,
   },

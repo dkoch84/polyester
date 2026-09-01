@@ -4,6 +4,7 @@
  * Each component receives a context and returns HTML.
  */
 
+import hljs from "highlight.js";
 import { getIcon } from "./icons.js";
 import { resolveStyleRef, loadStyle } from "../../library/index.js";
 import type { PageSettings } from "./compiler.js";
@@ -405,35 +406,104 @@ const quote: Component = (ctx) => {
 };
 
 /**
+ * Estimate whether a CSS color is dark, for picking contrasting text.
+ * Parses #rgb / #rrggbb / rgb()/rgba(). Returns null when it can't tell
+ * (named colors, gradients, etc.) so callers can leave text untouched.
+ */
+function isDarkColor(value: string): boolean | null {
+  const v = value.trim();
+  let r: number, g: number, b: number;
+
+  const hex = v.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+  if (hex) {
+    let h = hex[1];
+    if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+    r = parseInt(h.slice(0, 2), 16);
+    g = parseInt(h.slice(2, 4), 16);
+    b = parseInt(h.slice(4, 6), 16);
+  } else {
+    const rgb = v.match(/^rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)/i);
+    if (!rgb) return null;
+    r = parseFloat(rgb[1]); g = parseFloat(rgb[2]); b = parseFloat(rgb[3]);
+  }
+
+  // Perceived luminance (sRGB-weighted), 0–255.
+  const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  return luminance < 140;
+}
+
+/**
  * /hero - Hero section
  * Usage: /hero --bg blue { content }
  * Usage: /hero --bg gradient --pattern grid { content }
+ * Usage: /hero --bg "#4b6cf9" --pattern grid { content }   (solid color, auto white text)
+ * Usage: /hero --bg theme { content }                      (theme's hero background)
+ * Usage: /hero --image "cover.jpg" --overlay "rgba(0,0,0,0.4)" { content }
  */
 const hero: Component = (ctx) => {
   const bg = getArg(ctx.args, "bg", "");
+  const image = getArg(ctx.args, "image", "");
+  const overlay = getArg(ctx.args, "overlay", "");
+  const textColor = getArg(ctx.args, "text", "");
   const pattern = getArg(ctx.args, "pattern", "");
 
   let style = "";
-  let resolvedBg = "";
+  let baseColor = "";        // → background-color (solid fills; valid for solids only)
+  let baseImage = "";        // → background-image base layer (gradients / images)
+  let resolvedText = "";     // resolved text color, if any
 
-  if (bg) {
-    if (bg.includes("gradient")) {
-      resolvedBg = "var(--poly-hero-gradient, linear-gradient(135deg, #667eea 0%, #764ba2 100%))";
-      style += `color: var(--poly-hero-text, white); `;
+  if (bg === "gradient") {
+    baseImage = "var(--poly-hero-gradient, linear-gradient(135deg, #667eea 0%, #764ba2 100%))";
+    resolvedText = "var(--poly-hero-text, white)";
+  } else if (bg === "theme") {
+    // The theme's hero background is a solid fill (see StyleHero.background); fall back to the primary color.
+    baseColor = "var(--poly-hero-bg, var(--poly-color-primary, #4b6cf9))";
+    resolvedText = "var(--poly-hero-text, white)";
+  } else if (bg) {
+    if (bg.includes("gradient") || bg.includes("url(")) {
+      baseImage = bg;
     } else {
-      resolvedBg = bg;
+      baseColor = bg;
+      const dark = isDarkColor(bg);
+      if (dark === true) resolvedText = "#fff";
+      else if (dark === false) resolvedText = "var(--poly-color-text, #1a1a1a)";
     }
   }
 
+  // Optional foreground image layer (with optional color scrim), sits above the base, below the pattern.
+  let imageLayer = "";
+  if (image) {
+    const scrim = overlay ? `linear-gradient(${overlay}, ${overlay}), ` : "";
+    imageLayer = `${scrim}url("${image}")`;
+    if (!resolvedText) resolvedText = "var(--poly-hero-text, white)";
+  }
+
+  // Assemble background-image layers top → bottom: pattern, image, base gradient/image.
+  const imgLayers: string[] = [];
+  const imgSizes: string[] = [];
   if (pattern) {
     const patternSize = getArg(ctx.args, "pattern-size", "64px");
     const patternColor = getArg(ctx.args, "pattern-color", "rgba(255,255,255,0.15)");
     const patternFade = getArg(ctx.args, "pattern-fade", "none");
     const pCss = generatePatternCSS({ pattern, size: patternSize, color: patternColor, fade: patternFade });
-    style += patternToInlineStyle(pCss, resolvedBg);
-  } else if (resolvedBg) {
-    style += `background: ${resolvedBg}; `;
+    imgLayers.push(pCss.backgroundImage);
+    imgSizes.push(pCss.backgroundSize);
+    if (pCss.maskImage) style += `-webkit-mask-image: ${pCss.maskImage}; mask-image: ${pCss.maskImage}; `;
   }
+  if (imageLayer) { imgLayers.push(imageLayer); imgSizes.push("cover"); }
+  if (baseImage) { imgLayers.push(baseImage); imgSizes.push("cover"); }
+
+  if (imgLayers.length) {
+    style += `background-image: ${imgLayers.join(", ")}; `;
+    style += `background-size: ${imgSizes.join(", ")}; `;
+    style += `background-position: center; `;
+  }
+  // Solid fill goes to background-color so it never lands in (invalid) background-image.
+  if (baseColor) style += `background-color: ${baseColor}; `;
+
+  // Explicit --text always wins over the auto-resolved color.
+  const finalText = textColor || resolvedText;
+  if (finalText) style += `color: ${finalText}; `;
 
   const children = ctx.compileChildren();
 
@@ -472,6 +542,8 @@ const background: Component = (ctx) => {
  */
 const card: Component = (ctx) => {
   const icon = getArg(ctx.args, "icon", "");
+  const accent = hasFlag(ctx.args, "accent");
+  const top = getArg(ctx.args, "top", "");
   const children = ctx.compileChildren();
 
   let iconHtml = "";
@@ -488,8 +560,10 @@ const card: Component = (ctx) => {
     }
   }
 
+  const cls = accent ? "poly-card poly-card-accent" : "poly-card";
+  const topStyle = top ? ` style="border-top: 3px solid ${top};"` : "";
   return {
-    html: `<div class="poly-card">${iconHtml}${children}</div>`,
+    html: `<div class="${cls}"${topStyle}>${iconHtml}${children}</div>`,
   };
 };
 
@@ -689,10 +763,16 @@ const code: Component = (ctx) => {
   const langClass = language ? `language-${language}` : "";
   const lines = content.split("\n");
   const isPolyester = language === "polyester" || language === "poly";
+  // Non-Polyester languages run through highlight.js, emitting .hljs-* spans
+  // that the active syntax theme (and any user /style) colors. Unknown
+  // languages fall back to plain escaped text.
+  const useHljs = !isPolyester && !!language && !!hljs.getLanguage(language);
 
-  // Helper to highlight a line of code
+  // Helper to highlight a single line of code
   const highlightLine = (line: string): string => {
-    return isPolyester ? highlightPolyester(line) : escapeHtml(line);
+    if (isPolyester) return highlightPolyester(line);
+    if (useHljs) return hljs.highlight(line, { language, ignoreIllegals: true }).value;
+    return escapeHtml(line);
   };
 
   let codeHtml: string;
@@ -706,8 +786,12 @@ const code: Component = (ctx) => {
       })
       .join("");
     codeHtml = `<div class="poly-code-lines">${lineHtml}</div>`;
+  } else if (isPolyester) {
+    codeHtml = highlightPolyester(content);
+  } else if (useHljs) {
+    codeHtml = hljs.highlight(content, { language, ignoreIllegals: true }).value;
   } else {
-    codeHtml = isPolyester ? highlightPolyester(content) : escapeHtml(content);
+    codeHtml = escapeHtml(content);
   }
 
   const titleHtml = title ? `<div class="poly-code-title">${escapeHtml(title)}</div>` : "";
@@ -1065,7 +1149,8 @@ const image: Component = (ctx) => {
   if (height) style += `height: ${height};`;
 
   const shapeClass = shape !== "square" ? ` shape-${shape}` : "";
-  const imgHtml = `<img src="${escapeHtml(path)}" alt="${escapeHtml(alt)}" class="${shapeClass.trim()}" style="${style}">`;
+  const resolvedSrc = embedImage(path, ctx.sourceDir);
+  const imgHtml = `<img src="${escapeHtml(resolvedSrc)}" alt="${escapeHtml(alt)}" class="${shapeClass.trim()}" style="${style}">`;
   const captionHtml = caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : "";
 
   return {
