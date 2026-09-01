@@ -1,12 +1,17 @@
 import { describe, it, expect } from "vitest";
-import { resolve, dirname } from "node:path";
+import { readdirSync, readFileSync } from "node:fs";
+import { resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parse } from "./parser/parser.js";
 import { compileToHtml } from "./backends/html/compiler.js";
 import { prefetchFonts } from "./backends/html/fonts.js";
 import { hasErrors, assertNoErrors, PolyBuildError } from "./diagnostics.js";
+import { components as htmlComponents } from "./backends/html/components.js";
+import { components as svgComponents } from "./backends/svg/components.js";
+import { getComponent } from "./components/registry.js";
 import { ThemeError, loadStyle, loadSpacing, resolveTheme, tryResolveModules } from "./themes/loader.js";
 import { DEFAULT_STYLE } from "./themes/types.js";
+import type { Command } from "./parser/ast.js";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -109,4 +114,44 @@ describe("theme resolution", () => {
     const { diagnostics } = tryResolveModules({ style: "minimal", spacing: "compact" });
     expect(diagnostics).toEqual([]);
   });
+});
+
+/**
+ * Every /command used in the shipped .poly files must resolve against the
+ * component table of the backend that file is built with. `/font` was fully
+ * documented in docs/authoring.poly while absent from the build for months; a
+ * check this cheap would have caught the drift the day it happened. Now that
+ * unknown commands fail the build, this also stops the docs from shipping in a
+ * state that cannot be rebuilt.
+ *
+ * The two backends have different component tables on purpose (the badges are
+ * SVG-only), so each file is checked against the one the pre-commit render
+ * actually uses for it.
+ */
+describe("shipped .poly sources", () => {
+  const suites = [
+    { dir: "docs", backend: "html" as const },
+    { dir: "examples", backend: "html" as const },
+    { dir: join("docs", "badges"), backend: "svg" as const },
+  ];
+
+  const cases = suites.flatMap(({ dir, backend }) =>
+    readdirSync(resolve(repoRoot, dir))
+      .filter((f) => f.endsWith(".poly"))
+      .map((f) => [join(dir, f), backend] as const),
+  );
+
+  it("finds .poly files to check", () => {
+    expect(cases.length).toBeGreaterThan(0);
+  });
+
+  // /badge shipped in the SVG backend only, and in no registry entry, so
+  // `poly help badge` denied a command the badges were built with. Both halves
+  // of that drift are now covered.
+  it("implements /badge in both backends and documents it", () => {
+    expect(htmlComponents["badge"]).toBeDefined();
+    expect(svgComponents["badge"]).toBeDefined();
+    expect(getComponent("badge")).toBeDefined();
+  });
+
 });

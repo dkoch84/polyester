@@ -1637,6 +1637,58 @@ const font: Component = (ctx) => {
   return { html: "" };
 };
 
+/**
+ * /badge - Shields-style label/value badge.
+ *
+ * Mirrors the SVG backend's /badge so the same source renders in both: a
+ * two-tone badge when a value is given (gray label, colored value), a single
+ * colored pill when it is not. Metrics match the SVG version (20px tall, 11px
+ * Verdana, 3px radius) so an HTML preview and the committed .svg look alike.
+ *
+ * Distinct from /tag, which is a rounded inline label with no value half.
+ */
+const badge: Component = (ctx) => {
+  const label = getPositional(ctx.args, 0, "");
+  const value = getPositional(ctx.args, 1, "");
+  const color = getArg(ctx.args, "color", "") || getArg(ctx.args, "c", "") || "#8b5cf6";
+
+  ctx.addStyle(`
+    .poly-badge {
+      display: inline-flex;
+      height: 20px;
+      border-radius: 3px;
+      overflow: hidden;
+      font-family: Verdana, Geneva, "DejaVu Sans", sans-serif;
+      font-size: 11px;
+      line-height: 20px;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+    .poly-badge span {
+      padding: 0 8px;
+      color: #fff;
+    }
+    .poly-badge .poly-badge-label {
+      background: #555;
+    }
+  `);
+
+  const valueStyle = `background: ${escapeHtml(color)};`;
+  if (!value) {
+    return {
+      html: `<span class="poly-badge"><span class="poly-badge-value" style="${valueStyle}">${escapeHtml(label)}</span></span>`,
+    };
+  }
+
+  return {
+    html:
+      `<span class="poly-badge">` +
+      `<span class="poly-badge-label">${escapeHtml(label)}</span>` +
+      `<span class="poly-badge-value" style="${valueStyle}">${escapeHtml(value)}</span>` +
+      `</span>`,
+  };
+};
+
 // Export all components
 export const components: Record<string, Component> = {
   page,
@@ -1665,6 +1717,7 @@ export const components: Record<string, Component> = {
   icon,
   inline,
   tag,
+  badge,
   progress,
   divider,
   pagebg,

@@ -511,8 +511,26 @@ export const COMPONENTS: ComponentDef[] = [
     hasBlock: true,
   },
   {
+    name: "badge",
+    description: "Shields-style label/value badge. Two-tone when a value is given (gray label, colored value), a single colored pill when it is not. Renders in both the HTML and SVG backends.",
+    category: "content",
+    args: [
+      { name: "label", description: "Left-hand label text", required: true },
+      { name: "value", description: "Right-hand value text. Omit for a single-section pill." },
+    ],
+    flags: [
+      { name: "color", short: "c", description: "Color of the value half (or of the whole pill when no value is given)", hasValue: true, default: "#8b5cf6" },
+    ],
+    examples: [
+      '/badge "docs" "polyester"',
+      '/badge "mcp" "server" --color "#3b82f6"',
+      '/badge "beta"',
+    ],
+    hasBlock: false,
+  },
+  {
     name: "tag",
-    description: "Display a badge/pill/tag element.",
+    description: "Display a rounded inline label. For a two-tone label/value badge, use /badge.",
     category: "content",
     args: [
       { name: "label", description: "Tag text", required: true },
