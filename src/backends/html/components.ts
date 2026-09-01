@@ -952,6 +952,21 @@ function highlightPolyester(code: string): string {
  * /table - Styled table
  * Usage: /table --header --striped { Name | Age\nJohn | 30 }
  */
+/**
+ * Render one table cell's markdown, unwrapped.
+ *
+ * Cells are inline content, so the single paragraph markdown wraps them in is
+ * dropped. Anything richer than one paragraph (a list, a fenced block) is left
+ * as rendered, since discarding it would be worse than the stray markup.
+ */
+function renderCell(ctx: ComponentContext, cell: string): string {
+  const trimmed = cell.trim();
+  if (!trimmed) return "";
+  const html = ctx.renderMarkdown(trimmed).trim();
+  const single = html.match(/^<p(?:\s[^>]*)?>([\s\S]*)<\/p>$/);
+  return single && !single[1].includes("<p") ? single[1] : html;
+}
+
 const table: Component = (ctx) => {
   const hasHeader = hasFlag(ctx.args, "header");
   const striped = hasFlag(ctx.args, "striped");
@@ -959,9 +974,12 @@ const table: Component = (ctx) => {
   const dark = hasFlag(ctx.args, "dark");
   const align = getArg(ctx.args, "align", "");
 
-  let content = ctx.compileChildren();
-  // Strip any wrapping paragraphs from markdown processing
-  content = content.replace(/<\/?p>/g, "").trim();
+  // Raw block text, not compiled HTML. compileChildren() returns the block
+  // already rendered as a markdown document, wrapper div and all, and the old
+  // <p>-stripping regex could not match a <p data-source-line="2"> anyway. The
+  // wrapper then straddled the table: opened in the first <th>, closed in the
+  // last <td>.
+  const content = ctx.getRawContent().trim();
 
   ctx.addStyle(`
     .poly-table {
@@ -1030,14 +1048,14 @@ const table: Component = (ctx) => {
       html += "<thead><tr>";
       cells.forEach((cell, i) => {
         const style = alignments[i] ? `text-align: ${alignments[i]}` : "";
-        html += `<th style="${style}">${cell}</th>`;
+        html += `<th style="${style}">${renderCell(ctx, cell)}</th>`;
       });
       html += "</tr></thead><tbody>";
     } else {
       html += "<tr>";
       cells.forEach((cell, i) => {
         const style = alignments[i] ? `text-align: ${alignments[i]}` : "";
-        html += `<td style="${style}">${cell}</td>`;
+        html += `<td style="${style}">${renderCell(ctx, cell)}</td>`;
       });
       html += "</tr>";
     }
