@@ -154,4 +154,21 @@ describe("shipped .poly sources", () => {
     expect(getComponent("badge")).toBeDefined();
   });
 
+  it.each(cases)("%s uses only commands its backend implements", (relPath, backend) => {
+    const table = backend === "svg" ? svgComponents : htmlComponents;
+    const source = readFileSync(resolve(repoRoot, relPath), "utf-8");
+    const unknown = new Set<string>();
+
+    const walk = (children: readonly { type: string }[]) => {
+      for (const child of children) {
+        if (child.type !== "command") continue;
+        const cmd = child as Command;
+        if (!table[cmd.name]) unknown.add(cmd.name);
+        if (cmd.block) walk(cmd.block.children);
+      }
+    };
+    walk(parse(source).children);
+
+    expect([...unknown]).toEqual([]);
+  });
 });

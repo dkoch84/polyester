@@ -25,6 +25,8 @@
   --poly-color-surface: #f9fafb;
   --poly-color-text: #1a1a1a;
   --poly-color-text-muted: #666666;
+  --poly-color-heading: #1a1a1a;
+  --poly-color-heading-sub: #1a1a1a;
   --poly-color-border: #e5e5e5;
   --poly-color-link: #3b82f6;
   --poly-color-success: #16a34a;
@@ -38,14 +40,23 @@
   --poly-shadow-card: none;
   --poly-shadow-elevated: 0 4px 12px rgba(0,0,0,0.1);
   --poly-hero-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --poly-hero-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --poly-hero-text: #ffffff;
 }
 
 /* Polyester Base Styles */
-.poly-document {
+
+/* Inheritable typography sits on body, not on .poly-document. A property set
+   directly on .poly-document beats one inherited from body whatever the
+   specificity, so :where() alone would not let a plain body rule win: the
+   declaration has to live on the same element the author is targeting. */
+:where(body) {
   font-family: var(--poly-font-body, system-ui, -apple-system, sans-serif);
   line-height: 1.6;
   color: var(--poly-color-text, #1a1a1a);
+}
+
+:where(.poly-document) {
   background: var(--poly-color-bg, #ffffff);
   max-width: 800px;
   margin: 0 auto;
@@ -54,43 +65,50 @@
 
 /* Print styles for PDF generation */
 @media print {
-  .poly-document {
+  :where(.poly-document) {
     max-width: none;
     padding: 0;
     orphans: 3;
     widows: 3;
   }
-  .poly-content h1, .poly-content h2, .poly-content h3,
+  :where(.poly-content) h1, :where(.poly-content) h2, :where(.poly-content) h3,
   h1, h2, h3 {
     break-after: avoid;
     page-break-after: avoid;
     break-inside: avoid;
     page-break-inside: avoid;
   }
-  .poly-content table, table, .poly-region, .poly-card, .poly-quote, .poly-code-block {
+  :where(.poly-content) table, table, .poly-region, .poly-card, .poly-quote, .poly-code-block {
     break-inside: avoid;
     page-break-inside: avoid;
   }
-  .poly-content li { break-inside: avoid; page-break-inside: avoid; }
+  :where(.poly-content) li { break-inside: avoid; page-break-inside: avoid; }
 }
 
-.poly-content {
+:where(.poly-content) {
   margin-bottom: var(--poly-spacing-base, 1rem);
 }
 
-.poly-content p {
+:where(.poly-content) p {
   margin: 0 0 1em 0;
 }
 
-.poly-content h1, .poly-content h2, .poly-content h3 {
+:where(.poly-content) h1, :where(.poly-content) h2, :where(.poly-content) h3 {
   font-family: var(--poly-font-heading, system-ui, -apple-system, sans-serif);
   margin: 1.5em 0 0.5em 0;
   line-height: 1.3;
 }
 
-.poly-content h1 { font-size: 2rem; }
-.poly-content h2 { font-size: 1.5rem; }
-.poly-content h3 { font-size: 1.25rem; }
+:where(.poly-content) h1, :where(.poly-content) h2 {
+  color: var(--poly-color-heading, var(--poly-color-text, #1a1a1a));
+}
+:where(.poly-content) h3 {
+  color: var(--poly-color-heading-sub, var(--poly-color-heading, var(--poly-color-text, #1a1a1a)));
+}
+
+:where(.poly-content) h1 { font-size: 2rem; }
+:where(.poly-content) h2 { font-size: 1.5rem; }
+:where(.poly-content) h3 { font-size: 1.25rem; }
 
 /* Component styles */
 .poly-columns {
@@ -142,21 +160,32 @@
   box-shadow: var(--poly-shadow-card, none);
 }
 
+.poly-card-accent {
+  border-color: color-mix(in srgb, var(--poly-color-primary, #3b82f6) 45%, transparent);
+  background: color-mix(in srgb, var(--poly-color-primary, #3b82f6) 7%, var(--poly-color-bg, #fff));
+  box-shadow: none;
+}
+
+/* Card titles sit flush with the top of the card. */
+.poly-card :where(.poly-content):first-child > :first-child {
+  margin-top: 0;
+}
+
 .poly-text {
   display: inline;
 }
 
 /* Markdown content styles */
-.poly-content ul, .poly-content ol {
+:where(.poly-content) ul, :where(.poly-content) ol {
   margin: 0 0 1em 0;
   padding-left: 1.5em;
 }
 
-.poly-content li {
+:where(.poly-content) li {
   margin-bottom: 0.25em;
 }
 
-.poly-content code {
+:where(.poly-content) code {
   background: var(--poly-color-surface, #f3f4f6);
   padding: 0.125em 0.25em;
   border-radius: var(--poly-radius, 0.25em);
@@ -164,7 +193,7 @@
   font-size: 0.9em;
 }
 
-.poly-content pre {
+:where(.poly-content) pre {
   background: #0d1117;
   color: #c9d1d9;
   padding: var(--poly-spacing-block-padding, 1rem);
@@ -173,7 +202,7 @@
   margin: 1em 0;
 }
 
-.poly-content pre code {
+:where(.poly-content) pre code {
   background: none;
   padding: 0;
   color: inherit;
@@ -223,41 +252,41 @@
 .hljs-deletion { color: #ffa198; background: #490202; }
 .hljs-addition { color: #aff5b4; background: #033a16; }
 
-.poly-content table {
+:where(.poly-content) table {
   border-collapse: collapse;
   width: 100%;
   margin: 1em 0;
 }
 
-.poly-content th, .poly-content td {
+:where(.poly-content) th, :where(.poly-content) td {
   border: var(--poly-border-width, 1px) solid var(--poly-color-border, #e5e7eb);
   padding: 0.5rem 0.75rem;
   text-align: left;
 }
 
-.poly-content th {
+:where(.poly-content) th {
   background: var(--poly-color-surface, #f9fafb);
   font-weight: 600;
 }
 
-.poly-content blockquote {
+:where(.poly-content) blockquote {
   border-left: 4px solid var(--poly-color-primary, #e5e5e5);
   padding-left: 1rem;
   margin: 1em 0;
   color: var(--poly-color-text-muted, #666);
 }
 
-.poly-content a {
+:where(.poly-content) a {
   color: var(--poly-color-link, #3b82f6);
   text-decoration: underline;
 }
 
-.poly-content img {
+:where(.poly-content) img {
   max-width: 100%;
   height: auto;
 }
 
-.poly-content hr {
+:where(.poly-content) hr {
   border: none;
   border-top: var(--poly-border-width, 1px) solid var(--poly-color-border, #e5e7eb);
   margin: var(--poly-spacing-section-gap, 2em) 0;
@@ -305,21 +334,6 @@
       padding: 0;
     }
   
-body {
-  margin: 0;
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-}
-
-@media (max-width: 768px) {
-  .poly-columns {
-    flex-direction: column !important;
-  }
-  .poly-columns > * {
-    flex: 1 1 100% !important;
-    max-width: 100% !important;
-  }
-}
 
     .poly-button {
       display: inline-block;
@@ -746,13 +760,28 @@ body {
 .hljs-addition { color: #98971a; }
 
 .hljs-deletion { color: #cc241d; }
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+@media (max-width: 768px) {
+  .poly-columns {
+    flex-direction: column !important;
+  }
+  .poly-columns > * {
+    flex: 1 1 100% !important;
+    max-width: 100% !important;
+  }
+}
   </style>
 </head>
 <body>
   <div class="poly-document" data-page-mode="web">
 
 
-<section data-source-line="21" class="poly-hero" style="color: var(--poly-hero-text, white); background: var(--poly-hero-gradient, linear-gradient(135deg, #667eea 0%, #764ba2 100%)); "><div class="poly-vcenter" style="display: flex; align-items: center; justify-content: center; flex-direction: column; height: 60vh; min-height: 60vh;"><span class="poly-text" style="color: white; font-size: 3rem; font-weight: bold; letter-spacing: 0.1em; ">MCP Server</span>
+<section data-source-line="21" class="poly-hero" style="background-image: var(--poly-hero-gradient, linear-gradient(135deg, #667eea 0%, #764ba2 100%)); background-size: cover; background-position: center; color: var(--poly-hero-text, white); "><div class="poly-vcenter" style="display: flex; align-items: center; justify-content: center; flex-direction: column; height: 60vh; min-height: 60vh;"><span class="poly-text" style="color: white; font-size: 3rem; font-weight: bold; letter-spacing: 0.1em; ">MCP Server</span>
 <span class="poly-text" style="color: white; font-size: 1.5rem; font-style: italic; ">AI meets document authoring</span>
 <div class="poly-region" style="padding: 1rem; "><div class="poly-content"><p data-source-line="27">Polyester ships an MCP server so AI assistants can create, validate, and compile <code>.poly</code> documents.</p></div></div>
 <div class="poly-region" style="padding: 1rem; "><a class="poly-button poly-button-primary" href="index.html">Back to Home</a></div></div></section>
@@ -765,7 +794,7 @@ body {
 <div class="poly-frame" style="border: 1px solid #e5e5e5; border-radius: 8px; padding: 1.5rem; background: #fef3c7;"><span class="poly-text" style="color: #f59e0b; font-size: 2rem; font-weight: bold; ">3</span>
 <span class="poly-text" style="color: #64748b; font-size: 0.9rem; ">Resources</span></div></div></div>
 <div data-source-line="59" class="poly-region" style="padding: 3rem; "><div class="poly-content"><h2 data-source-line="61">Tools</h2></div>
-<table class="poly-table bordered"><thead><tr><th style=""><div class="poly-content"><p data-source-line="64">Tool</th><th style="">Parameters</th><th style="">Returns</th></tr></thead><tbody><tr><td style=""><code>list_components</code></td><td style=""><code>category</code> (optional)</td><td style="">Component names and descriptions</td></tr><tr><td style=""><code>get_component_help</code></td><td style=""><code>name</code> (required)</td><td style="">Full docs: args, flags, examples</td></tr><tr><td style=""><code>validate_document</code></td><td style=""><code>source</code> (required)</td><td style="">Parse errors and warnings with line numbers</td></tr><tr><td style=""><code>compile_document</code></td><td style=""><code>source</code> (required)</td><td style="">Standalone HTML string</div></td></tr></tbody></table>
+<table class="poly-table bordered"><thead><tr><th style="">Tool</th><th style="">Parameters</th><th style="">Returns</th></tr></thead><tbody><tr><td style=""><code>list_components</code></td><td style=""><code>category</code> (optional)</td><td style="">Component names and descriptions</td></tr><tr><td style=""><code>get_component_help</code></td><td style=""><code>name</code> (required)</td><td style="">Full docs: args, flags, examples</td></tr><tr><td style=""><code>validate_document</code></td><td style=""><code>source</code> (required)</td><td style="">Parse errors and warnings with line numbers</td></tr><tr><td style=""><code>compile_document</code></td><td style=""><code>source</code> (required)</td><td style="">Standalone HTML string</td></tr></tbody></table>
 <div class="poly-columns" style="grid-template-columns: repeat(2, 1fr); gap: 2rem;"><div class="poly-frame" style="border: 1px solid #e5e5e5; border-radius: 8px; padding: 1.5rem; background: #f8fafc;"><div class="poly-content"><h3 data-source-line="74">list_components</h3>
 <p data-source-line="76">Browse all 28 components, optionally filtered by category: <code>layout</code>, <code>content</code>, <code>style</code>, or <code>interactive</code>.</p></div></div>
 <div class="poly-frame" style="border: 1px solid #e5e5e5; border-radius: 8px; padding: 1.5rem; background: #f8fafc;"><div class="poly-content"><h3 data-source-line="80">get_component_help</h3>
@@ -812,17 +841,17 @@ body {
 <p data-source-line="130">Converts HTML, Markdown, or LaTeX source into Polyester syntax. The AI receives mapping guidelines for translating constructs from the source format.</p></div></div></div></div>
 <div data-source-line="137" class="poly-region" style="padding: 3rem; "><div class="poly-content"><h2 data-source-line="139">Resources</h2>
 <p data-source-line="141">The MCP server exposes read-only resources that AI clients can fetch for context.</p></div>
-<table class="poly-table bordered"><thead><tr><th style=""><div class="poly-content"><p data-source-line="144">URI</th><th style="">Type</th><th style="">Content</th></tr></thead><tbody><tr><td style=""><code>polyester://syntax-guide</code></td><td style="">text/markdown</td><td style="">Full language reference</td></tr><tr><td style=""><code>polyester://components</code></td><td style="">application/json</td><td style="">Complete component registry</td></tr><tr><td style=""><code>polyester://examples/{name}</code></td><td style="">text/plain</td><td style="">Example files from the examples directory</div></td></tr></tbody></table></div>
+<table class="poly-table bordered"><thead><tr><th style="">URI</th><th style="">Type</th><th style="">Content</th></tr></thead><tbody><tr><td style=""><code>polyester://syntax-guide</code></td><td style="">text/markdown</td><td style="">Full language reference</td></tr><tr><td style=""><code>polyester://components</code></td><td style="">application/json</td><td style="">Complete component registry</td></tr><tr><td style=""><code>polyester://examples/{name}</code></td><td style="">text/plain</td><td style="">Example files from the examples directory</td></tr></tbody></table></div>
 <div data-source-line="152" class="poly-region" style="background: #f0fdf4; padding: 3rem; "><div class="poly-content"><h2 data-source-line="154">Setup</h2>
 <p data-source-line="156">Add to your project's <code>.mcp.json</code> (or your editor's MCP config):</p></div>
-<div class="poly-code-block"><div class="poly-code-title">.mcp.json</div><pre><code class="language-json">{
-  &quot;mcpServers&quot;: {
-    &quot;polyester&quot;: {
-      &quot;command&quot;: &quot;node&quot;,
-      &quot;args&quot;: [&quot;dist/mcp/server.js&quot;]
-    }
-  }
-}</code></pre></div>
+<div class="poly-code-block"><div class="poly-code-title">.mcp.json</div><pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;mcpServers&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;polyester&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;command&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;node&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;args&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">&quot;dist/mcp/server.js&quot;</span><span class="hljs-punctuation">]</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span></code></pre></div>
 <div class="poly-content"><p data-source-line="169">The server uses stdio transport. Point the <code>args</code> path to your Polyester installation's <code>dist/mcp/server.js</code>.</p></div></div>
 <div data-source-line="173" class="poly-region" style="padding: 3rem; "><div class="poly-content"><h2 data-source-line="175">Compatible With</h2>
 <p data-source-line="177">The MCP server works with any client that supports the Model Context Protocol:</p></div>

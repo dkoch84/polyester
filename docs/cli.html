@@ -25,6 +25,8 @@
   --poly-color-surface: #f9fafb;
   --poly-color-text: #1a1a1a;
   --poly-color-text-muted: #666666;
+  --poly-color-heading: #1a1a1a;
+  --poly-color-heading-sub: #1a1a1a;
   --poly-color-border: #e5e5e5;
   --poly-color-link: #3b82f6;
   --poly-color-success: #16a34a;
@@ -38,14 +40,23 @@
   --poly-shadow-card: none;
   --poly-shadow-elevated: 0 4px 12px rgba(0,0,0,0.1);
   --poly-hero-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --poly-hero-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --poly-hero-text: #ffffff;
 }
 
 /* Polyester Base Styles */
-.poly-document {
+
+/* Inheritable typography sits on body, not on .poly-document. A property set
+   directly on .poly-document beats one inherited from body whatever the
+   specificity, so :where() alone would not let a plain body rule win: the
+   declaration has to live on the same element the author is targeting. */
+:where(body) {
   font-family: var(--poly-font-body, system-ui, -apple-system, sans-serif);
   line-height: 1.6;
   color: var(--poly-color-text, #1a1a1a);
+}
+
+:where(.poly-document) {
   background: var(--poly-color-bg, #ffffff);
   max-width: 800px;
   margin: 0 auto;
@@ -54,43 +65,50 @@
 
 /* Print styles for PDF generation */
 @media print {
-  .poly-document {
+  :where(.poly-document) {
     max-width: none;
     padding: 0;
     orphans: 3;
     widows: 3;
   }
-  .poly-content h1, .poly-content h2, .poly-content h3,
+  :where(.poly-content) h1, :where(.poly-content) h2, :where(.poly-content) h3,
   h1, h2, h3 {
     break-after: avoid;
     page-break-after: avoid;
     break-inside: avoid;
     page-break-inside: avoid;
   }
-  .poly-content table, table, .poly-region, .poly-card, .poly-quote, .poly-code-block {
+  :where(.poly-content) table, table, .poly-region, .poly-card, .poly-quote, .poly-code-block {
     break-inside: avoid;
     page-break-inside: avoid;
   }
-  .poly-content li { break-inside: avoid; page-break-inside: avoid; }
+  :where(.poly-content) li { break-inside: avoid; page-break-inside: avoid; }
 }
 
-.poly-content {
+:where(.poly-content) {
   margin-bottom: var(--poly-spacing-base, 1rem);
 }
 
-.poly-content p {
+:where(.poly-content) p {
   margin: 0 0 1em 0;
 }
 
-.poly-content h1, .poly-content h2, .poly-content h3 {
+:where(.poly-content) h1, :where(.poly-content) h2, :where(.poly-content) h3 {
   font-family: var(--poly-font-heading, system-ui, -apple-system, sans-serif);
   margin: 1.5em 0 0.5em 0;
   line-height: 1.3;
 }
 
-.poly-content h1 { font-size: 2rem; }
-.poly-content h2 { font-size: 1.5rem; }
-.poly-content h3 { font-size: 1.25rem; }
+:where(.poly-content) h1, :where(.poly-content) h2 {
+  color: var(--poly-color-heading, var(--poly-color-text, #1a1a1a));
+}
+:where(.poly-content) h3 {
+  color: var(--poly-color-heading-sub, var(--poly-color-heading, var(--poly-color-text, #1a1a1a)));
+}
+
+:where(.poly-content) h1 { font-size: 2rem; }
+:where(.poly-content) h2 { font-size: 1.5rem; }
+:where(.poly-content) h3 { font-size: 1.25rem; }
 
 /* Component styles */
 .poly-columns {
@@ -142,21 +160,32 @@
   box-shadow: var(--poly-shadow-card, none);
 }
 
+.poly-card-accent {
+  border-color: color-mix(in srgb, var(--poly-color-primary, #3b82f6) 45%, transparent);
+  background: color-mix(in srgb, var(--poly-color-primary, #3b82f6) 7%, var(--poly-color-bg, #fff));
+  box-shadow: none;
+}
+
+/* Card titles sit flush with the top of the card. */
+.poly-card :where(.poly-content):first-child > :first-child {
+  margin-top: 0;
+}
+
 .poly-text {
   display: inline;
 }
 
 /* Markdown content styles */
-.poly-content ul, .poly-content ol {
+:where(.poly-content) ul, :where(.poly-content) ol {
   margin: 0 0 1em 0;
   padding-left: 1.5em;
 }
 
-.poly-content li {
+:where(.poly-content) li {
   margin-bottom: 0.25em;
 }
 
-.poly-content code {
+:where(.poly-content) code {
   background: var(--poly-color-surface, #f3f4f6);
   padding: 0.125em 0.25em;
   border-radius: var(--poly-radius, 0.25em);
@@ -164,7 +193,7 @@
   font-size: 0.9em;
 }
 
-.poly-content pre {
+:where(.poly-content) pre {
   background: #0d1117;
   color: #c9d1d9;
   padding: var(--poly-spacing-block-padding, 1rem);
@@ -173,7 +202,7 @@
   margin: 1em 0;
 }
 
-.poly-content pre code {
+:where(.poly-content) pre code {
   background: none;
   padding: 0;
   color: inherit;
@@ -223,41 +252,41 @@
 .hljs-deletion { color: #ffa198; background: #490202; }
 .hljs-addition { color: #aff5b4; background: #033a16; }
 
-.poly-content table {
+:where(.poly-content) table {
   border-collapse: collapse;
   width: 100%;
   margin: 1em 0;
 }
 
-.poly-content th, .poly-content td {
+:where(.poly-content) th, :where(.poly-content) td {
   border: var(--poly-border-width, 1px) solid var(--poly-color-border, #e5e7eb);
   padding: 0.5rem 0.75rem;
   text-align: left;
 }
 
-.poly-content th {
+:where(.poly-content) th {
   background: var(--poly-color-surface, #f9fafb);
   font-weight: 600;
 }
 
-.poly-content blockquote {
+:where(.poly-content) blockquote {
   border-left: 4px solid var(--poly-color-primary, #e5e5e5);
   padding-left: 1rem;
   margin: 1em 0;
   color: var(--poly-color-text-muted, #666);
 }
 
-.poly-content a {
+:where(.poly-content) a {
   color: var(--poly-color-link, #3b82f6);
   text-decoration: underline;
 }
 
-.poly-content img {
+:where(.poly-content) img {
   max-width: 100%;
   height: auto;
 }
 
-.poly-content hr {
+:where(.poly-content) hr {
   border: none;
   border-top: var(--poly-border-width, 1px) solid var(--poly-color-border, #e5e7eb);
   margin: var(--poly-spacing-section-gap, 2em) 0;
@@ -305,21 +334,6 @@
       padding: 0;
     }
   
-body {
-  margin: 0;
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-}
-
-@media (max-width: 768px) {
-  .poly-columns {
-    flex-direction: column !important;
-  }
-  .poly-columns > * {
-    flex: 1 1 100% !important;
-    max-width: 100% !important;
-  }
-}
 
     .poly-button {
       display: inline-block;
@@ -1518,13 +1532,28 @@ body {
 .hljs-addition { color: #98971a; }
 
 .hljs-deletion { color: #cc241d; }
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+@media (max-width: 768px) {
+  .poly-columns {
+    flex-direction: column !important;
+  }
+  .poly-columns > * {
+    flex: 1 1 100% !important;
+    max-width: 100% !important;
+  }
+}
   </style>
 </head>
 <body>
   <div class="poly-document" data-page-mode="web">
 
 
-<section data-source-line="21" class="poly-hero" style="color: var(--poly-hero-text, white); background: var(--poly-hero-gradient, linear-gradient(135deg, #667eea 0%, #764ba2 100%)); "><div class="poly-vcenter" style="display: flex; align-items: center; justify-content: center; flex-direction: column; height: 60vh; min-height: 60vh;"><span class="poly-text" style="color: white; font-size: 3rem; font-weight: bold; letter-spacing: 0.1em; ">CLI Reference</span>
+<section data-source-line="21" class="poly-hero" style="background-image: var(--poly-hero-gradient, linear-gradient(135deg, #667eea 0%, #764ba2 100%)); background-size: cover; background-position: center; color: var(--poly-hero-text, white); "><div class="poly-vcenter" style="display: flex; align-items: center; justify-content: center; flex-direction: column; height: 60vh; min-height: 60vh;"><span class="poly-text" style="color: white; font-size: 3rem; font-weight: bold; letter-spacing: 0.1em; ">CLI Reference</span>
 <span class="poly-text" style="color: white; font-size: 1.5rem; font-style: italic; ">Build, watch, and manage Polyester documents</span>
 <div class="poly-region" style="padding: 1rem; "><div class="poly-content"><p data-source-line="27">The <code>poly</code> command compiles <code>.poly</code> files to HTML, PDF, and SVG. Supports multi-file builds, theming, and file watching.</p></div></div>
 <div class="poly-region" style="padding: 1rem; "><a class="poly-button poly-button-primary" href="index.html">Back to Home</a></div></div></section>
@@ -1533,7 +1562,7 @@ body {
 <div class="poly-content"><p data-source-line="44">This gives you the <code>poly</code> command. You can also run it directly from a local install:</p></div>
 <div class="poly-code-block"><pre><code class="language-bash">node dist/cli/index.js build document.poly</code></pre></div></div>
 <div data-source-line="52" class="poly-region" style="background: #f8fafc; padding: 3rem; "><div class="poly-content"><h2 data-source-line="54">Commands</h2></div>
-<table class="poly-table bordered"><thead><tr><th style=""><div class="poly-content"><p data-source-line="57">Command</th><th style="">Description</th></tr></thead><tbody><tr><td style=""><code>poly build</code></td><td style="">Compile <code>.poly</code> files to HTML, PDF, or SVG</td></tr><tr><td style=""><code>poly watch</code></td><td style="">Watch a file and recompile on changes</td></tr><tr><td style=""><code>poly help</code></td><td style="">List all components or show help for one</td></tr><tr><td style=""><code>poly theme import</code></td><td style="">Import a colorscheme as a syntax theme</td></tr><tr><td style=""><code>poly theme list</code></td><td style="">List available themes</td></tr><tr><td style=""><code>poly style list</code></td><td style="">List available style modules</td></tr><tr><td style=""><code>poly spacing list</code></td><td style="">List available spacing presets</div></td></tr></tbody></table></div>
+<table class="poly-table bordered"><thead><tr><th style="">Command</th><th style="">Description</th></tr></thead><tbody><tr><td style=""><code>poly build</code></td><td style="">Compile <code>.poly</code> files to HTML, PDF, or SVG</td></tr><tr><td style=""><code>poly watch</code></td><td style="">Watch a file and recompile on changes</td></tr><tr><td style=""><code>poly help</code></td><td style="">List all components or show help for one</td></tr><tr><td style=""><code>poly theme import</code></td><td style="">Import a colorscheme as a syntax theme</td></tr><tr><td style=""><code>poly theme list</code></td><td style="">List available themes</td></tr><tr><td style=""><code>poly style list</code></td><td style="">List available style modules</td></tr><tr><td style=""><code>poly spacing list</code></td><td style="">List available spacing presets</td></tr></tbody></table></div>
 <div data-source-line="69" class="poly-region" style="padding: 3rem; "><div class="poly-content"><h2 data-source-line="71">poly build</h2></div>
 <div class="poly-code-block"><pre><code class="language-bash">poly build &lt;input.poly...&gt; [-o output] [--format html|pdf|svg] [--theme name]</code></pre></div>
 <div class="poly-content"><p data-source-line="77">Compiles one or more <code>.poly</code> files. With a single file, you can specify an output path with <code>-o</code>. With multiple files, each produces an output file with the same name and a new extension.</p></div>
@@ -1548,7 +1577,7 @@ poly build a.poly b.poly c.poly
 poly build docs/badges/*.poly --padding 0</code></pre></div>
 <div class="poly-content"><p data-source-line="102">Shell glob expansion handles wildcards. The <code>-o</code> flag is not allowed with multiple inputs.</p></div></div></div></div>
 <div data-source-line="109" class="poly-region" style="background: #f8fafc; padding: 3rem; "><div class="poly-content"><h2 data-source-line="111">Build Options</h2></div>
-<table class="poly-table bordered"><thead><tr><th style=""><div class="poly-content"><p data-source-line="114">Flag</th><th style="">Description</th></tr></thead><tbody><tr><td style=""><code>-o, --output &#x3C;file></code></td><td style="">Output file path (single input only)</td></tr><tr><td style=""><code>-f, --format &#x3C;fmt></code></td><td style="">Output format: <code>html</code> (default), <code>pdf</code>, <code>svg</code></td></tr><tr><td style=""><code>-t, --theme &#x3C;name></code></td><td style="">Composed theme (style + spacing + syntax)</td></tr><tr><td style=""><code>--style &#x3C;name></code></td><td style="">Style module (colors, fonts, borders, shadows)</td></tr><tr><td style=""><code>--spacing &#x3C;name></code></td><td style="">Spacing module: <code>compact</code>, <code>default</code>, <code>spacious</code></td></tr><tr><td style=""><code>--width &#x3C;px></code></td><td style="">SVG viewport width (default 800)</td></tr><tr><td style=""><code>--padding &#x3C;px></code></td><td style="">SVG padding</td></tr><tr><td style=""><code>--background &#x3C;color></code></td><td style="">SVG background color (use <code>none</code> for transparent)</div></td></tr></tbody></table>
+<table class="poly-table bordered"><thead><tr><th style="">Flag</th><th style="">Description</th></tr></thead><tbody><tr><td style=""><code>-o, --output &#x3C;file></code></td><td style="">Output file path (single input only)</td></tr><tr><td style=""><code>-f, --format &#x3C;fmt></code></td><td style="">Output format: <code>html</code> (default), <code>pdf</code>, <code>svg</code></td></tr><tr><td style=""><code>-t, --theme &#x3C;name></code></td><td style="">Composed theme (style + spacing + syntax)</td></tr><tr><td style=""><code>--style &#x3C;name></code></td><td style="">Style module (colors, fonts, borders, shadows)</td></tr><tr><td style=""><code>--spacing &#x3C;name></code></td><td style="">Spacing module: <code>compact</code>, <code>default</code>, <code>spacious</code></td></tr><tr><td style=""><code>--width &#x3C;px></code></td><td style="">SVG viewport width (default 800)</td></tr><tr><td style=""><code>--padding &#x3C;px></code></td><td style="">SVG padding</td></tr><tr><td style=""><code>--background &#x3C;color></code></td><td style="">SVG background color (use <code>none</code> for transparent)</td></tr></tbody></table>
 <div class="poly-content"><p data-source-line="125">Flags apply to all files in a multi-file build. This is useful for batch operations like building badges with shared settings.</p></div></div>
 <div data-source-line="129" class="poly-region" style="padding: 3rem; "><div class="poly-content"><h2 data-source-line="131">Output Formats</h2></div>
 <div class="poly-columns" style="grid-template-columns: repeat(3, 1fr); gap: 1.5rem;"><div class="poly-card"><div class="poly-card-icon"><svg style="vertical-align: middle; display: inline-block;"
@@ -1608,13 +1637,13 @@ poly build docs/badges/*.poly --padding 0</code></pre></div>
 <div class="poly-code-block"><pre><code class="language-bash">poly build doc.poly --format svg</code></pre></div></div></div></div>
 <div data-source-line="169" class="poly-region" style="background: #f8fafc; padding: 3rem; "><div class="poly-content"><h2 data-source-line="171">Theming</h2>
 <p data-source-line="173">Three composable modules control the look of your documents.</p></div>
-<div class="poly-code-block"><pre><code class="language-bash"># Use a composed theme
+<div class="poly-code-block"><pre><code class="language-bash"><span class="hljs-comment"># Use a composed theme</span>
 poly build doc.poly --theme gruvbox
 
-# Mix individual modules
+<span class="hljs-comment"># Mix individual modules</span>
 poly build doc.poly --style corporate --spacing compact
 
-# Import a terminal colorscheme
+<span class="hljs-comment"># Import a terminal colorscheme</span>
 poly theme import ~/.Xresources --name my-theme
 poly build doc.poly --theme my-theme</code></pre></div>
 <div class="poly-columns" style="grid-template-columns: repeat(3, 1fr); gap: 1.5rem;"><div class="poly-frame" style="border: 1px solid #e5e5e5; border-radius: 8px; padding: 1.5rem; background: white;"><span class="poly-text" style="font-size: 0.9rem; font-weight: bold; ">Style</span>
@@ -1632,14 +1661,14 @@ poly build doc.poly --theme my-theme</code></pre></div>
 <div class="poly-code-block"><pre><code class="language-bash">poly watch document.poly
 poly watch slides.poly --format pdf</code></pre></div></div>
 <div data-source-line="234" class="poly-region" style="background: #f8fafc; padding: 3rem; "><div class="poly-content"><h2 data-source-line="236">poly help</h2></div>
-<div class="poly-code-block"><pre><code class="language-bash">poly help              # List all 28 components
-poly help columns      # Show detailed help for /columns
-poly help --json       # Output as JSON (for tooling)</code></pre></div>
+<div class="poly-code-block"><pre><code class="language-bash">poly <span class="hljs-built_in">help</span>              <span class="hljs-comment"># List all 28 components</span>
+poly <span class="hljs-built_in">help</span> columns      <span class="hljs-comment"># Show detailed help for /columns</span>
+poly <span class="hljs-built_in">help</span> --json       <span class="hljs-comment"># Output as JSON (for tooling)</span></code></pre></div>
 <div class="poly-content"><p data-source-line="244">Displays component documentation including arguments, flags, descriptions, and examples. The <code>--json</code> flag outputs structured data for editor extensions and the MCP server.</p></div></div>
 <div data-source-line="248" class="poly-region" style="padding: 3rem; "><div class="poly-content"><h2 data-source-line="250">Theme Import</h2>
 <p data-source-line="252">Import colorschemes from terminal emulators and other tools.</p></div>
 <div class="poly-code-block"><pre><code class="language-bash">poly theme import &lt;file&gt; --name &lt;name&gt; [--format &lt;format&gt;]</code></pre></div>
-<table class="poly-table bordered"><thead><tr><th style=""><div class="poly-content"><p data-source-line="259">Format</th><th style="">Source</th></tr></thead><tbody><tr><td style=""><code>xresources</code></td><td style=""><code>~/.Xresources</code> files</td></tr><tr><td style=""><code>pywal</code></td><td style="">pywal color files</td></tr><tr><td style=""><code>base16</code></td><td style="">Base16 YAML schemes</td></tr><tr><td style=""><code>kitty</code></td><td style="">Kitty terminal config</td></tr><tr><td style=""><code>alacritty</code></td><td style="">Alacritty TOML/YAML config</div></td></tr></tbody></table>
+<table class="poly-table bordered"><thead><tr><th style="">Format</th><th style="">Source</th></tr></thead><tbody><tr><td style=""><code>xresources</code></td><td style=""><code>~/.Xresources</code> files</td></tr><tr><td style=""><code>pywal</code></td><td style="">pywal color files</td></tr><tr><td style=""><code>base16</code></td><td style="">Base16 YAML schemes</td></tr><tr><td style=""><code>kitty</code></td><td style="">Kitty terminal config</td></tr><tr><td style=""><code>alacritty</code></td><td style="">Alacritty TOML/YAML config</td></tr></tbody></table>
 <div class="poly-content"><p data-source-line="267">The format is auto-detected from the file when possible. Use <code>--format</code> to override.</p></div></div>
 <div data-source-line="271" class="poly-region" style="background: #282828; padding: 3rem; "><div style="text-align: center; display: flex; align-items: center; justify-content: center; flex-direction: column;"><span class="poly-text" style="color: white; font-size: 1.5rem; font-weight: bold; letter-spacing: 0.1em; ">Polyester CLI</span>
 <div class="poly-region" style="padding: 1rem; "><span class="poly-inline"><a class="poly-button poly-button-secondary" href="index.html">Home</a>
