@@ -96,3 +96,13 @@ describe("/page --width", () => {
     expect(pageSettings.width).toBeUndefined();
   });
 });
+
+describe("paginated page background", () => {
+  it("paints the sheet with the document background, not hardcoded white", () => {
+    // A dark style set --poly-color-text on the content but never reached the
+    // page sheet, so a paginated dark document rendered light text on white.
+    const { html } = compileToHtml(parse("/page A4\n\n# Hi\n"), { standalone: true });
+    expect(html).toContain("background:var(--poly-color-bg, white)");
+    expect(html).not.toContain("'background:white'");
+  });
+});

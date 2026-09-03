@@ -1331,7 +1331,11 @@ every paginated document.</p>
         'height:' + pageHeightPx + 'px',
         'padding:' + marginPx + 'px',
         'box-sizing:border-box',
-        'background:white',
+        // The sheet follows the document's background. Hardcoding white left a
+        // dark style painting light text onto a white page, i.e. unreadable:
+        // --poly-color-text was inherited by the content but --poly-color-bg
+        // reached nothing.
+        'background:var(--poly-color-bg, white)',
         'box-shadow:0 2px 8px rgba(0,0,0,0.12)',
         'position:relative',
         'margin-bottom:24px',

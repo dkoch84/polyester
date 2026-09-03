@@ -1,6 +1,6 @@
 # Maintainer: Daniel <daniel@localhost>
 pkgname=polyester
-pkgver=0.1.1
+pkgver=0.1.2
 pkgrel=1
 pkgdesc="Document authoring language combining Markdown simplicity with programming power"
 arch=('any')
