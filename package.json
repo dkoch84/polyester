@@ -1,6 +1,6 @@
 {
   "name": "@dkoch84/polyester",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A document authoring language combining Markdown simplicity with programming power",
   "type": "module",
   "main": "dist/index.js",
