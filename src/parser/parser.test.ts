@@ -208,3 +208,32 @@ More text.`);
     expect(block.children[2].type).toBe("content"); // More content
   });
 });
+
+describe("front matter", () => {
+  it("takes a leading --- block off the document and hands back the raw text", () => {
+    const doc = parse("---\ntitle: A post\ndate: 2026-09-03\n---\n\n# Heading\n");
+    expect(doc.frontMatter).toBe("title: A post\ndate: 2026-09-03");
+  });
+
+  it("keeps source line numbers intact below the block", () => {
+    // Everything downstream — diagnostics, LSP ranges, data-source-line — is
+    // measured in original file lines, so the block cannot shift them.
+    const doc = parse("---\ntitle: A post\n---\n\n/text \"hi\"\n");
+    const command = doc.children.find((c) => c.type === "command");
+    expect(command?.loc?.start.line).toBe(5);
+  });
+
+  it("leaves a document without front matter alone", () => {
+    expect(parse("# Hi\n").frontMatter).toBeUndefined();
+  });
+
+  it("treats an unterminated block as prose rather than failing", () => {
+    const doc = parse("---\ntitle: A post\n\n# Heading\n");
+    expect(doc.frontMatter).toBeUndefined();
+    expect(doc.children.length).toBeGreaterThan(0);
+  });
+
+  it("ignores a --- horizontal rule that is not at the start", () => {
+    expect(parse("# Hi\n\n---\n\nmore\n").frontMatter).toBeUndefined();
+  });
+});

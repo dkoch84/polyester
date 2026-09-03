@@ -27,6 +27,11 @@ export interface BaseNode {
 export interface Document extends BaseNode {
   type: "document";
   children: (Command | Content)[];
+  /**
+   * Raw text between a leading `---` pair, absent when the document has none.
+   * Polyester neither parses nor validates it; the consumer owns the schema.
+   */
+  frontMatter?: string;
 }
 
 // A command: /name args { block }

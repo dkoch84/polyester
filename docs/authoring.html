@@ -69,6 +69,17 @@
   padding: 2rem;
 }
 
+/* Web output is a page, not a sheet, so the viewport is part of it: without
+   this a dark style renders as a dark card floating on the browser's white.
+   Paginated output keeps the sheet metaphor, where the surrounding area is
+   deliberately not part of the artifact. Embedded consumers own their own
+   <body> and opt in by marking their wrapper the same way. */
+@media screen {
+  :where(body:has(.poly-document[data-page-mode="web"])) {
+    background: var(--poly-color-bg, #ffffff);
+  }
+}
+
 /* Print styles for PDF generation */
 @media print {
   :where(.poly-document) {

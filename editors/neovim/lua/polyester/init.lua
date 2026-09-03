@@ -13,7 +13,14 @@ M.config = {
   pdf_viewer = nil,
   -- Auto-build on save
   auto_build = false,
+  -- Where builds are written. Nil puts the artifact beside its source, which
+  -- with auto_build drops an .html into every content directory on save.
+  output_dir = nil,
 }
+
+local FORMATS = { "html", "pdf", "svg" }
+
+local EXTENSIONS = { html = ".html", pdf = ".pdf", svg = ".svg" }
 
 -- Setup function
 function M.setup(opts)
@@ -62,14 +69,16 @@ end
 -- Setup user commands
 function M.setup_commands()
   vim.api.nvim_create_user_command("PolyBuild", function(opts)
-    local format = opts.args ~= "" and opts.args or M.config.default_format
-    M.build(format)
+    local format = opts.fargs[1] or M.config.default_format
+    M.build(format, opts.fargs[2])
   end, {
-    nargs = "?",
-    complete = function()
-      return { "html", "pdf" }
+    nargs = "*",
+    complete = function(_, line)
+      -- Only the first argument is a format; the second is an output path.
+      if line:match("^%s*%S+%s+%S*$") then return FORMATS end
+      return vim.fn.getcompletion(line:match("%S*$") or "", "file")
     end,
-    desc = "Build current .poly file to HTML or PDF",
+    desc = "Build current .poly file: PolyBuild [format] [output]",
   })
 
   vim.api.nvim_create_user_command("PolyPreview", function()
@@ -79,8 +88,25 @@ function M.setup_commands()
   })
 end
 
--- Build current file
-function M.build(format)
+-- Where a build lands: an explicit path wins, then output_dir, then beside the source.
+local function resolve_output(file, format, explicit)
+  if explicit and explicit ~= "" then
+    return vim.fn.fnamemodify(explicit, ":p")
+  end
+
+  local ext = EXTENSIONS[format] or ".html"
+  if not M.config.output_dir then
+    return (file:gsub("%.poly$", ext))
+  end
+
+  local dir = vim.fn.fnamemodify(M.config.output_dir, ":p"):gsub("/$", "")
+  vim.fn.mkdir(dir, "p")
+  return dir .. "/" .. vim.fn.fnamemodify(file, ":t:r") .. ext
+end
+
+-- Build current file. on_done receives the output path, and only when the build
+-- actually succeeded.
+function M.build(format, output, on_done)
   local file = vim.fn.expand("%:p")
   if not file:match("%.poly$") then
     vim.notify("Not a .poly file", vim.log.levels.ERROR)
@@ -88,22 +114,20 @@ function M.build(format)
   end
 
   format = format or M.config.default_format
-  local ext = format == "pdf" and ".pdf" or ".html"
-  local output = file:gsub("%.poly$", ext)
-
-  local cmd = string.format('poly build "%s" --format %s -o "%s"', file, format, output)
+  output = resolve_output(file, format, output)
 
   vim.notify("Building: " .. file, vim.log.levels.INFO)
 
-  vim.fn.jobstart(cmd, {
+  -- List form: no shell, so a space or a quote in a path cannot break the command.
+  vim.fn.jobstart({ "poly", "build", file, "--format", format, "-o", output }, {
     on_exit = function(_, code)
-      if code == 0 then
-        vim.notify("Built: " .. output, vim.log.levels.INFO)
-        -- Store output path for preview
-        vim.b.polyester_output = output
-      else
+      if code ~= 0 then
         vim.notify("Build failed", vim.log.levels.ERROR)
+        return
       end
+      vim.notify("Built: " .. output, vim.log.levels.INFO)
+      vim.b.polyester_output = output
+      if on_done then on_done(output) end
     end,
     on_stderr = function(_, data)
       if data and #data > 0 and data[1] ~= "" then
@@ -113,30 +137,27 @@ function M.build(format)
   })
 end
 
--- Preview the built output
+-- Open an already-built artifact.
+function M.open(output)
+  if not output then
+    vim.notify("No output file to preview", vim.log.levels.WARN)
+    return
+  end
+
+  if output:match("%.pdf$") and M.config.pdf_viewer then
+    vim.fn.jobstart({ M.config.pdf_viewer, output }, { detach = true })
+  elseif output:match("%.pdf$") or output:match("%.html$") or output:match("%.svg$") then
+    local open_cmd = vim.fn.has("mac") == 1 and "open" or "xdg-open"
+    vim.fn.jobstart({ open_cmd, output }, { detach = true })
+  else
+    vim.notify("Unknown output format: " .. output, vim.log.levels.WARN)
+  end
+end
+
+-- Build, then open once the build reports success. Opening on a timer instead
+-- raced the build: a slow one opened a stale file, or nothing at all.
 function M.preview()
-  -- First build
-  M.build(M.config.default_format)
-
-  -- Wait a bit then open
-  vim.defer_fn(function()
-    local output = vim.b.polyester_output
-    if not output then
-      vim.notify("No output file to preview", vim.log.levels.WARN)
-      return
-    end
-
-    if output:match("%.pdf$") and M.config.pdf_viewer then
-      -- Open PDF with configured viewer
-      vim.fn.jobstart({ M.config.pdf_viewer, output }, { detach = true })
-    elseif output:match("%.html$") then
-      -- Open HTML in browser
-      local open_cmd = vim.fn.has("mac") == 1 and "open" or "xdg-open"
-      vim.fn.jobstart({ open_cmd, output }, { detach = true })
-    else
-      vim.notify("Unknown output format: " .. output, vim.log.levels.WARN)
-    end
-  end, 1000)
+  M.build(M.config.default_format, nil, M.open)
 end
 
 -- Setup auto-build on save

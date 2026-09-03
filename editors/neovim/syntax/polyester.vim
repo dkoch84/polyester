@@ -6,6 +6,14 @@ if exists("b:current_syntax")
   finish
 endif
 
+" Front matter: a --- block at the very start of the file, opaque to Polyester
+" and owned by whatever consumes the document. \%^ anchors to the first line,
+" so a --- horizontal rule later in the document is untouched.
+syn region polyFrontMatter start=/\%^---\s*$/ end=/^---\s*$/ keepend
+      \ contains=polyFrontMatterKey,polyFrontMatterDelim
+syn match polyFrontMatterDelim "^---\s*$" contained
+syn match polyFrontMatterKey "^\s*[A-Za-z_][A-Za-z0-9_-]*\ze:" contained
+
 " Commands: /command
 syn match polyCommand "^\s*/\w\+" contains=polyCommandSlash,polyCommandName
 syn match polyCommandSlash "/" contained
@@ -55,6 +63,9 @@ hi def link polyFlag Identifier
 hi def link polyFlagShort Identifier
 hi def link polyString String
 hi def link polyStringSingle String
+hi def link polyFrontMatterDelim Delimiter
+hi def link polyFrontMatterKey Identifier
+hi def link polyFrontMatter Comment
 hi def link polyEscape SpecialChar
 hi def link polyNumber Number
 hi def link polyColor Constant

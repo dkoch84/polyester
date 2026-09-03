@@ -272,8 +272,33 @@ export class Parser {
   }
 }
 
+/**
+ * A leading `---` block is metadata belonging to whatever is driving the
+ * compile (a site generator's title/date/tags), not prose. Polyester does not
+ * read it: it hands the raw text back and the consumer owns the schema.
+ *
+ * Only at the very start of the file. A `---` run anywhere else is a markdown
+ * horizontal rule, and an unterminated block is prose, so the failure mode is
+ * "rendered as written" rather than a parse error.
+ */
+const FRONT_MATTER = /^---[ \t]*\r?\n([\s\S]*?)\r?\n---[ \t]*(?:\r?\n|$)/;
+
+export function splitFrontMatter(source: string): { frontMatter?: string; body: string } {
+  const match = FRONT_MATTER.exec(source);
+  if (!match) return { body: source };
+
+  // Blank out the block rather than removing it. Every line number downstream —
+  // diagnostics, LSP ranges, data-source-line — is measured in original file
+  // lines, and deleting the lines would shift all of them.
+  const newlines = match[0].split("\n").length - 1;
+  return { frontMatter: match[1], body: "\n".repeat(newlines) + source.slice(match[0].length) };
+}
+
 export function parse(source: string): Document {
-  const tokens = tokenize(source);
+  const { frontMatter, body } = splitFrontMatter(source);
+  const tokens = tokenize(body);
   const parser = new Parser(tokens);
-  return parser.parse();
+  const doc = parser.parse();
+  if (frontMatter !== undefined) doc.frontMatter = frontMatter;
+  return doc;
 }

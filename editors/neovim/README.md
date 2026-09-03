@@ -53,12 +53,13 @@ require("polyester").setup()
 - `poly` CLI installed and in PATH
 - `poly-lsp` for LSP features
 - `nvim-lspconfig` for LSP integration
-- Typst for PDF output
+- Chrome or Chromium for PDF output (rendered via Puppeteer)
 
 ## Commands
 
-- `:PolyBuild [html|pdf]` - Build current file
-- `:PolyPreview` - Build and open in viewer
+- `:PolyBuild [format] [output]` - Build current file. Format is `html`, `pdf` or
+  `svg` (default: `default_format`); output is a path, overriding `output_dir`.
+- `:PolyPreview` - Build and open in viewer once the build succeeds
 
 ## Configuration
 
@@ -68,5 +69,6 @@ require("polyester").setup({
   default_format = "pdf",     -- Default build format
   pdf_viewer = "zathura",     -- PDF viewer command
   auto_build = false,         -- Build on save
+  output_dir = nil,           -- Where builds land; nil writes beside the source
 })
 ```
