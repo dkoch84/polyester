@@ -16,6 +16,7 @@ import {
 } from "../../parser/ast.js";
 import { components, SvgComponentContext, SvgComponentResult } from "./components.js";
 import { describeUnknownFlag, positionalArgNames } from "../../components/registry.js";
+import { assertKnownOptions } from "../../options.js";
 import type { Diagnostic } from "../../diagnostics.js";
 
 export interface SvgCompileOptions {
@@ -484,10 +485,21 @@ export interface TextRenderOptions {
   anchor?: "start" | "middle" | "end";
 }
 
+const SVG_COMPILE_OPTIONS = [
+  "width",
+  "height",
+  "fontSize",
+  "fontFamily",
+  "background",
+  "enableLinks",
+  "padding",
+] as const;
+
 export function compileToSvg(
   doc: Document,
   options?: SvgCompileOptions
 ): SvgCompileResult {
+  if (options) assertKnownOptions(options, SVG_COMPILE_OPTIONS, "compileToSvg");
   const compiler = new SvgCompiler(options);
   return compiler.compile(doc);
 }

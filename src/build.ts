@@ -7,6 +7,7 @@
 
 import { basename } from "node:path";
 import { parse } from "./parser/parser.js";
+import { assertKnownOptions } from "./options.js";
 import { compileToHtml } from "./backends/html/compiler.js";
 import { prefetchFonts, prefetchThemeFonts } from "./backends/html/fonts.js";
 import {
@@ -41,7 +42,10 @@ export interface CompileDocOptions {
  * unresolvable fonts). Nothing is returned in that case: a document that
  * silently degrades to fallback fonts is not a successful build.
  */
+const COMPILE_DOC_OPTIONS = ["sourceDir", "title", "theme", "style", "spacing"] as const;
+
 export async function compilePolyDocument(source: string, opts: CompileDocOptions = {}): Promise<string> {
+  assertKnownOptions(opts, COMPILE_DOC_OPTIONS, "compilePolyDocument");
   const config = loadConfig();
   const ast = parse(source);
 

@@ -22,6 +22,7 @@ import {
 } from "../../parser/ast.js";
 import { components, ComponentContext, ComponentResult } from "./components.js";
 import { describeUnknownFlag, positionalArgNames } from "../../components/registry.js";
+import { assertKnownOptions } from "../../options.js";
 import type { FontCache } from "./fonts.js";
 import type { Diagnostic, DiagnosticSeverity } from "../../diagnostics.js";
 
@@ -1276,7 +1277,20 @@ ${body}
   }
 }
 
+const COMPILE_OPTIONS = [
+  "sourceDir",
+  "standalone",
+  "customCss",
+  "title",
+  "styleCss",
+  "spacingCss",
+  "syntaxCss",
+  "fontCache",
+  "themeCss",
+] as const;
+
 export function compileToHtml(doc: Document, options?: CompileOptions): CompileResult {
+  if (options) assertKnownOptions(options, COMPILE_OPTIONS, "compileToHtml");
   const compiler = new HtmlCompiler(options);
   return compiler.compile(doc);
 }
