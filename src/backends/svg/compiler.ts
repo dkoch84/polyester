@@ -15,6 +15,7 @@ import {
   isContent,
 } from "../../parser/ast.js";
 import { components, SvgComponentContext, SvgComponentResult } from "./components.js";
+import { describeUnknownFlag, positionalArgNames } from "../../components/registry.js";
 import type { Diagnostic } from "../../diagnostics.js";
 
 export interface SvgCompileOptions {
@@ -218,7 +219,21 @@ export class SvgCompiler {
       return;
     }
 
-    const args = this.parseArgs(cmd.args);
+    for (const arg of cmd.args) {
+      if (arg.type !== "flag") continue;
+      const problem = describeUnknownFlag(cmd.name, arg.name);
+      if (problem) {
+        this.diagnostics.push({
+          severity: "error",
+          message: problem,
+          ...((arg.loc?.start.line ?? cmd.loc?.start.line) !== undefined && {
+            line: arg.loc?.start.line ?? cmd.loc?.start.line,
+          }),
+        });
+      }
+    }
+
+    const args = this.parseArgs(cmd.args, cmd.name);
 
     // Apply pipes as additional args
     if (cmd.pipes) {
@@ -274,7 +289,7 @@ export class SvgCompiler {
     component(ctx);
   }
 
-  private parseArgs(args: Argument[]): Record<string, string | boolean> {
+  private parseArgs(args: Argument[], component: string): Record<string, string | boolean> {
     const result: Record<string, string | boolean> = {};
     let positionalIndex = 0;
 
@@ -286,6 +301,15 @@ export class SvgCompiler {
         result[arg.name] = arg.value ?? true;
       }
     }
+
+    // A named flag fills the slot its positional would have taken, so
+    // `/code --language bash` reaches the component as `/code bash`.
+    positionalArgNames(component).forEach((name, index) => {
+      const slot = `_${index}`;
+      if (result[slot] === undefined && typeof result[name] === "string") {
+        result[slot] = result[name];
+      }
+    });
 
     return result;
   }

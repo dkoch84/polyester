@@ -27,6 +27,8 @@ import {
 
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { parse, ParseError } from "../parser/parser.js";
+import type { Command } from "../parser/ast.js";
+import { describeUnknownFlag } from "../components/registry.js";
 import { COMMAND_DOCS, getCommandCompletions, getFlagCompletions, getCommandHoverDoc } from "./completions.js";
 
 /**
@@ -164,32 +166,46 @@ function validateDocument(document: TextDocument): void {
     // Try to parse the document
     const ast = parse(text);
 
-    // Check for unknown commands
-    for (const node of ast.children) {
-      if (node.type === "command") {
-        if (!COMMAND_DOCS[node.name]) {
-          // Use location if available
-          let range = {
-            start: { line: 0, character: 0 },
-            end: { line: 0, character: 10 },
-          };
-
-          if (node.loc) {
-            range = {
-              start: { line: node.loc.start.line - 1, character: node.loc.start.column - 1 },
-              end: { line: node.loc.end.line - 1, character: node.loc.end.column - 1 },
-            };
+    // Check commands and their flags, including inside blocks.
+    const rangeOf = (loc?: { start: { line: number; column: number }; end: { line: number; column: number } }) =>
+      loc
+        ? {
+            start: { line: loc.start.line - 1, character: loc.start.column - 1 },
+            end: { line: loc.end.line - 1, character: loc.end.column - 1 },
           }
+        : { start: { line: 0, character: 0 }, end: { line: 0, character: 10 } };
 
+    const visit = (nodes: readonly { type: string }[]): void => {
+      for (const node of nodes) {
+        if (node.type !== "command") continue;
+        const cmd = node as Command;
+
+        if (!COMMAND_DOCS[cmd.name]) {
           diagnostics.push({
             severity: DiagnosticSeverity.Warning,
-            range,
-            message: `Unknown command: /${node.name}`,
+            range: rangeOf(cmd.loc),
+            message: `Unknown command: /${cmd.name}`,
             source: "polyester",
           });
+        } else {
+          for (const arg of cmd.args) {
+            if (arg.type !== "flag") continue;
+            const problem = describeUnknownFlag(cmd.name, arg.name);
+            if (problem) {
+              diagnostics.push({
+                severity: DiagnosticSeverity.Error,
+                range: rangeOf(arg.loc ?? cmd.loc),
+                message: problem,
+                source: "polyester",
+              });
+            }
+          }
         }
+
+        if (cmd.block) visit(cmd.block.children);
       }
-    }
+    };
+    visit(ast.children);
   } catch (err) {
     if (err instanceof ParseError) {
       // Convert parse error to diagnostic

@@ -5,12 +5,14 @@
  */
 
 import { parse } from "../parser/parser.js";
+import type { Command } from "../parser/ast.js";
 import { compileToHtml } from "../backends/html/compiler.js";
 import { formatDiagnostics, hasErrors } from "../diagnostics.js";
 import { launchBrowser } from "../browser.js";
 import { listLibrary, type PolyStyle } from "../library/index.js";
 import {
   getComponent,
+  describeUnknownFlag,
   formatComponentHelp,
   formatComponentsList,
   COMPONENTS,
@@ -76,16 +78,25 @@ export function validateDocument(source: string): ToolResult {
   try {
     const ast = parse(source);
 
-    // Check for unknown commands
-    for (const node of ast.children) {
-      if (node.type === "command") {
-        const comp = getComponent(node.name);
-        if (!comp) {
-          const line = node.loc?.start.line ?? "?";
-          warnings.push(`Unknown command: /${node.name} (line ${line})`);
+    // Check commands and their flags, including inside blocks.
+    const visit = (nodes: readonly { type: string }[]): void => {
+      for (const node of nodes) {
+        if (node.type !== "command") continue;
+        const cmd = node as Command;
+        const line = cmd.loc?.start.line ?? "?";
+        if (!getComponent(cmd.name)) {
+          warnings.push(`Unknown command: /${cmd.name} (line ${line})`);
+        } else {
+          for (const arg of cmd.args) {
+            if (arg.type !== "flag") continue;
+            const problem = describeUnknownFlag(cmd.name, arg.name);
+            if (problem) errors.push(`${problem} (line ${arg.loc?.start.line ?? line})`);
+          }
         }
+        if (cmd.block) visit(cmd.block.children);
       }
-    }
+    };
+    visit(ast.children);
 
     if (errors.length === 0 && warnings.length === 0) {
       return { content: [{ type: "text", text: "Document is valid. No errors or warnings." }] };

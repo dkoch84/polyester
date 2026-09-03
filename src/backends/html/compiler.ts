@@ -21,6 +21,7 @@ import {
   isBlock,
 } from "../../parser/ast.js";
 import { components, ComponentContext, ComponentResult } from "./components.js";
+import { describeUnknownFlag, positionalArgNames } from "../../components/registry.js";
 import type { FontCache } from "./fonts.js";
 import type { Diagnostic, DiagnosticSeverity } from "../../diagnostics.js";
 
@@ -207,8 +208,14 @@ export class HtmlCompiler {
       return `<!-- Unknown command: /${cmd.name} -->`;
     }
 
+    for (const arg of cmd.args) {
+      if (arg.type !== "flag") continue;
+      const problem = describeUnknownFlag(cmd.name, arg.name);
+      if (problem) this.report("error", problem, arg.loc?.start.line ?? cmd.loc?.start.line);
+    }
+
     // Build context - merge pipe args into main args
-    const args = this.parseArgs(cmd.args);
+    const args = this.parseArgs(cmd.args, cmd.name);
 
     // Apply pipes as additional args/transforms
     if (cmd.pipes) {
@@ -262,7 +269,7 @@ export class HtmlCompiler {
     this.diagnostics.push({ severity, message, ...(line !== undefined && { line }) });
   }
 
-  private parseArgs(args: Argument[]): Record<string, string | boolean> {
+  private parseArgs(args: Argument[], component: string): Record<string, string | boolean> {
     const result: Record<string, string | boolean> = {};
     let positionalIndex = 0;
 
@@ -274,6 +281,15 @@ export class HtmlCompiler {
         result[arg.name] = arg.value ?? true;
       }
     }
+
+    // A named flag fills the slot its positional would have taken, so
+    // `/code --language bash` reaches the component as `/code bash`.
+    positionalArgNames(component).forEach((name, index) => {
+      const slot = `_${index}`;
+      if (result[slot] === undefined && typeof result[name] === "string") {
+        result[slot] = result[name];
+      }
+    });
 
     return result;
   }

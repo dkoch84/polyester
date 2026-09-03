@@ -52,6 +52,8 @@ export const COMPONENTS: ComponentDef[] = [
       { name: "theme", description: "Composed theme name (combines style + spacing + syntax)", hasValue: true },
       { name: "style", description: "Style module name (colors, fonts, borders, shadows)", hasValue: true },
       { name: "spacing", description: "Spacing module name (gaps, margins, padding density)", hasValue: true },
+      { name: "max-width", description: "Cap the content width, centering it in the page", hasValue: true },
+      { name: "mode", description: "Render mode: web (continuous), pdf or print (paginated)", hasValue: true, values: ["web", "pdf", "print"] },
     ],
     examples: [
       "/page A4 --margin 2cm",
@@ -107,6 +109,7 @@ export const COMPONENTS: ComponentDef[] = [
       { name: "bg", description: "Background color", hasValue: true },
       { name: "padding", short: "p", description: "Inner padding", hasValue: true },
       { name: "margin", short: "m", description: "Outer margin", hasValue: true },
+      { name: "class", description: "Extra CSS class names for the rendered element", hasValue: true },
     ],
     examples: [
       "/region --bg #f0f0f0 --padding 2rem { content }",
@@ -165,6 +168,7 @@ export const COMPONENTS: ComponentDef[] = [
       { name: "radius", short: "r", description: "Border radius", hasValue: true, default: "4px" },
       { name: "padding", short: "p", description: "Inner padding", hasValue: true, default: "1rem" },
       { name: "bg", description: "Background color", hasValue: true },
+      { name: "class", description: "Extra CSS class names for the rendered element", hasValue: true },
     ],
     examples: [
       "/frame { content }",
@@ -189,6 +193,7 @@ export const COMPONENTS: ComponentDef[] = [
       { name: "italic", short: "i", description: "Make text italic" },
       { name: "rotate", description: "Rotate text", hasValue: true },
       { name: "tracking", description: "Letter spacing (or 'wide')", hasValue: true },
+      { name: "class", description: "Extra CSS class names for the rendered element", hasValue: true },
     ],
     examples: [
       '/text "Hello" --bold --color red',
@@ -223,6 +228,7 @@ export const COMPONENTS: ComponentDef[] = [
       { name: "start", description: "Starting line number", hasValue: true, default: "1" },
       { name: "highlight", description: "Lines to highlight (e.g., 1,3-5)", hasValue: true },
       { name: "title", short: "t", description: "Code block title/filename", hasValue: true },
+      { name: "class", description: "Extra CSS class names for the rendered element", hasValue: true },
     ],
     examples: [
       "/code typescript --lines { const x = 1; }",
@@ -717,4 +723,51 @@ export function formatComponentsList(): string {
   }
 
   return lines.join("\n");
+}
+
+/**
+ * Every flag name a component accepts: its own flags, their short forms, and
+ * one named form per positional argument (`/code --language bash` for
+ * `/code bash`). Returns null for a component with no registry entry, which
+ * the caller should treat as "cannot validate" rather than "no flags".
+ */
+export function knownFlagNames(component: string): Set<string> | null {
+  const def = COMPONENTS.find((c) => c.name === component);
+  if (!def) return null;
+
+  const names = new Set<string>();
+  for (const flag of def.flags) {
+    names.add(flag.name);
+    if (flag.short) names.add(flag.short);
+  }
+  for (const arg of def.args) names.add(arg.name);
+  return names;
+}
+
+/**
+ * Positional argument names in declaration order, so a named flag can fill the
+ * slot its positional would have occupied.
+ */
+export function positionalArgNames(component: string): string[] {
+  const def = COMPONENTS.find((c) => c.name === component);
+  return def ? def.args.map((a) => a.name) : [];
+}
+
+/**
+ * Explain why a flag is not accepted, or null when it is. Unknown components
+ * return null: an unrecognized command is reported on its own, and guessing at
+ * its flags would bury that.
+ */
+export function describeUnknownFlag(component: string, flag: string): string | null {
+  const known = knownFlagNames(component);
+  if (!known || known.has(flag)) return null;
+
+  const def = COMPONENTS.find((c) => c.name === component)!;
+  // Long forms only: a short form is an alias, and listing it as --l is wrong.
+  const valid = [...def.flags.map((f) => f.name), ...def.args.map((a) => a.name)]
+    .sort()
+    .map((n) => `--${n}`)
+    .join(", ");
+  const suffix = valid ? ` Valid flags: ${valid}` : " It accepts no flags.";
+  return `Unknown flag --${flag} for /${component}.${suffix}`;
 }
