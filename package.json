@@ -10,8 +10,7 @@
     "url": "git+https://github.com/dkoch84/polyester.git"
   },
   "publishConfig": {
-    "registry": "https://registry.npmjs.org",
-    "access": "public"
+    "registry": "https://npm.pkg.github.com"
   },
   "files": [
     "dist"
