@@ -159,14 +159,13 @@
     {
       "mcpServers": {
         "polyester": {
-          "command": "node",
-          "args": ["dist/mcp/server.js"]
+          "command": "poly-mcp"
         }
       }
     }
   }
 
-  The server uses stdio transport. Point the `args` path to your Polyester installation's `dist/mcp/server.js`.
+  The server uses stdio transport. `poly-mcp` ships with the package and needs to be on your `PATH`; from a checkout, use `"command": "node"` with `"args": ["dist/mcp/server.js"]` instead.
 
 }
 

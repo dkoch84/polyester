@@ -1,12 +1,15 @@
 # Maintainer: Daniel <daniel@localhost>
 pkgname=polyester
-pkgver=0.1.0
+pkgver=0.1.1
 pkgrel=1
 pkgdesc="Document authoring language combining Markdown simplicity with programming power"
 arch=('any')
 url="https://github.com/dkoch84/polyester"
 license=('MIT')
-depends=('nodejs>=20')
+# PDF and PNG output render through Chrome. The npm install below runs with
+# --ignore-scripts, so puppeteer never downloads its own copy and the system
+# browser is what it launches.
+depends=('nodejs>=20' 'google-chrome')
 makedepends=('npm')
 options=('!debug' '!strip')
 

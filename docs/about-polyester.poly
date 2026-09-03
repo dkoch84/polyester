@@ -278,8 +278,7 @@ Works with Claude Code, Cursor, Windsurf, and any MCP-compatible editor. Add to 
 {
   "mcpServers": {
     "polyester": {
-      "command": "node",
-      "args": ["dist/mcp/server.js"]
+      "command": "poly-mcp"
     }
   }
 }

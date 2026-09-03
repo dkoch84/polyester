@@ -847,17 +847,16 @@ body {
 <div class="poly-code-block"><div class="poly-code-title">.mcp.json</div><pre><code class="language-json"><span class="hljs-punctuation">{</span>
   <span class="hljs-attr">&quot;mcpServers&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
     <span class="hljs-attr">&quot;polyester&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-      <span class="hljs-attr">&quot;command&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;node&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-attr">&quot;args&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">&quot;dist/mcp/server.js&quot;</span><span class="hljs-punctuation">]</span>
+      <span class="hljs-attr">&quot;command&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;poly-mcp&quot;</span>
     <span class="hljs-punctuation">}</span>
   <span class="hljs-punctuation">}</span>
 <span class="hljs-punctuation">}</span></code></pre></div>
-<div class="poly-content"><p data-source-line="169">The server uses stdio transport. Point the <code>args</code> path to your Polyester installation's <code>dist/mcp/server.js</code>.</p></div></div>
-<div data-source-line="173" class="poly-region" style="padding: 3rem; "><div class="poly-content"><h2 data-source-line="175">Compatible With</h2>
-<p data-source-line="177">The MCP server works with any client that supports the Model Context Protocol:</p></div>
+<div class="poly-content"><p data-source-line="168">The server uses stdio transport. <code>poly-mcp</code> ships with the package and needs to be on your <code>PATH</code>; from a checkout, use <code>"command": "node"</code> with <code>"args": ["dist/mcp/server.js"]</code> instead.</p></div></div>
+<div data-source-line="172" class="poly-region" style="padding: 3rem; "><div class="poly-content"><h2 data-source-line="174">Compatible With</h2>
+<p data-source-line="176">The MCP server works with any client that supports the Model Context Protocol:</p></div>
 <div class="poly-columns" style="grid-template-columns: repeat(2, 1fr); gap: 2rem;"><div class="poly-region" style=""><ul class="poly-list"><li><span style="position: absolute; left: 0;">•</span> <p data-source-line="1"><strong>Claude Code</strong> — Full support via <code>.mcp.json</code></p></li><li><span style="position: absolute; left: 0;">•</span> <p data-source-line="1"><strong>Cursor</strong> — MCP tools in AI chat</p></li><li><span style="position: absolute; left: 0;">•</span> <p data-source-line="1"><strong>Windsurf</strong> — MCP integration</p></li></ul></div>
 <div class="poly-region" style=""><ul class="poly-list"><li><span style="position: absolute; left: 0;">•</span> <p data-source-line="1"><strong>VS Code</strong> — With MCP extension</p></li><li><span style="position: absolute; left: 0;">•</span> <p data-source-line="1"><strong>Zed</strong> — MCP support</p></li><li><span style="position: absolute; left: 0;">•</span> <p data-source-line="1"><strong>Any MCP client</strong> — stdio transport</p></li></ul></div></div></div>
-<div data-source-line="201" class="poly-region" style="background: #282828; padding: 3rem; "><div style="text-align: center; display: flex; align-items: center; justify-content: center; flex-direction: column;"><span class="poly-text" style="color: white; font-size: 1.5rem; font-weight: bold; letter-spacing: 0.1em; ">Polyester MCP Server</span>
+<div data-source-line="200" class="poly-region" style="background: #282828; padding: 3rem; "><div style="text-align: center; display: flex; align-items: center; justify-content: center; flex-direction: column;"><span class="poly-text" style="color: white; font-size: 1.5rem; font-weight: bold; letter-spacing: 0.1em; ">Polyester MCP Server</span>
 <div class="poly-region" style="padding: 1rem; "><span class="poly-inline"><a class="poly-button poly-button-secondary" href="index.html">Home</a>
 <a class="poly-button poly-button-secondary" href="authoring.html">Authoring</a>
 <a class="poly-button poly-button-secondary" href="internals.html">Internals</a>

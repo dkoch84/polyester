@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 7348.400000000011" width="800" height="7348.400000000011">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 7328.400000000011" width="800" height="7328.400000000011">
   <defs>
     <linearGradient id="polyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#667eea"/>
@@ -390,13 +390,12 @@
 <text x="412" y="7011.80000000001" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#1a1a1a" font-weight="normal">Compile to standalone HTML</text>
 <line x1="40" y1="6880.80000000001" x2="760" y2="6880.80000000001" stroke="#e5e7eb" stroke-width="2"/>
 <text x="40" y="7070.400000000011" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#1a1a1a">Works with Claude Code, Cursor, Windsurf, and any MCP-compatible editor. Add to .mcp.json:</text>
-<rect x="40" y="7096.400000000011" width="720" height="192" rx="8" fill="#1e1e1e"/>
+<rect x="40" y="7096.400000000011" width="720" height="172" rx="8" fill="#1e1e1e"/>
 <text x="56" y="7126.400000000011" xml:space="preserve" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">{</text>
 <text x="56" y="7146.400000000011" xml:space="preserve" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">  "mcpServers": {</text>
 <text x="56" y="7166.400000000011" xml:space="preserve" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">    "polyester": {</text>
-<text x="56" y="7186.400000000011" xml:space="preserve" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">      "command": "node",</text>
-<text x="56" y="7206.400000000011" xml:space="preserve" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">      "args": ["dist/mcp/server.js"]</text>
-<text x="56" y="7226.400000000011" xml:space="preserve" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">    }</text>
-<text x="56" y="7246.400000000011" xml:space="preserve" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">  }</text>
-<text x="56" y="7266.400000000011" xml:space="preserve" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">}</text>
+<text x="56" y="7186.400000000011" xml:space="preserve" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">      "command": "poly-mcp"</text>
+<text x="56" y="7206.400000000011" xml:space="preserve" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">    }</text>
+<text x="56" y="7226.400000000011" xml:space="preserve" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">  }</text>
+<text x="56" y="7246.400000000011" xml:space="preserve" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">}</text>
 </svg>

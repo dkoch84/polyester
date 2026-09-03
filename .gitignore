@@ -37,6 +37,8 @@ tmp/
 
 # Packages
 *.pkg.tar.zst
+pkg/arch/pkg/
+pkg/arch/src/
 
 # Personal document examples
 examples-private/

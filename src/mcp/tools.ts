@@ -7,6 +7,7 @@
 import { parse } from "../parser/parser.js";
 import { compileToHtml } from "../backends/html/compiler.js";
 import { formatDiagnostics, hasErrors } from "../diagnostics.js";
+import { launchBrowser } from "../browser.js";
 import { listLibrary, type PolyStyle } from "../library/index.js";
 import {
   getComponent,
@@ -222,8 +223,7 @@ export async function analyzePageLayout(source: string): Promise<ToolResult> {
     });
 
     // Launch Puppeteer and measure
-    const puppeteer = await import("puppeteer");
-    const browser = await puppeteer.default.launch();
+    const browser = await launchBrowser();
     const page = await browser.newPage();
 
     await page.setViewport({ width: 1400, height: 2000 });

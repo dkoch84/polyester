@@ -24,6 +24,7 @@ import { compileToHtml } from "../backends/html/compiler.js";
 import { prefetchFonts, prefetchThemeFonts } from "../backends/html/fonts.js";
 import { compileToSvg } from "../backends/svg/compiler.js";
 import { compilePolyDocument } from "../build.js";
+import { launchBrowser } from "../browser.js";
 import { extractTheme } from "../themes/extract.js";
 import { assertNoErrors, PolyBuildError } from "../diagnostics.js";
 import {
@@ -313,8 +314,7 @@ async function buildPdf(
   // For paginated docs we let the in-browser pagination sim run (screen media)
   // so the PDF matches the live preview exactly. Each .poly-page becomes one
   // physical PDF page via break-after rules injected below.
-  const puppeteer = await import("puppeteer");
-  const browser = await puppeteer.default.launch();
+  const browser = await launchBrowser();
   const page = await browser.newPage();
 
   const absoluteOutput = resolve(outputPath);
@@ -478,8 +478,7 @@ async function screenshot(
   const outPath = resolve(outputPath || inputPath.replace(/\.(poly|html)$/, ".png"));
   const url = `file://${htmlPath}${opts.hints ? "?hints=1" : ""}`;
 
-  const puppeteer = await import("puppeteer");
-  const browser = await puppeteer.default.launch();
+  const browser = await launchBrowser();
   try {
     const page = await browser.newPage();
     await page.setViewport({ width: opts.width || 1200, height: 900, deviceScaleFactor: 2 });
