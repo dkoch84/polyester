@@ -214,7 +214,7 @@ const code: SvgComponent = (ctx) => {
       ctx.addElement(renderPolyesterLine(line, codeX, codeY, ctx));
     } else {
       ctx.addElement(
-        `<text x="${codeX}" y="${codeY}" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">${ctx.escapeText(line)}</text>`
+        `<text x="${codeX}" y="${codeY}" xml:space="preserve" font-family="ui-monospace, monospace" font-size="14" fill="#e6e6e6">${ctx.escapeText(line)}</text>`
       );
     }
     codeY += lineHeight;
@@ -238,8 +238,11 @@ function renderPolyesterLine(line: string, x: number, y: number, ctx: SvgCompone
     const color = getTokenColor(token.type);
     const width = token.text.length * charWidth;
 
+    // xml:space="preserve": tokens carry significant leading/trailing spaces, and
+    // the x advance below assumes every character is drawn. Without it the SVG
+    // whitespace rules strip those spaces and adjacent tokens run together.
     elements.push(
-      `<text x="${currentX}" y="${y}" font-family="ui-monospace, monospace" font-size="14" fill="${color}">${ctx.escapeText(token.text)}</text>`
+      `<text x="${currentX}" y="${y}" xml:space="preserve" font-family="ui-monospace, monospace" font-size="14" fill="${color}">${ctx.escapeText(token.text)}</text>`
     );
     currentX += width;
   }
