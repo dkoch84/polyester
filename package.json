@@ -1,10 +1,20 @@
 {
-  "name": "polyester",
+  "name": "@dkoch84/polyester",
   "version": "0.1.0",
   "description": "A document authoring language combining Markdown simplicity with programming power",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dkoch84/polyester.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "files": [
+    "dist"
+  ],
   "bin": {
     "poly": "dist/cli/index.js",
     "poly-lsp": "dist/lsp/server.js",
