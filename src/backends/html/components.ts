@@ -28,17 +28,59 @@ const IMAGE_MIME: Record<string, string> = {
  * PDF (Puppeteer) output, where relative paths have no base to resolve against.
  * Remote URLs, existing data URIs, and unreadable/unknown files are passed through unchanged.
  */
-function embedImage(src: string, sourceDir?: string): string {
+export function embedImage(
+  src: string,
+  sourceDir?: string,
+  onProblem?: (message: string) => void,
+): string {
   if (/^(https?:|data:|\/\/)/i.test(src)) return src;
   try {
     const abs = isAbsolute(src) ? src : resolvePath(sourceDir || process.cwd(), src);
-    if (!existsSync(abs)) return src;
+    if (!existsSync(abs)) {
+      // Returning src unchanged renders a broken-image glyph and exits 0, so
+      // the only signal was visual. Paths resolve against the .poly file rather
+      // than the cwd, which is worth saying: it is the usual reason a path that
+      // looks right does not resolve.
+      onProblem?.(`image not found: "${src}" (resolved against the document to ${abs})`);
+      return src;
+    }
     const mime = IMAGE_MIME[extname(abs).toLowerCase()];
-    if (!mime) return src;
+    if (!mime) {
+      onProblem?.(
+        `unsupported image type for "${src}": ${extname(abs) || "no extension"}. ` +
+          `Supported: ${Object.keys(IMAGE_MIME).sort().join(", ")}`,
+      );
+      return src;
+    }
     return `data:${mime};base64,${readFileSync(abs).toString("base64")}`;
-  } catch {
+  } catch (err) {
+    onProblem?.(`could not read image "${src}": ${(err as Error).message}`);
     return src;
   }
+}
+
+/**
+ * Inline relative <img src> in pass-through HTML, the way /image does.
+ *
+ * Raw HTML is the documented escape hatch for layout components do not cover,
+ * so mixing it with images is a natural reach. But every output path hands the
+ * document to the renderer via setContent with no base URL, so a relative src
+ * has nothing to resolve against and renders as a broken image in HTML and PDF
+ * alike. Rewriting the path cannot fix that; inlining is the only mechanism
+ * that works in both.
+ */
+export function inlineHtmlImages(
+  html: string,
+  sourceDir?: string,
+  onProblem?: (message: string) => void,
+): string {
+  return html.replace(
+    /(<img\b[^>]*?\bsrc\s*=\s*)(["'])(.*?)\2/gi,
+    (match, prefix: string, quote: string, src: string) => {
+      const resolved = embedImage(src, sourceDir, onProblem);
+      return resolved === src ? match : `${prefix}${quote}${resolved}${quote}`;
+    },
+  );
 }
 
 export interface ComponentContext {
@@ -213,6 +255,33 @@ function normalizeLength(value: string): string {
   return /^\d+(\.\d+)?$/.test(v) ? `${v}px` : v;
 }
 
+/** Four sides of a CSS margin, resolved from 1-4 shorthand values. */
+export interface PageMargins {
+  top: string;
+  right: string;
+  bottom: string;
+  left: string;
+}
+
+/**
+ * Expand a CSS margin shorthand (1 to 4 lengths) into four sides.
+ *
+ * Returns null for anything that is not 1-4 valid lengths, so the caller can
+ * report it. This used to be interpolated raw into `calc(WIDTHmm - 2 * VALUE)`,
+ * which turned a perfectly reasonable `"1.25cm 2cm"` into invalid CSS. Because
+ * the result was an invalid custom property rather than a thrown error, nothing
+ * in the pipeline could notice: the page simply lost its width constraint and
+ * the content ran to the paper edge, in HTML as well as PDF.
+ */
+export function parseMargins(value: string): PageMargins | null {
+  const parts = value.trim().split(/\s+/);
+  if (parts.length < 1 || parts.length > 4) return null;
+  if (!parts.every(isValidLength)) return null;
+
+  const [a, b = a, c = a, d = b] = parts.map(normalizeLength);
+  return { top: a, right: b, bottom: c, left: d };
+}
+
 const page: Component = (ctx) => {
   const size = getPositional(ctx.args, 0, "");
   const margin = getArg(ctx.args, "margin", "2cm");
@@ -242,6 +311,17 @@ const page: Component = (ctx) => {
     ctx.report(
       "error",
       `/page --width "${width}" is not a length: use px, pt, mm, cm or in (for example 1100px)`,
+    );
+  }
+
+  // A margin that cannot be parsed used to reach the stylesheet verbatim and
+  // produce an invalid calc(), which fails silently: the build exits 0 and the
+  // page loses its width constraint. Refuse it here instead.
+  if (!parseMargins(margin)) {
+    ctx.report(
+      "error",
+      `/page --margin "${margin}" is not 1 to 4 lengths: use px, pt, mm, cm or in ` +
+        `(for example "2cm", or "1.25cm 1.25cm 2.2cm 1.25cm" for top/right/bottom/left)`,
     );
   }
 
@@ -375,15 +455,35 @@ const region: Component = (ctx) => {
   const bg = getArg(ctx.args, "bg", "");
   const padding = getArg(ctx.args, "padding", "") || getArg(ctx.args, "p", "");
   const margin = getArg(ctx.args, "margin", "") || getArg(ctx.args, "m", "");
+  const radius = getArg(ctx.args, "radius", "");
+  const flatten = hasFlag(ctx.args, "flatten");
   const userClass = getArg(ctx.args, "class", "");
 
   let style = "";
   if (bg) style += `background: ${bg}; `;
   if (padding) style += `padding: ${padding}; `;
   if (margin) style += `margin: ${margin}; `;
+  if (radius) style += `border-radius: ${radius}; `;
+
+  if (flatten) {
+    // Contiguous markdown and pass-through HTML inside a block are collected
+    // into ONE .poly-content wrapper, so they reach a flex or grid region as a
+    // single child and justify-content has nothing to distribute. `display:
+    // contents` drops the wrapper's box while keeping its children, making them
+    // real siblings for layout.
+    //
+    // Opt-in rather than automatic: the base sheet gives .poly-content a
+    // bottom margin that does inter-block spacing in every document, and
+    // removing the box removes that margin too. Applying this globally would
+    // reflow every existing document by roughly one spacing unit per wrapper.
+    ctx.addStyle(`
+    .poly-region-flat > .poly-content {
+      display: contents;
+    }`);
+  }
 
   const children = ctx.compileChildren();
-  const cls = `poly-region${userClass ? ` ${userClass}` : ""}`;
+  const cls = `poly-region${flatten ? " poly-region-flat" : ""}${userClass ? ` ${userClass}` : ""}`;
 
   return {
     html: `<div class="${cls}" style="${style}">${children}</div>`,
@@ -428,12 +528,16 @@ const text: Component = (ctx) => {
   const isItalic = hasFlag(ctx.args, "italic") || hasFlag(ctx.args, "i");
   const rotate = getArg(ctx.args, "rotate", "");
   const tracking = getArg(ctx.args, "tracking", "");
+  const weight = getArg(ctx.args, "weight", "");
   const userClass = getArg(ctx.args, "class", "");
 
   let style = "";
   if (color) style += `color: ${color}; `;
   if (size) style += `font-size: ${size}; `;
   if (isBold) style += `font-weight: bold; `;
+  // An explicit numeric weight is more specific than --bold, so it is emitted
+  // after and wins when both are given.
+  if (weight) style += `font-weight: ${weight}; `;
   if (isItalic) style += `font-style: italic; `;
   if (rotate) style += `transform: rotate(${rotate}); display: inline-block; `;
   if (tracking) {
@@ -1227,7 +1331,7 @@ const image: Component = (ctx) => {
   if (height) style += `height: ${height};`;
 
   const shapeClass = shape !== "square" ? ` shape-${shape}` : "";
-  const resolvedSrc = embedImage(path, ctx.sourceDir);
+  const resolvedSrc = embedImage(path, ctx.sourceDir, (m) => ctx.report("warning", m));
   const imgHtml = `<img src="${escapeHtml(resolvedSrc)}" alt="${escapeHtml(alt)}" class="${shapeClass.trim()}" style="${style}">`;
   const captionHtml = caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : "";
 
@@ -1324,6 +1428,7 @@ const shape: Component = (ctx) => {
   const fill = getArg(ctx.args, "fill", "") || getArg(ctx.args, "f", "transparent");
   const stroke = getArg(ctx.args, "stroke", "");
   const strokeWidth = getArg(ctx.args, "stroke-width", "1px");
+  const radius = getArg(ctx.args, "radius", "");
 
   ctx.addStyle(`
     .poly-shape {
@@ -1343,6 +1448,7 @@ const shape: Component = (ctx) => {
     // Default: rect
     let style = `width: ${width}; height: ${height}; background: ${fill};`;
     if (stroke) style += ` border: ${strokeWidth} solid ${stroke};`;
+    if (radius) style += ` border-radius: ${radius};`;
     return { html: `<div class="poly-shape" style="${style}"></div>` };
   }
 };
@@ -1550,6 +1656,40 @@ const divider: Component = (ctx) => {
  * Usage: /pagebg 2-4 --bg "#f0f4ff"
  * Usage: /pagebg all --pattern dots --color "rgba(0,0,0,0.08)"
  */
+/**
+ * /header and /footer - content repeated on every page of a paginated document
+ *
+ * The point is not that the content repeats: `position: fixed` already
+ * repeated, badly. It is that the band RESERVES ITS HEIGHT, so the flow stops
+ * short of it instead of running underneath. Without that, the only lever was
+ * shrinking content until it happened to fit, and a fixed footer's rule would
+ * cut through whatever block landed at the bottom of a page.
+ *
+ * Usage: /footer { Page content | Confidential }
+ */
+function pageBand(which: "header" | "footer"): Component {
+  return (ctx) => {
+    const html = ctx.compileChildren();
+    if (!html.trim()) {
+      ctx.report("warning", `/${which} has no content, so nothing will be reserved`);
+      return { html: "" };
+    }
+    ctx.addStyle(`
+    .poly-page-${which} {
+      position: absolute;
+      left: 0;
+      right: 0;
+      ${which === "header" ? "top: 0;" : "bottom: 0;"}
+      z-index: 2;
+    }`);
+    ctx.setPageSettings({ [which]: html });
+    return { html: "" };
+  };
+}
+
+const header = pageBand("header");
+const footer = pageBand("footer");
+
 const pagebg: Component = (ctx) => {
   const pages = getPositional(ctx.args, 0, "all");
   const pattern = getArg(ctx.args, "pattern", "");
@@ -1728,6 +1868,8 @@ const badge: Component = (ctx) => {
 
 // Export all components
 export const components: Record<string, Component> = {
+  header,
+  footer,
   page,
   columns,
   grid,

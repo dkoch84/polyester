@@ -109,11 +109,14 @@ export const COMPONENTS: ComponentDef[] = [
       { name: "bg", description: "Background color", hasValue: true },
       { name: "padding", short: "p", description: "Inner padding", hasValue: true },
       { name: "margin", short: "m", description: "Outer margin", hasValue: true },
+      { name: "radius", description: "Corner radius", hasValue: true },
+      { name: "flatten", description: "Make the wrapper around markdown/HTML children layout-transparent, so they become real flex/grid siblings. Also drops that wrapper's bottom margin." },
       { name: "class", description: "Extra CSS class names for the rendered element", hasValue: true },
     ],
     examples: [
       "/region --bg #f0f0f0 --padding 2rem { content }",
       "/region -p 1rem -m 1rem { ... }",
+      "/region --bg #eff6ff --padding 0.75rem --radius 8px { callout }",
     ],
     hasBlock: true,
   },
@@ -190,6 +193,7 @@ export const COMPONENTS: ComponentDef[] = [
       { name: "color", short: "c", description: "Text color", hasValue: true },
       { name: "size", description: "Font size", hasValue: true },
       { name: "bold", short: "b", description: "Make text bold" },
+      { name: "weight", description: "Numeric font weight (100-900); beats --bold when both are given", hasValue: true },
       { name: "italic", short: "i", description: "Make text italic" },
       { name: "rotate", description: "Rotate text", hasValue: true },
       { name: "tracking", description: "Letter spacing (or 'wide')", hasValue: true },
@@ -358,6 +362,28 @@ export const COMPONENTS: ComponentDef[] = [
     hasBlock: true,
   },
   {
+    name: "header",
+    description: "Content repeated at the top of every page of a paginated document. Sits in the top margin and reserves its own height, so the flow never runs underneath it.",
+    category: "layout",
+    args: [],
+    flags: [],
+    examples: [
+      "/header { **Acme Corp** | Q3 Review }",
+    ],
+    hasBlock: true,
+  },
+  {
+    name: "footer",
+    description: "Content repeated at the bottom of every page of a paginated document. Sits in the bottom margin and reserves its own height, so the flow never runs underneath it. Use this rather than position:fixed, which anchors to the content box and draws through your content.",
+    category: "layout",
+    args: [],
+    flags: [],
+    examples: [
+      "/footer { Confidential | Do not distribute }",
+    ],
+    hasBlock: true,
+  },
+  {
     name: "pagebg",
     description: "Set per-page background pattern or color for paginated documents.",
     category: "style",
@@ -368,12 +394,15 @@ export const COMPONENTS: ComponentDef[] = [
       { name: "pattern", description: "Pattern type", hasValue: true, values: ["grid", "dots", "cross", "diagonal"] },
       { name: "size", short: "s", description: "Pattern cell size", hasValue: true, default: "64px" },
       { name: "color", short: "c", description: "Pattern line/dot color", hasValue: true, default: "rgba(0,0,0,0.1)" },
-      { name: "bg", description: "Solid background color", hasValue: true },
+      { name: "bg", description: "Background colour, or any CSS background value: gradients work and survive to PDF", hasValue: true },
       { name: "fade", description: "Pattern fade mode", hasValue: true, values: ["none", "radial", "edges"] },
     ],
     examples: [
       '/pagebg 1 --pattern grid --size 48px --color "rgba(0,0,0,0.035)"',
       '/pagebg 2-4 --bg "#f0f4ff"',
+      // A full-bleed gradient cover is the main reason to reach for this, and
+      // "Solid background color" previously implied it was unsupported.
+      '/pagebg 1 --bg "linear-gradient(135deg, #4b6cf9 0%, #09197a 100%)"',
       "/pagebg all --pattern dots --color \"rgba(0,0,0,0.08)\"",
     ],
     hasBlock: false,
@@ -428,6 +457,7 @@ export const COMPONENTS: ComponentDef[] = [
       { name: "fill", short: "f", description: "Fill color", hasValue: true },
       { name: "stroke", description: "Stroke/border color", hasValue: true },
       { name: "stroke-width", description: "Stroke width", hasValue: true, default: "1px" },
+      { name: "radius", description: "Corner radius (rect only)", hasValue: true },
     ],
     examples: [
       "/shape circle --size 50px --fill red",
@@ -456,7 +486,7 @@ export const COMPONENTS: ComponentDef[] = [
   },
   {
     name: "style",
-    description: "Inject custom CSS into the document. Note: @page CSS rules have limited browser support — only margin, size, marks, and bleed are supported. Use /pagebg for page backgrounds.",
+    description: "Inject custom CSS into the document. Note: an @page rule here does NOT affect paginated PDF output; the renderer supplies the page box and the margin comes from /page --margin, so an @page margin written here is silently overridden. Use /pagebg for page backgrounds.",
     category: "style",
     args: [],
     flags: [],

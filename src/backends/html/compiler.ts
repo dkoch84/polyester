@@ -20,7 +20,7 @@ import {
   isContent,
   isBlock,
 } from "../../parser/ast.js";
-import { components, ComponentContext, ComponentResult } from "./components.js";
+import { components, ComponentContext, ComponentResult, parseMargins, inlineHtmlImages } from "./components.js";
 import { describeUnknownFlag, positionalArgNames } from "../../components/registry.js";
 import { assertKnownOptions } from "../../options.js";
 import type { FontCache } from "./fonts.js";
@@ -68,6 +68,10 @@ export interface PageSettings {
   style?: string;
   spacing?: string;
   pagebgs?: Array<{ pages: string; style: string }>;
+  /** Rendered HTML repeated at the top of every page, reserving its own height. */
+  header?: string;
+  /** Rendered HTML repeated at the bottom of every page, reserving its own height. */
+  footer?: string;
 }
 
 export interface CompileResult {
@@ -101,6 +105,12 @@ export class HtmlCompiler {
   private userStyles: string[] = [];
   private pageSettings: PageSettings = {};
   private diagnostics: Diagnostic[] = [];
+  /**
+   * Source lines of document CSS containing an @page rule. Reported after the
+   * body has compiled, because whether it matters depends on /page's mode and
+   * /page may appear after the /style block that wrote the rule.
+   */
+  private userPageRuleLines: number[] = [];
 
   constructor(options: CompileOptions = {}) {
     this.options = {
@@ -116,12 +126,32 @@ export class HtmlCompiler {
     this.userStyles = [];
     this.pageSettings = {};
     this.diagnostics = [];
+    this.userPageRuleLines = [];
 
     // Compile document body — top-level children get source-line annotations
     // so the MCP page-layout tool can map overflows back to .poly source lines.
     const bodyHtml = doc.children
       .map((child) => this.annotateSourceLine(this.compileNode(child), child.loc?.start.line))
       .join("\n");
+
+    // An @page rule written by the document cannot reach paginated output: the
+    // renderer supplies the page box, and /page deliberately zeroes @page's
+    // margin so it does not double the page wrapper's padding. Silently
+    // dropping it is what sent someone hunting through compiled CSS, so name
+    // the flag that does work instead. Web mode is left alone: there @page is
+    // genuinely honoured when the browser prints.
+    const paginated = (this.pageSettings.mode ?? (this.pageSettings.size && !this.pageSettings.pageless ? "pdf" : "web")) !== "web";
+    if (paginated) {
+      for (const line of this.userPageRuleLines) {
+        this.report(
+          "warning",
+          "@page in document CSS has no effect on paginated output: the renderer " +
+            "supplies the page box. Use /page --margin (which accepts 1 to 4 " +
+            'lengths, e.g. --margin "1.25cm 1.25cm 2.2cm 1.25cm") to set page margins.',
+          line,
+        );
+      }
+    }
 
     // Generate CSS
     const css = this.generateCss();
@@ -245,7 +275,12 @@ export class HtmlCompiler {
       renderMarkdown: (text: string) => this.renderMarkdown(text),
       addClass: (cls: string) => this.cssClasses.add(cls),
       addStyle: (css: string) => this.customStyles.push(css),
-      addUserStyle: (css: string) => this.userStyles.push(css),
+      addUserStyle: (css: string) => {
+        if (/@page\b/.test(css)) {
+          this.userPageRuleLines.push(cmd.loc?.start.line ?? 0);
+        }
+        this.userStyles.push(css);
+      },
       setPageSettings: (settings) => {
         if (settings.pagebgs) {
           const existing = this.pageSettings.pagebgs || [];
@@ -322,7 +357,13 @@ export class HtmlCompiler {
       .use(annotateSourceLines)
       .use(rehypeStringify, { allowDangerousHtml: true })
       .processSync(text);
-    return String(result);
+
+    // Pass-through HTML reaches here verbatim, so an <img src="assets/x.svg">
+    // written as raw HTML never went through /image's inlining and rendered as
+    // a broken image in every output. Same treatment, same warnings.
+    return inlineHtmlImages(String(result), this.options.sourceDir, (message) =>
+      this.report("warning", message, baseLine),
+    );
   }
 
   private extractRawContent(children: (Command | Content)[]): string {
@@ -633,20 +674,20 @@ export class HtmlCompiler {
 }
 `;
 
-    // @page rule for print/PDF rendering. PDF generation skips the in-browser
-    // pagination sim, so margins come from @page directly.
-    let pageCss = "";
-    if (this.pageSettings.size && !this.pageSettings.pageless) {
-      const size = this.pageSettings.size || "A4";
-      const orientation = this.pageSettings.orientation || "portrait";
-      const margin = this.pageSettings.margin || "2cm";
-      pageCss = `
-@page {
-  size: ${size} ${orientation};
-  margin: ${margin};
-}
-`;
-    }
+    // No @page rule is emitted here.
+    //
+    // There used to be one, carrying the comment "PDF generation skips the
+    // in-browser pagination sim, so margins come from @page directly". That
+    // stopped being true: the paginated PDF path runs the sim and then maps each
+    // .poly-page to a physical page, so the physical margin comes from the page
+    // wrapper's padding and the /page component deliberately emits a LATER
+    // `@page { margin: 0 }` to avoid double-margining. This rule was therefore
+    // overridden by that one in every document it applied to.
+    //
+    // Dead but not harmless: it was the first @page in the compiled output, so
+    // anyone reading the HTML to work out why their margin was ignored found a
+    // rule that looked authoritative and was not.
+    const pageCss = "";
 
     const pageSimCss = `
 /* Screen-only page simulation styles */
@@ -709,7 +750,19 @@ export class HtmlCompiler {
     if (isPaginated) {
       dataAttrs += ` data-page-size="${this.pageSettings.size}"`;
       dataAttrs += ` data-page-orientation="${this.pageSettings.orientation || "portrait"}"`;
-      dataAttrs += ` data-page-margin="${this.pageSettings.margin || "2cm"}"`;
+      // Normalized to four explicit sides so the in-browser sim can split on
+      // whitespace instead of reimplementing CSS shorthand expansion. /page has
+      // already refused anything unparseable, so the fallback is unreachable in
+      // practice and exists only to keep this total.
+      const m = parseMargins(this.pageSettings.margin || "2cm") ||
+        { top: "2cm", right: "2cm", bottom: "2cm", left: "2cm" };
+      dataAttrs += ` data-page-margin="${m.top} ${m.right} ${m.bottom} ${m.left}"`;
+      for (const band of ["header", "footer"] as const) {
+        const content = this.pageSettings[band];
+        if (content) {
+          dataAttrs += ` data-page-${band}="${content.replace(/"/g, "&quot;")}"`;
+        }
+      }
       if (this.pageSettings.pagebgs && this.pageSettings.pagebgs.length > 0) {
         const escaped = JSON.stringify(this.pageSettings.pagebgs).replace(/"/g, "&quot;");
         dataAttrs += ` data-pagebgs="${escaped}"`;
@@ -723,11 +776,15 @@ export class HtmlCompiler {
       const isLandscape = this.pageSettings.orientation === "landscape";
       const pageW = isLandscape ? dims[1] : dims[0];
       const pageH = isLandscape ? dims[0] : dims[1];
-      const margin = this.pageSettings.margin || "2cm";
+      // Per side. The raw margin string used to be interpolated as
+      // `2 * ${margin}`, so any shorthand produced invalid CSS and the custom
+      // property silently never applied.
+      const mv = parseMargins(this.pageSettings.margin || "2cm") ||
+        { top: "2cm", right: "2cm", bottom: "2cm", left: "2cm" };
       pageVarsCss = `
   .poly-document {
-    --poly-page-width: calc(${pageW}mm - 2 * ${margin});
-    --poly-page-height: calc(${pageH}mm - 2 * ${margin});
+    --poly-page-width: calc(${pageW}mm - ${mv.left} - ${mv.right});
+    --poly-page-height: calc(${pageH}mm - ${mv.top} - ${mv.bottom});
   }`;
     }
 
@@ -798,15 +855,62 @@ ${body}
 
     var pageWidthPx = w * MM_TO_PX;
     var pageHeightPx = h * MM_TO_PX;
-    var marginPx = parseLength(marginStr);
-    var contentWidth = pageWidthPx - 2 * marginPx;
-    var contentHeight = pageHeightPx - 2 * marginPx;
+    // Four explicit sides, emitted normalized by the compiler. Falls back to CSS
+    // shorthand rules if fewer arrive, so an older cached document still works.
+    var mParts = marginStr.trim().split(/\\s+/).map(parseLength);
+    var mTop = mParts[0];
+    var mRight = mParts.length > 1 ? mParts[1] : mTop;
+    var mBottom = mParts.length > 2 ? mParts[2] : mTop;
+    var mLeft = mParts.length > 3 ? mParts[3] : mRight;
+    var contentWidth = pageWidthPx - mLeft - mRight;
+    var contentHeight = pageHeightPx - mTop - mBottom;
+
+    // Repeating bands. Measured at the real content width before anything is
+    // laid out, then subtracted from the height available to the flow: that
+    // subtraction IS the feature. Rendering the band without it is what
+    // position:fixed already did, and it drew straight through the content.
+    var headerHtml = doc.dataset.pageHeader || '';
+    var footerHtml = doc.dataset.pageFooter || '';
+    function measureBand(html) {
+      if (!html) return 0;
+      var probe = document.createElement('div');
+      probe.className = 'poly-content';
+      probe.style.cssText = 'position:absolute;visibility:hidden;left:-99999px;top:0;width:' + contentWidth + 'px;';
+      probe.innerHTML = html;
+      document.body.appendChild(probe);
+      var h = probe.getBoundingClientRect().height;
+      document.body.removeChild(probe);
+      return h;
+    }
+    var headerH = measureBand(headerHtml);
+    var footerH = measureBand(footerHtml);
     // Tolerance absorbs sub-pixel rounding drift accumulated across many stacked
     // blocks. Without it, two environments rendering the same HTML with the same
     // fonts can disagree by a fraction of a pixel per block, which adds up to a
     // single-line discrepancy on long pages and causes one-word overflow.
     // Half a body line at 16px base is conservative.
     var OVERFLOW_TOLERANCE = 24;
+
+    // The bands live in the MARGIN, which is where a page footer belongs and
+    // where anyone reaching for position:fixed was trying to get (hence the
+    // negative offsets needed to escape the content box). The margin has already
+    // reserved that space, so a band that fits inside it costs the flow nothing.
+    //
+    // Only the excess is charged to the content area. Subtracting the full band
+    // height instead would double-reserve, and it cannot be fixed by also
+    // reserving OVERFLOW_TOLERANCE: the tolerance is applied on top of whatever
+    // contentHeight ends up being, so subtracting it just moves the same
+    // permitted overflow down with it.
+    var headerOverflow = Math.max(0, headerH - mTop);
+    var footerOverflow = Math.max(0, footerH - mBottom);
+    // Plus the tolerance, but only for a footer. The flow is permitted to
+    // exceed contentHeight by OVERFLOW_TOLERANCE, and that spill lands in the
+    // bottom margin, which is exactly where the footer now sits. Reserving it
+    // works here only because the band is anchored to the page rather than to
+    // the flow: while the footer lived inside the content box it moved down
+    // with every subtraction, which is why the same arithmetic changed nothing.
+    contentHeight = contentHeight - headerOverflow - footerOverflow
+      - (footerHtml ? OVERFLOW_TOLERANCE : 0);
 
     // Reset document container: it's now a wrapper of page containers.
     doc.style.width = pageWidthPx + 'px';
@@ -895,7 +999,7 @@ ${body}
       page.style.cssText = [
         'width:' + pageWidthPx + 'px',
         'height:' + pageHeightPx + 'px',
-        'padding:' + marginPx + 'px',
+        'padding:' + mTop + 'px ' + mRight + 'px ' + mBottom + 'px ' + mLeft + 'px',
         'box-sizing:border-box',
         // The sheet follows the document's background. Hardcoding white left a
         // dark style painting light text onto a white page, i.e. unreadable:
@@ -922,8 +1026,29 @@ ${body}
       // Content wrapper sits above page bg
       var contentWrap = document.createElement('div');
       contentWrap.className = 'poly-page-flow poly-content';
-      contentWrap.style.cssText = 'position:relative;z-index:1;';
+      // Offset by the header band so the flow starts below it. The bottom is
+      // handled by contentHeight being short by footerH, so nothing is placed
+      // in the band's space in the first place.
+      contentWrap.style.cssText = 'position:relative;z-index:1;margin-top:' + headerOverflow + 'px;';
       inner.appendChild(contentWrap);
+      // Appended to the page rather than to inner, so they sit in the margin
+      // band and align with the content column horizontally.
+      if (headerHtml) {
+        var hdr = document.createElement('div');
+        hdr.className = 'poly-page-header poly-content';
+        hdr.style.cssText = 'position:absolute;z-index:2;left:' + mLeft + 'px;right:' + mRight
+          + 'px;top:0;height:' + Math.max(mTop, headerH) + 'px;display:flex;align-items:center;';
+        hdr.innerHTML = headerHtml;
+        page.appendChild(hdr);
+      }
+      if (footerHtml) {
+        var ftr = document.createElement('div');
+        ftr.className = 'poly-page-footer poly-content';
+        ftr.style.cssText = 'position:absolute;z-index:2;left:' + mLeft + 'px;right:' + mRight
+          + 'px;bottom:0;height:' + Math.max(mBottom, footerH) + 'px;display:flex;align-items:center;';
+        ftr.innerHTML = footerHtml;
+        page.appendChild(ftr);
+      }
       page.appendChild(inner);
       // Page label
       var label = document.createElement('div');

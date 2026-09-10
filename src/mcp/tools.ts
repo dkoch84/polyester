@@ -119,7 +119,37 @@ export function validateDocument(source: string): ToolResult {
 export function compileDocument(source: string): ToolResult {
   try {
     const ast = parse(source);
-    const { html, diagnostics } = compileToHtml(ast, { standalone: true });
+
+    // Resolve the same theme modules the CLI does. This used to compile with no
+    // theme at all, so a document declaring `/page A4 --theme <name>` came back
+    // UNTHEMED and said nothing: the compile succeeded, the brand palette was
+    // simply absent. Since the server's own instructions tell agents to author
+    // and check through it, that made every visual check meaningless while
+    // looking like it had passed.
+    const config = loadConfig();
+    const initial = compileToHtml(ast, { standalone: false });
+    const ps = initial.pageSettings;
+    const { resolved, diagnostics: themeDiagnostics } = tryResolveModules({
+      theme: ps.theme || config.defaultTheme,
+      style: ps.style,
+      spacing: ps.spacing,
+    });
+    // An unresolved theme name is an error, not a silent fallback: handing back
+    // a document in the wrong design is the defect this call exists to avoid.
+    if (hasErrors(themeDiagnostics)) {
+      return {
+        content: [{ type: "text", text: formatDiagnostics(themeDiagnostics) }],
+        isError: true,
+      };
+    }
+
+    const { html, diagnostics } = compileToHtml(ast, {
+      standalone: true,
+      styleCss: styleToCSS(resolved.style),
+      spacingCss: spacingToCSS(resolved.spacing),
+      syntaxCss: syntaxToCSS(resolved.syntax, resolved.name),
+      themeCss: resolved.css,
+    });
     // Returning HTML for a document with errors would hand back markup that
     // renders but is not the document that was asked for.
     if (hasErrors(diagnostics)) {
@@ -128,7 +158,20 @@ export function compileDocument(source: string): ToolResult {
         isError: true,
       };
     }
-    return { content: [{ type: "text", text: html }] };
+    // State what resolved rather than leaving it invisible. Reading user config
+    // makes the output depend on machine state, and the honest answer to that is
+    // to say which state, not to pretend there is none. Appended so the HTML
+    // stays the first content block for callers that write it straight to a file.
+    const requested = ps.theme || config.defaultTheme;
+    const note = requested
+      ? `Resolved theme "${requested}" -> ${resolved.name}`
+      : `No theme requested; compiled with built-in defaults`;
+    return {
+      content: [
+        { type: "text", text: html },
+        { type: "text", text: note },
+      ],
+    };
   } catch (err: any) {
     return {
       content: [{ type: "text", text: `Compilation error: ${err.message}` }],

@@ -1,6 +1,6 @@
 # Maintainer: Daniel <daniel@localhost>
 pkgname=polyester
-pkgver=0.1.3
+pkgver=0.2.0
 pkgrel=1
 pkgdesc="Document authoring language combining Markdown simplicity with programming power"
 arch=('any')
@@ -30,6 +30,12 @@ package() {
 
     cp -r dist "$instdir/"
     cp package.json package-lock.json "$instdir/"
+
+    # The in-process runtime (used by the editor extensions, which load
+    # /usr/lib/polyester rather than shipping their own compiler) resolves
+    # library items from here. Without it listLibrary() returns zero items
+    # instead of failing, so the library browser comes up empty with no error.
+    cp -r library "$instdir/"
 
     # Install production dependencies only
     cd "$instdir"

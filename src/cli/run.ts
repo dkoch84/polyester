@@ -25,6 +25,7 @@ import { prefetchFonts, prefetchThemeFonts } from "../backends/html/fonts.js";
 import { compileToSvg } from "../backends/svg/compiler.js";
 import { compilePolyDocument } from "../build.js";
 import { launchBrowser } from "../browser.js";
+import { parseMargins } from "../backends/html/components.js";
 import { extractTheme } from "../themes/extract.js";
 import { assertNoErrors, PolyBuildError } from "../diagnostics.js";
 import {
@@ -74,12 +75,37 @@ interface CliArgs {
   hints?: boolean;
   page?: number;
   full?: boolean;
+  /** Options that matched nothing. Collected rather than ignored: see parseArgs. */
+  unknown: string[];
 }
+
+/**
+ * Every option the CLI accepts. An option absent from this list is a typo or a
+ * guess, and either way the user did not get what they asked for.
+ */
+const KNOWN_FLAGS = [
+  "-h", "--help", "--json", "-o", "--output", "-f", "--format", "-t", "--theme",
+  "--style", "--spacing", "-n", "--name", "--width", "--padding", "--background",
+  "--to", "--adopt", "--hints", "--page", "--full", "-w", "--watch",
+] as const;
+
+/**
+ * Bare format flags people reach for. `--pdf` is the obvious guess and used to
+ * be dropped in silence, so the build emitted HTML, printed a success line and
+ * exited 0. If a stale .pdf from an earlier run was already on disk it looked
+ * like the build had simply changed nothing.
+ */
+const FORMAT_GUESSES: Record<string, string> = {
+  "--pdf": "pdf",
+  "--html": "html",
+  "--svg": "svg",
+};
 
 function parseArgs(args: string[]): CliArgs {
   const result: CliArgs = {
     command: "",
     inputs: [],
+    unknown: [],
   };
 
   let i = 0;
@@ -128,6 +154,10 @@ function parseArgs(args: string[]): CliArgs {
       } else {
         result.inputs.push(arg);
       }
+    } else {
+      // Anything left starting with "-" matched no branch above. Previously it
+      // fell off the end of the chain and was discarded without a word.
+      result.unknown.push(arg);
     }
 
     i++;
@@ -318,7 +348,10 @@ async function buildPdf(
   const page = await browser.newPage();
 
   const absoluteOutput = resolve(outputPath);
-  const docMargin = pageSettings.margin || "2cm";
+  // Per side: passing a shorthand string to each of top/right/bottom/left gave
+  // Puppeteer four copies of "1.25cm 2cm", which is not a length.
+  const docMargins = parseMargins(pageSettings.margin || "2cm") ||
+    { top: "2cm", right: "2cm", bottom: "2cm", left: "2cm" };
 
   if (pageSettings.pageless) {
     // Pageless mode: skip the sim, render as one continuous page.
@@ -344,7 +377,7 @@ async function buildPdf(
       path: absoluteOutput,
       width: pageWidth,
       height: contentHeight + 100,
-      margin: { top: docMargin, right: docMargin, bottom: docMargin, left: docMargin },
+      margin: docMargins,
       printBackground: true,
     });
   } else {
@@ -684,6 +717,18 @@ function themeList(): void {
 
 async function main(): Promise<void> {
   const args = parseArgs(process.argv.slice(2));
+
+  if (args.unknown.length > 0) {
+    const named = args.unknown.map((f) => `"${f}"`).join(", ");
+    const noun = args.unknown.length === 1 ? "option" : "options";
+    console.error(`Error: unknown ${noun}: ${named}`);
+    for (const flag of args.unknown) {
+      const format = FORMAT_GUESSES[flag];
+      if (format) console.error(`  Did you mean --format ${format}?`);
+    }
+    console.error(`Valid options: ${[...KNOWN_FLAGS].sort().join(", ")}`);
+    process.exit(1);
+  }
 
   if (args.help || !args.command) {
     printHelp();

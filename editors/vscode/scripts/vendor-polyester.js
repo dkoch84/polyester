@@ -47,9 +47,53 @@ copyDir(
   path.join(vendorRoot, "icons"),
 );
 
+// Stamp the snapshot with what it actually is.
+//
+// This used to write `version: "bundled"`, which made a vendored copy
+// unidentifiable: there was no way to tell a fresh bundle from one four months
+// stale, and the extension manifest's own version kept matching the repo the
+// whole time. That is exactly how a June compiler kept rendering previews while
+// the CLI had moved on since September, with nothing reporting it.
+//
+// A stamp that cannot move at the rate the artifact moves is worse than none at
+// all, because a confident wrong version stops people looking. So this records
+// the source tree state, not a literal.
+function gitOutput(args, fallback) {
+  try {
+    return require("child_process")
+      .execFileSync("git", args, { cwd: repoRoot, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] })
+      .trim();
+  } catch {
+    return fallback;
+  }
+}
+
+const sourceVersion = JSON.parse(
+  fs.readFileSync(path.join(repoRoot, "package.json"), "utf8"),
+).version;
+const commit = gitOutput(["rev-parse", "HEAD"], "unknown");
+const dirty = gitOutput(["status", "--porcelain"], "") !== "";
+
 fs.writeFileSync(
   path.join(vendorRoot, "package.json"),
-  JSON.stringify({ name: "polyester", version: "bundled", type: "module", main: "dist/index.js" }, null, 2),
+  JSON.stringify(
+    {
+      name: "polyester",
+      version: sourceVersion,
+      type: "module",
+      main: "dist/index.js",
+      polyesterBundle: {
+        vendoredAt: new Date().toISOString(),
+        sourceVersion,
+        commit,
+        // A bundle built from a dirty tree matches no commit, so `commit` alone
+        // would overstate its provenance.
+        dirty,
+      },
+    },
+    null,
+    2,
+  ),
 );
 
 const bundleSize = (fs.statSync(path.join(vendorRoot, "dist", "index.js")).size / 1024).toFixed(1);
