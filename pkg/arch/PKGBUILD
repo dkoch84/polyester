@@ -1,7 +1,7 @@
 # Maintainer: Daniel <daniel@localhost>
 pkgname=polyester
-pkgver=0.2.0
-pkgrel=2
+pkgver=0.2.1
+pkgrel=1
 pkgdesc="Document authoring language combining Markdown simplicity with programming power"
 arch=('any')
 url="https://github.com/dkoch84/polyester"
