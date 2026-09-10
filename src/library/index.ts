@@ -27,18 +27,39 @@ export interface PolyStyle {
 
 // ─── Library root discovery ─────────────────────────────────────
 
+/** Does this directory actually hold library items, rather than merely exist? */
+function holdsLibraryItems(dir: string): boolean {
+  if (!existsSync(dir)) return false;
+  try {
+    for (const entry of readdirSync(dir)) {
+      const full = join(dir, entry);
+      if (entry.endsWith(".polystyle")) return true;
+      if (statSync(full).isDirectory() && holdsLibraryItems(full)) return true;
+    }
+  } catch {
+    return false;
+  }
+  return false;
+}
+
 function libraryRoot(): string {
   const here = dirname(fileURLToPath(import.meta.url));
-  // dist/library/index.js → ../../library
   const candidates = [
     // Bundled runtime (VS Code extension): vendor/polyester/dist/index.js → ../library
     resolve(here, "..", "library"),
+    // Normal build: dist/library/index.js → ../../library
     resolve(here, "..", "..", "library"),
     resolve(here, "..", "..", "..", "library"),
     resolve(process.cwd(), "library"),
   ];
+  // Existence alone is not enough. In the normal build this module lives at
+  // dist/library/index.js, so the first candidate resolves to dist/library:
+  // the module's OWN directory, which of course exists. It matched, held no
+  // .polystyle files, and listLibrary() returned an empty list everywhere
+  // except the one layout the first candidate was written for. Requiring the
+  // directory to actually contain an item makes the probe test what it means.
   for (const c of candidates) {
-    if (existsSync(c)) return c;
+    if (holdsLibraryItems(c)) return c;
   }
   return candidates[0];
 }
