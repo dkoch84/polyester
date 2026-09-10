@@ -1,7 +1,7 @@
 # Maintainer: Daniel <daniel@localhost>
 pkgname=polyester
 pkgver=0.2.0
-pkgrel=1
+pkgrel=2
 pkgdesc="Document authoring language combining Markdown simplicity with programming power"
 arch=('any')
 url="https://github.com/dkoch84/polyester"
@@ -29,13 +29,22 @@ package() {
     install -dm755 "$instdir"
 
     cp -r dist "$instdir/"
-    cp package.json package-lock.json "$instdir/"
+
+    # install rather than cp: cp carries the working tree's permissions into the
+    # package, so a tool that rewrites a file via mktemp + mv (mktemp is 0600)
+    # ships a root-only file. That happened to package.json in 0.2.0-1, which
+    # left the runtime unable to read its own version and report what it was.
+    install -m644 package.json package-lock.json "$instdir/"
 
     # The in-process runtime (used by the editor extensions, which load
     # /usr/lib/polyester rather than shipping their own compiler) resolves
     # library items from here. Without it listLibrary() returns zero items
     # instead of failing, so the library browser comes up empty with no error.
     cp -r library "$instdir/"
+
+    # Same reasoning for the copied trees: normalize instead of inheriting.
+    find "$instdir/dist" "$instdir/library" -type d -exec chmod 755 {} +
+    find "$instdir/dist" "$instdir/library" -type f -exec chmod 644 {} +
 
     # Install production dependencies only
     cd "$instdir"
